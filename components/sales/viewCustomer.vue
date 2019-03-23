@@ -1,66 +1,81 @@
 <template>
-  <v-card>
-    <v-card>
-      <v-btn color="info" round class="pa-2" @click="showModal=true">
-        <v-icon dark small class="mr-2"> gavel</v-icon>Add Customer
-      </v-btn>
-    </v-card>
-    <v-card-title>
-      <v-btn v-if="selectCustomer.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
-        <v-icon dark small class="mr-1">gavel</v-icon> Delete
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-
-      <v-spacer></v-spacer>
-      <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-    </v-card-title>
-    <v-data-table v-model="selectCustomer" :headers="header" :items="customerDtl" :pagination.sync="pagination"
-      :total-items="totalCustomer" :loading="loading" select-all item-key="id" class="elevation-1">
-      <template v-slot:no-data>
-        <v-alert :value="true" color="error" icon="warning">
-          Sorry, nothing to display here :(
-        </v-alert>
-      </template>
-      <template v-slot:items="props">
-        <td>
-            <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
-          </td>
-          <td>{{props.index+1}}</td>
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.mobile }}</td>
-          <td>{{ props.item.totalamount }}</td>
-          <td>{{ props.item.received }}</td>
-          <td> {{parseFloat(props.item.totalamount) - parseFloat(props.item.received)}} </td>
-          <td>
-            <v-icon small class="mr-12" @click="editItem(props.item)">edit
-            </v-icon>
-          </td>
-      </template>
-      <v-alert v-slot:no-results :value="true" color="error" icon="warning">
-        Your search for "{{ search }}" found no results.
-      </v-alert>
-    </v-data-table>
-    <v-dialog v-model="showModal" width="800">
+  <v-layout>
+    <v-flex xs12 sm12>
       <v-card>
-        <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
-          <span style="font-size:18px;">Add Customer</span>
-        </v-card-title>
-        <v-card-text>
-          <addCustomer></addCustomer>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" flat @click="showModal = false">
-            Close
-          </v-btn>
-        </v-card-actions>
+        <v-container grid-list-xs>
+          <v-layout align-center justify-start row wrap>
+            <v-flex sm9></v-flex>
+            <v-flex sm3>
+              <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+                <v-icon dark small class="mr-2"> gavel</v-icon>Add Customer
+              </v-btn>
+            </v-flex>
+          </v-layout>
+        </v-container>
       </v-card>
-    </v-dialog>
-  </v-card>
+      <v-card>
+        <v-card-title>
+          <v-btn v-if="selectCustomer.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
+            <v-icon dark small class="mr-1">gavel</v-icon> Delete
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+
+          <v-spacer></v-spacer>
+          <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+        </v-card-title>
+        <v-data-table v-model="selectCustomer" :headers="header" :items="customerDtl" :pagination.sync="pagination"
+          :total-items="totalCustomer" :loading="loading" select-all item-key="id" class="elevation-1">
+          <template v-slot:no-data>
+            <v-alert :value="true" color="error" icon="warning">
+              Sorry, nothing to display here :(
+            </v-alert>
+          </template>
+          <template v-slot:items="props">
+            <td>
+                <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
+              </td>
+              <td>{{props.index+1}}</td>
+              <td>{{ props.item.name }}</td>
+              <td>{{ props.item.mobile }}</td>
+              <td>{{ props.item.totalamount }}</td>
+              <td>{{ props.item.received }}</td>
+              <td> {{parseFloat(props.item.totalamount) - parseFloat(props.item.received)}} </td>
+              <td>
+                <v-icon small class="mr-12" @click="editCustomer(props.item.id)">edit
+                </v-icon>
+              </td>
+          </template>
+          <v-alert v-slot:no-results :value="true" color="error" icon="warning">
+            Your search for "{{ search }}" found no results.
+          </v-alert>
+        </v-data-table>
+        
+        <v-dialog width="800" v-model="showModal" >
+          <v-card>
+            <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
+              <span style="font-size:18px;" v-if="editValue==null">Add Customer</span>
+              <span style="font-size:18px;" v-else>Edit Customer</span>
+            </v-card-title>
+            <v-card-text class="pa-0">
+              <v-container grid-list-xs>
+                <addCustomer v-if="showModal==true" v-model="closeModal1" :id="editValue"></addCustomer>
+              </v-container>
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" flat @click="showModal = false,editValue=null">
+                Close
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-card>
+    </v-flex>
+  </v-layout>    
 </template>
 <script>
   import addCustomer from "~/components/sales/addCustomerComponent";
@@ -89,11 +104,25 @@
         selectCustomer: [],
         search: '',
         addinBulk: 0,
-        showModal: 0,
+        showModal: false,
         showBulk: false,
-        totalCustomer: 0
+        totalCustomer: 0,
+        editValue:null,
+        closeModal1:1
       }
 
+    },
+    updated(){
+        
+        if(this.closeModal1 == 2)
+        {
+            this.showModal = false
+            this.getDataFromApi()
+                .then(data => {
+                  this.customerDtl = data.items
+                  this.totalCustomer = data.total
+            })
+        }
     },
     watch: {
       pagination: {
@@ -164,11 +193,11 @@
         else { }
 
       },
-      editItem(item) {
-        this.editedIndex = this.customerDtl.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
+      // editItem(item) {
+      //   this.editedIndex = this.customerDtl.indexOf(item)
+      //   this.editedItem = Object.assign({}, item)
+      //   this.dialog = true
+      // },
       getDataFromApi() {
         this.loading = true
         return new Promise((resolve, reject) => {
@@ -215,13 +244,12 @@
       generate() {
         this.$axios.get("/jay/api/Customers?access_token=AMHo9vQVi854r3gPjzYFUAnFwohRRX8x2uzR3V2mJDJ5JUfXMmfmDNoO5c17EXFx&filter[where][isenabled]=1")
           .then(res => {
-            console.log("bb")
+            //console.log("bb")
             return res.data;
 
             //console.log(res.data)
           });
-      }
-    }
+      },
 
     //     _suppress(evt) { evt.stopPropagation(); evt.preventDefault(); },
     // 	_drop(evt) {
@@ -389,15 +417,17 @@
     //         else{}
 
     //     },
-    //     editCustomer(val){
-    //         this.editValue = "";
-    //           if(this.editValue =="")
-    //           {
-    //               this.editValue =val
-    //               this.showModal = 1
-    //           }
-    //           //console.log(this.editValue)
-    //     },
+        editCustomer(val){
+            this.editValue = "";
+              if(this.editValue =="")
+              {
+                  this.editValue =val
+                  this.showModal = true
+                  //console.log(this.editValue)
+              }
+              //console.log(this.editValue)
+        },
+  }
     //     viewAllDetail(val){
     //        // console.log("clicked"+val);
     //           this.$router.push("/"+this.$route.params.username+"/dashboard/sales/customer/"+val+"/viewAllDetails");

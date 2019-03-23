@@ -53,11 +53,11 @@ module.exports = {
  axios: {
   // See https://github.com/nuxt-community/axios-module#options
   //baseURL: 'http://bcontrol.jdmit.in'
-  baseURL: 'http://192.168.2.10:3030'
+  baseURL: 'http://192.168.2.2:3030'
 },
 env:{
   //URL: 'http://bcontrol.jdmit.in'
-  URL: 'http://localhost:3030'
+  URL: 'http://192.168.2.2:3030'
 }, 
 
   /*
