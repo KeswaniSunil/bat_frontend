@@ -106,8 +106,8 @@
 
                                         </v-flex>
                                         <v-flex xs12 sm8>
-                                            <v-text-field v-model="transport.vehicleNo" :single-line="biggerScreen"
-                                                readonly disabled height=20></v-text-field>
+                                            <v-text-field v-model="transport.vehicleNo" label="Vehicle No."
+                                                :single-line="biggerScreen" readonly disabled height=20></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -119,8 +119,8 @@
                                         <v-flex sm1>
                                         </v-flex>
                                         <v-flex xs12 sm8>
-                                            <v-text-field v-model="transport.placeOfSupply" :single-line="biggerScreen"
-                                                readonly height=20></v-text-field>
+                                            <v-text-field v-model="transport.placeOfSupply" label="Place of Supply"
+                                                :single-line="biggerScreen" readonly height=20></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -158,12 +158,13 @@
                         <v-flex xs3>
                             <v-layout align-center justify-space-between>
                                 <label class="title">Items Details:</label>
-                                <v-btn round dark @click="createItemRow()">
+                                <v-btn v-if="biggerScreen == true" round dark @click="createItemRow()">
                                     Add Item
                                 </v-btn>
                             </v-layout>
                         </v-flex>
-                        <v-flex xs12 mt-3>
+                        <!-- Laptop View Item -->
+                        <v-flex v-if="biggerScreen == true" xs12 mt-3>
                             <v-data-table :headers="itemheaders" :items="itemDetails" hide-actions class="elevation-1">
                                 <template v-slot:items="props">
                                     <td>
@@ -183,7 +184,7 @@
                                             :single-line="true" height=20 disabled></v-text-field>
                                     </td>
                                     <td style="min-width:100px" class="text-xs-right">
-                                        <v-text-field type="number" v-model="props.item.mrp" label="MRP" :single-line="true"
+                                        <v-text-field type="number" v-model="props.item.mrp" label="MRP" step="any" min="0" :single-line="true"
                                             height=20></v-text-field>
                                     </td>
                                     <td v-if="configuration.taxes == 1" class="text-xs-right">
@@ -191,7 +192,7 @@
                                             height=20 disabled></v-text-field>
                                     </td>
                                     <td class="text-xs-right">
-                                        <v-text-field type="number" v-model="props.item.quantity" label="Quantity"
+                                        <v-text-field type="number" v-model="props.item.quantity" :disabled="props.item.id != null" min="1" label="Quantity"
                                             :single-line="true" height=20></v-text-field>
                                     </td>
                                     <td class="text-xs-right">
@@ -206,8 +207,47 @@
                                 </template>
                             </v-data-table>
                         </v-flex>
+                        <!-- Mobile View Item -->
+                        <v-flex v-else xs12 mt-3>
+                            <v-card class="border-radius-5">
+                                <v-card-text primary-title>
+                                    <v-layout v-for="(cd,index) in itemDetails" :key="index" row wrap>
+                                        <v-flex v-if="index < itemDetails.length-1" xs12>
+                                            <v-layout align-center row wrap>
+                                                <v-flex xs2>
+                                                    <v-icon @click="removeItemRow(index);removeItemModalRow(index)">delete</v-icon>
+                                                </v-flex>
+                                                <v-flex xs6>
+                                                    <v-layout overflow-x-scroll align-center justify-start class="text-no-wrap text-capitalize">
+                                                        <v-flex xs12 text-xs-left>
+                                                            <div class="font-15 font-weight-bold">{{ cd.itemName }}</div>
+                                                            <div class="font-13 ml-1 mb-2">
+                                                                <span>{{ cd.mrp+" x "+cd.quantity }}</span>
+                                                                <span v-if="configuration.taxes == 1">{{ " x "+cd.gst+"%"}}</span>
+                                                            </div>
+                                                        </v-flex>
+                                                    </v-layout>
+                                                </v-flex>
+                                                <v-flex xs2 overflow-x-scroll font-weight-medium>
+                                                    {{ cd.subTotal }}
+                                                </v-flex>
+                                                <v-flex xs2>
+                                                    <v-icon @click="itemModalIndex = index;modalPreItem = true;">edit</v-icon>
+                                                </v-flex>
+                                            </v-layout>
+                                            <v-divider v-if="index < itemDetails.length - 2"></v-divider>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-card-text>
+                            </v-card>
+                            <v-layout align-left justify-start row wrap overflow-x-hidden>
+                                <v-flex xs12>
+                                    <v-btn round dark @click="modalPreItem = true;" class="width-90">Add Item</v-btn>
+                                </v-flex>
+                            </v-layout>
+                        </v-flex>
                     </v-layout>
-                    <v-layout mt-3 justify-end>
+                    <v-layout px-2 mt-3 justify-end>
                         <v-flex xs12 sm6>
                             <v-layout align-center justify-end row wrap>
                                 <v-flex v-if="biggerScreen" class="text-lg-left" xs12 sm5>
@@ -215,8 +255,7 @@
                                 </v-flex>
                                 <v-flex xs10 sm6>
                                     <v-text-field type="number" v-model.number="billDetail.discount" min="0" @keyup="getBillTotal"
-                                        @change="getBillTotal" label="Discount" :single-line="biggerScreen" height=20
-                                        ></v-text-field>
+                                        @change="getBillTotal" label="Discount" :single-line="biggerScreen" height=20></v-text-field>
                                 </v-flex>
                                 <v-flex xs2 sm1>
                                     <v-select :items="[{text:'Rs',value:'1'},{text:'%', value:'2'}]" item-text="text"
@@ -226,42 +265,41 @@
                             </v-layout>
                         </v-flex>
                     </v-layout>
-                    <v-layout justify-end>
+                    <v-layout px-2 justify-end>
                         <v-flex xs12 sm6>
                             <v-layout align-center justify-end row wrap>
                                 <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
                                     <label class="font-15 font-weight-regular">Charges: </label>
                                 </v-flex>
                                 <v-flex xs12 sm7>
-                                    <v-text-field type="number" min="0" v-model.number="billDetail.charges"
-                                        @keyup="getBillTotal" @change="getBillTotal" label="Charges" :single-line="biggerScreen"
-                                        height=20></v-text-field>
+                                    <v-text-field type="number" min="0" v-model.number="billDetail.charges" @keyup="getBillTotal"
+                                        @change="getBillTotal" label="Charges" :single-line="biggerScreen" height=20></v-text-field>
                                 </v-flex>
                             </v-layout>
                         </v-flex>
                     </v-layout>
-                    <v-layout justify-end>
+                    <v-layout px-2 justify-end>
                         <v-flex xs12 sm6>
                             <v-layout align-center justify-end row wrap>
                                 <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
                                     <label class="font-15 font-weight-regular">Round off: </label>
                                 </v-flex>
                                 <v-flex xs12 sm7>
-                                    <v-text-field type="number"  step="any" v-model="billDetail.roundoff"
-                                        label="Round off" :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                    <v-text-field type="number" step="any" v-model="billDetail.roundoff" label="Round off"
+                                        :single-line="biggerScreen" height=20 disabled></v-text-field>
                                 </v-flex>
                             </v-layout>
                         </v-flex>
                     </v-layout>
-                    <v-layout justify-end>
+                    <v-layout px-2 justify-end>
                         <v-flex xs12 sm6>
                             <v-layout align-center justify-end row wrap>
                                 <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
                                     <label class="font-15 font-weight-regular">Total Payable Amount: </label>
                                 </v-flex>
                                 <v-flex xs12 sm7>
-                                    <v-text-field type="number"  v-model="billDetail.totalPayableAmount"
-                                        label="Total Payable Amount" :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                    <v-text-field type="number" v-model="billDetail.totalPayableAmount" label="Total Payable Amount"
+                                        :single-line="biggerScreen" height=20 disabled></v-text-field>
                                 </v-flex>
                             </v-layout>
                         </v-flex>
@@ -319,7 +357,7 @@
                             </v-data-table>
                         </v-flex>
                     </v-layout>
-                    <v-layout mt-3 justify-end>
+                    <v-layout px-2 mt-3 justify-end>
                         <v-flex v-if="billDetail.receivable > 0" xs12 sm6>
                             <v-layout align-center justify-end row wrap>
                                 <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
@@ -342,15 +380,15 @@
                             </v-layout>
                         </v-flex>
                     </v-layout>
-                    <v-layout justify-end>
+                    <v-layout px-2 justify-end>
                         <v-flex xs12 sm6>
                             <v-layout align-center justify-end row wrap>
                                 <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
                                     <label class="font-15 font-weight-regular">Total Payable Amount: </label>
                                 </v-flex>
                                 <v-flex xs12 sm7>
-                                    <v-text-field type="number" v-model.number="billDetail.receivable"
-                                        label="Total Payable Amount" :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                    <v-text-field type="number" v-model.number="billDetail.receivable" label="Total Payable Amount"
+                                        :single-line="biggerScreen" height=20 disabled></v-text-field>
                                 </v-flex>
                             </v-layout>
                         </v-flex>
@@ -361,6 +399,57 @@
                 </v-container>
             </v-form>
         </v-flex>
+        <!-- Modals -->
+        <v-dialog v-model="modalPreItem" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <v-card>
+                <v-toolbar dark color="primary">
+                    <v-btn icon dark @click="modalPreItem = false;resetItemModal(itemModalDetails.length - 1)">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Add Item</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-items>
+                        <v-btn dark flat v-if="itemModalIndex == (itemModalDetails.length - 1)" @click="itemInsertModal(itemModalIndex)">Insert</v-btn>
+                        <v-btn dark flat v-else @click="itemEditModal(itemModalIndex)">Update</v-btn>
+                    </v-toolbar-items>
+                </v-toolbar>
+                <v-container grid-list-md>
+                    <v-layout wrap>
+                        <v-flex xs12>
+                                <v-autocomplete v-model="itemModalDetails[itemModalIndex].itemId" @input="itemModalGenerate(itemModalIndex)"
+                                append-icon="search" v-if="itemModalDetails[itemModalIndex].check == 1" :items="itemsACVitems"
+                                :loading="itemsACV.isLoading" :search-input.sync="itemsACV.search"
+                                hide-no-data hide-selected item-text="name" item-value="id" label="Item Name"
+                                placeholder="Item Name" return-string height=20></v-autocomplete>
+                            <v-text-field v-else v-model="itemModalDetails[itemModalIndex].itemName" height=20
+                                disabled></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                                <v-text-field type="text" v-model="itemModalDetails[itemModalIndex].unitName" label="Unit"
+                                height=20 disabled></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                                <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].mrp" label="MRP" min="0" step="any"
+                                height=20  @keyup="getSubTotalModal(itemModalIndex)" @change="getSubTotalModal(itemModalIndex)"></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 v-if="configuration.taxes == 1">
+                                <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].gst" label="GST" 
+                                height=20 disabled></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                                <v-text-field type="number" min="1" :disabled="itemModalDetails[itemModalIndex].id != null" 
+                                v-model.number="itemModalDetails[itemModalIndex].quantity" 
+                                @change="getSubTotalModal(itemModalIndex)" @keyup="getSubTotalModal(itemModalIndex)" label="Quantity"
+                                 height=20></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                                <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].subTotal" label="Sub Total"
+                                height=20 disabled></v-text-field>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </v-card>
+        </v-dialog>
     </v-layout>
 </template>
 <script>
@@ -513,7 +602,8 @@
             ]
         }),
         created() {
-            this.$store.state.token = 'AMHo9vQVi854r3gPjzYFUAnFwohRRX8x2uzR3V2mJDJ5JUfXMmfmDNoO5c17EXFx'
+            this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
+            this.$store.state.userId = 1
             if (this.id != null) {
                 this.$axios.get("/" + this.$route.params.username + "/api/Orders?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id + "&filter[where][isenabled]=1")
                     .then(res => {
@@ -529,6 +619,16 @@
             else {
                 this.generate();
             }
+        },
+        mounted() {
+            this.$nextTick(() => {
+                if (window.innerWidth <= 600) this.biggerScreen = false
+                else this.biggerScreen = true
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth <= 600) this.biggerScreen = false
+                    else this.biggerScreen = true
+                })
+            })
         },
         computed: {
             customerACVitems() {
@@ -1409,5 +1509,17 @@
 <style>
     .font-15 {
         font-size: 15px
+    }
+
+    .font-13 {
+        font-size: 13px
+    }
+
+    .overflow-x-scroll {
+        overflow-x: scroll
+    }
+
+    .width-90 {
+        width: 90%
     }
 </style>

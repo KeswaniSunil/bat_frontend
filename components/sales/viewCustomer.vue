@@ -137,6 +137,7 @@
       }
     },
     mounted() {
+      this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
       this.getDataFromApi()
         .then(data => {
           this.customerDtl = data.items
@@ -161,13 +162,13 @@
           let promise = new Promise((resolve, reject) => {
             for (let i = 0; i < this.selectCustomer.length; i++) {
               //console.log(this.selectCustomer[i]);
-              this.$axios.post("/" + this.$route.params.username + "/api/Customers/update?access_token=HIaSTRQmKsfb3ysIF3Bg84P7hzRxaCXdPg2q06Rk5B1yKlQ5E4LKOK5wiwgUEDBY&where[id]=" + this.selectCustomer[i].id,
+              this.$axios.post("/" + this.$route.params.username + "/api/Customers/update?access_token="+this.$store.state.token+"&where[id]=" + this.selectCustomer[i].id,
                 {
                   isenabled: 0
                 })
                 .then(res => {
                   //console.log("customer="+res.data);
-                  this.$axios.post("/" + this.$route.params.username + "/api/Orders/update?access_token=HIaSTRQmKsfb3ysIF3Bg84P7hzRxaCXdPg2q06Rk5B1yKlQ5E4LKOK5wiwgUEDBY&where[customerId]=" + this.selectCustomer[i].id,
+                  this.$axios.post("/" + this.$route.params.username + "/api/Orders/update?access_token="+this.$store.state.token+"&where[customerId]=" + this.selectCustomer[i].id,
                     {
                       isenabled: 0
                     })
@@ -204,7 +205,7 @@
           const { sortBy, descending, page, rowsPerPage } = this.pagination
           //console.log("aa")
           let items = "";
-          this.$axios.get("/jay/api/Customers?access_token=AMHo9vQVi854r3gPjzYFUAnFwohRRX8x2uzR3V2mJDJ5JUfXMmfmDNoO5c17EXFx&filter[where][isenabled]=1")
+          this.$axios.get("/jay/api/Customers?access_token="+this.$store.state.token+"&filter[where][isenabled]=1")
             .then(res => {
               //console.log("bb")
               items = res.data;
@@ -242,7 +243,7 @@
         })
       },
       generate() {
-        this.$axios.get("/jay/api/Customers?access_token=AMHo9vQVi854r3gPjzYFUAnFwohRRX8x2uzR3V2mJDJ5JUfXMmfmDNoO5c17EXFx&filter[where][isenabled]=1")
+        this.$axios.get("/jay/api/Customers?access_token="+this.$store.state.token+"&filter[where][isenabled]=1")
           .then(res => {
             //console.log("bb")
             return res.data;

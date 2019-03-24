@@ -65,7 +65,7 @@
         items: [
           { icon: 'apps', title: 'Main', to: '/home' },
           { icon: 'apps', title: 'Welcome', to: '/' },
-          { icon: 'bubble_chart', title: 'Inspire', to: '/inspire' }
+          { icon: 'bubble_chart', title: 'Sales', to: '/jay/Dashboard/sales' }
         ],
         miniVariant: false,
         right: true,
