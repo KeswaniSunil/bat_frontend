@@ -1,50 +1,77 @@
 <template>
   <v-layout>
     <v-flex xs12 sm12>
-      <v-card>
-        <v-container grid-list-xs>
-          <v-layout align-center justify-start row wrap>
-            <v-flex sm9></v-flex>
-            <v-flex sm3>
-              <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                <v-icon dark small class="mr-2"> gavel</v-icon>Add Customer
-              </v-btn>
+      <v-card class="border-radius-5"> 
+          <v-card-text>
+            <v-layout align-center justify-start row wrap>
+            <v-flex xs6 sm10></v-flex>
+            <v-flex xs6 sm2>
+              
+                  <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+                    <v-icon dark small class="mr-2"> gavel</v-icon>Add Customer
+                  </v-btn>
             </v-flex>
           </v-layout>
-        </v-container>
-      </v-card>
-      <v-card>
-        <v-card-title>
-          <v-btn v-if="selectCustomer.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
-            <v-icon dark small class="mr-1">gavel</v-icon> Delete
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-spacer></v-spacer>
-
-          <v-spacer></v-spacer>
-          <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-        </v-card-title>
-        <v-data-table v-model="selectCustomer" :headers="header" :items="customerDtl" :pagination.sync="pagination"
+          <v-layout column class="pb-2">
+            <v-flex sm12>
+              <v-layout align-center row wrap>
+                <v-flex xs3 sm1>
+                  <v-btn v-if="selectCustomer.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
+                    <v-icon dark small class="mr-1">gavel</v-icon> Delete
+                  </v-btn>
+                </v-flex>
+                <v-flex xs9 sm8></v-flex>
+                <v-flex xs12 sm3>
+                  <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                </v-flex>
+              </v-layout>
+            </v-flex>
+          </v-layout>
+         <v-data-table v-model="selectCustomer" :headers="header" :items="customerDtl" :pagination.sync="pagination"
           :total-items="totalCustomer" :loading="loading" select-all item-key="id" class="elevation-1">
+          <template v-slot:headers="props">
+            <tr>
+              <th>
+                <v-checkbox
+                  :input-value="props.all"
+                  :indeterminate="props.indeterminate"
+                  primary
+                  hide-details
+                  @click.stop="toggleAll"
+                ></v-checkbox>
+              </th>
+              <th
+                v-for="header in props.headers"
+                :key="header.text"
+                :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                @click="changeSort(header.value)"
+              >
+                <v-icon small>arrow_upward</v-icon>
+                {{ header.text }}
+              </th>
+            </tr>
+          </template>
           <template v-slot:no-data>
             <v-alert :value="true" color="error" icon="warning">
               Sorry, nothing to display here :(
             </v-alert>
           </template>
           <template v-slot:items="props">
-            <td>
-                <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
-              </td>
-              <td>{{props.index+1}}</td>
-              <td>{{ props.item.name }}</td>
-              <td>{{ props.item.mobile }}</td>
-              <td>{{ props.item.totalamount }}</td>
-              <td>{{ props.item.received }}</td>
-              <td> {{parseFloat(props.item.totalamount) - parseFloat(props.item.received)}} </td>
-              <td>
-                <v-icon small class="mr-12" @click="editCustomer(props.item.id)">edit
-                </v-icon>
-              </td>
+            <tr>
+              <td :active="props.selected" @click="props.selected = !props.selected">
+                  <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
+                </td>
+                <td>{{props.index+1}}</td>
+                <td>{{ props.item.name }}</td>
+                <td>{{ props.item.mobile }}</td>
+                <td>{{ props.item.totalamount }}</td>
+                <td>{{ props.item.received }}</td>
+                <td> {{parseFloat(props.item.totalamount) - parseFloat(props.item.received)}} </td>
+                <td>
+                  <v-icon small class="mr-12" @click="editCustomer(props.item.id)">edit
+                  </v-icon>
+                </td>
+              </tr>  
           </template>
           <v-alert v-slot:no-results :value="true" color="error" icon="warning">
             Your search for "{{ search }}" found no results.
@@ -73,6 +100,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        </v-card-text>
       </v-card>
     </v-flex>
   </v-layout>    
@@ -113,7 +141,7 @@
 
     },
     updated(){
-        
+        //console.log(this.selectCustomer)
         if(this.closeModal1 == 2)
         {
             this.showModal = false
@@ -241,15 +269,6 @@
               //console.log(res.data)
             });
         })
-      },
-      generate() {
-        this.$axios.get("/jay/api/Customers?access_token="+this.$store.state.token+"&filter[where][isenabled]=1")
-          .then(res => {
-            //console.log("bb")
-            return res.data;
-
-            //console.log(res.data)
-          });
       },
 
     //     _suppress(evt) { evt.stopPropagation(); evt.preventDefault(); },
@@ -427,7 +446,7 @@
                   //console.log(this.editValue)
               }
               //console.log(this.editValue)
-        },
+        }
   }
     //     viewAllDetail(val){
     //        // console.log("clicked"+val);

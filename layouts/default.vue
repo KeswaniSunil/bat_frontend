@@ -22,7 +22,7 @@
 
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar color="grey lighten-4" v-if="toolbarview" :clipped-left="clipped" app light>
+    <v-toolbar color="grey lighten-4" v-if="toolbarview" class="elevation-0" :clipped-left="clipped" app light>
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
 
       <v-toolbar-title>Page title</v-toolbar-title>
@@ -37,8 +37,8 @@
         <v-icon>more_vert</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-content class="grey lighten-3">
-      <v-container class="pa-0">
+    <v-content class="padding-print-0 grey lighten-3">
+      <v-container class="pa-0" style="max-width:100%">
         <nuxt />
       </v-container>
     </v-content>
@@ -65,7 +65,9 @@
         items: [
           { icon: 'apps', title: 'Main', to: '/home' },
           { icon: 'apps', title: 'Welcome', to: '/' },
-          { icon: 'bubble_chart', title: 'Sales', to: '/jay/Dashboard/sales' }
+          { icon: 'bubble_chart', title: 'Sales', to: '/jay/Dashboard/sales' },
+          { icon: 'bubble_chart', title: 'Purchases', to: '/jay/Dashboard/purchase' },
+          { icon: 'bubble_chart', title: 'Items', to: '/jay/Dashboard/items' }
         ],
         miniVariant: false,
         right: true,

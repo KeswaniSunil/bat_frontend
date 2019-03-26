@@ -20,6 +20,7 @@
                                                 :loading="customerACV.isLoading" :search-input.sync="customerACV.search"
                                                 hide-no-data hide-selected item-text="name" item-value="id" label="Customer Name"
                                                 placeholder="Customer Name" return-string height=20 :single-line="biggerScreen"></v-autocomplete>
+                                            <v-text-field v-else v-model="billDetail.customerName" height=20 disabled></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -79,7 +80,7 @@
                                     </v-layout>
                                 </v-flex>
                             </v-layout>
-                            <v-layout v-if="transport.check == 1" align-center justify-start row wrap>
+                            <v-layout v-if="configuration.transport == 1" align-center justify-start row wrap>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
                                         <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
@@ -153,254 +154,311 @@
                         </v-container>
                     </v-card-text>
                 </v-card>
-                <v-container grid-list-xs>
-                    <v-layout column wrap>
-                        <v-flex xs3>
-                            <v-layout align-center justify-space-between>
-                                <label class="title">Items Details:</label>
-                                <v-btn v-if="biggerScreen == true" round dark @click="createItemRow()">
-                                    Add Item
-                                </v-btn>
-                            </v-layout>
-                        </v-flex>
-                        <!-- Laptop View Item -->
-                        <v-flex v-if="biggerScreen == true" xs12 mt-3>
-                            <v-data-table :headers="itemheaders" :items="itemDetails" hide-actions class="elevation-1">
-                                <template v-slot:items="props">
-                                    <td>
-                                        {{props.index+1}}
-                                    </td>
-                                    <td style="min-width:300px">
-                                        <v-autocomplete v-model="props.item.itemId" @input="itemGenerate(props.index)"
-                                            append-icon="search" v-if="props.item.check == 1" :items="itemsACVitems"
-                                            :loading="itemsACV.isLoading" :search-input.sync="itemsACV.search"
-                                            hide-no-data hide-selected item-text="name" item-value="id" label="Item Name"
-                                            placeholder="Item Name" return-string height=20 :single-line="true"></v-autocomplete>
-                                        <v-text-field v-else v-model="props.item.itemName" height=20 :single-line="true"
-                                            disabled></v-text-field>
-                                    </td>
-                                    <td style="min-width:80px" class="text-xs-right">
-                                        <v-text-field type="text" v-model="props.item.unitName" label="Unit"
-                                            :single-line="true" height=20 disabled></v-text-field>
-                                    </td>
-                                    <td style="min-width:100px" class="text-xs-right">
-                                        <v-text-field type="number" v-model="props.item.mrp" label="MRP" step="any" min="0" :single-line="true"
-                                            height=20></v-text-field>
-                                    </td>
-                                    <td v-if="configuration.taxes == 1" class="text-xs-right">
-                                        <v-text-field type="number" v-model="props.item.gst" label="GST" :single-line="true"
-                                            height=20 disabled></v-text-field>
-                                    </td>
-                                    <td class="text-xs-right">
-                                        <v-text-field type="number" v-model="props.item.quantity" :disabled="props.item.id != null" min="1" label="Quantity"
-                                            :single-line="true" height=20></v-text-field>
-                                    </td>
-                                    <td class="text-xs-right">
-                                        <v-text-field type="number" v-model="props.item.subTotal" label="Sub Total"
-                                            :single-line="true" height=20 disabled></v-text-field>
-                                    </td>
-                                    <td class="text-xs-right">
-                                        <v-btn flat icon @click="removeItemRow(props.index)">
-                                            <v-icon>delete</v-icon>
+                <v-card class="ma-3 border-radius-5">
+                    <v-card-title>
+                        <v-container style="max-width:100%" class="pa-0" grid-list-xs>
+                            <v-layout column wrap>
+                                <v-flex xs3>
+                                    <v-layout align-center justify-space-between>
+                                        <label class="title">Items Details:</label>
+                                        <v-btn v-if="biggerScreen == true" round dark @click="createItemRow()">
+                                            Add Item
                                         </v-btn>
-                                    </td>
-                                </template>
-                            </v-data-table>
-                        </v-flex>
-                        <!-- Mobile View Item -->
-                        <v-flex v-else xs12 mt-3>
-                            <v-card class="border-radius-5">
-                                <v-card-text primary-title>
-                                    <v-layout v-for="(cd,index) in itemDetails" :key="index" row wrap>
-                                        <v-flex v-if="index < itemDetails.length-1" xs12>
-                                            <v-layout align-center row wrap>
-                                                <v-flex xs2>
-                                                    <v-icon @click="removeItemRow(index);removeItemModalRow(index)">delete</v-icon>
-                                                </v-flex>
-                                                <v-flex xs6>
-                                                    <v-layout overflow-x-scroll align-center justify-start class="text-no-wrap text-capitalize">
-                                                        <v-flex xs12 text-xs-left>
-                                                            <div class="font-15 font-weight-bold">{{ cd.itemName }}</div>
-                                                            <div class="font-13 ml-1 mb-2">
-                                                                <span>{{ cd.mrp+" x "+cd.quantity }}</span>
-                                                                <span v-if="configuration.taxes == 1">{{ " x "+cd.gst+"%"}}</span>
-                                                            </div>
+                                    </v-layout>
+                                </v-flex>
+                                <!-- Laptop View Item -->
+                                <v-flex v-if="biggerScreen == true" xs12 mt-3>
+                                    <v-data-table :headers="itemheaders" :items="itemDetails" hide-actions class="elevation-0">
+                                        <template v-slot:items="props">
+                                            <td>
+                                                {{props.index+1}}
+                                            </td>
+                                            <td style="min-width:300px">
+                                                <v-autocomplete v-model="props.item.itemId" @input="itemGenerate(props.index)"
+                                                    append-icon="search" v-if="props.item.check == 1" :items="itemsACVitems"
+                                                    :loading="itemsACV.isLoading" :search-input.sync="itemsACV.search"
+                                                    hide-no-data hide-selected item-text="name" item-value="id" label="Item Name"
+                                                    placeholder="Item Name" return-string height=20 :single-line="true"></v-autocomplete>
+                                                <v-text-field v-else v-model="props.item.itemName" height=20
+                                                    :single-line="true" disabled></v-text-field>
+                                            </td>
+                                            <td style="min-width:80px" class="text-xs-right">
+                                                <v-text-field type="text" v-model="props.item.unitName" label="Unit"
+                                                    :single-line="true" height=20 disabled></v-text-field>
+                                            </td>
+                                            <td style="min-width:100px" class="text-xs-right">
+                                                <v-text-field type="number" v-model="props.item.mrp" @keyup="getSubTotal(props.index)"
+                                                    label="MRP" step="any" min="0" :single-line="true" height=20></v-text-field>
+                                            </td>
+                                            <td v-if="configuration.taxes == 1" class="text-xs-right">
+                                                <v-text-field type="number" v-model="props.item.gst" label="GST"
+                                                    :single-line="true" height=20 disabled></v-text-field>
+                                            </td>
+                                            <td class="text-xs-right">
+                                                <v-text-field type="number" v-model="props.item.quantity" :disabled="props.item.id != null"
+                                                    min="1" label="Quantity" @keyup="getSubTotal(props.index)" @change="getSubTotal(props.index)"
+                                                    :single-line="true" height=20></v-text-field>
+                                            </td>
+                                            <td class="text-xs-right">
+                                                <v-text-field type="number" v-model="props.item.subTotal" label="Sub Total"
+                                                    :single-line="true" height=20 disabled></v-text-field>
+                                            </td>
+                                            <td class="text-xs-right">
+                                                <v-btn flat icon @click="removeItemRow(props.index)">
+                                                    <v-icon>delete</v-icon>
+                                                </v-btn>
+                                            </td>
+                                        </template>
+                                    </v-data-table>
+                                </v-flex>
+                                <!-- Mobile View Item -->
+                                <v-flex v-else xs12 mt-3>
+                                    <v-card class="border-radius-5">
+                                        <v-card-text class="pa-0" primary-title>
+                                            <v-layout v-for="(cd,index) in itemDetails" :key="index" row wrap>
+                                                <v-flex v-if="index < itemDetails.length-1" xs12>
+                                                    <v-layout align-center row wrap>
+                                                        <v-flex xs2>
+                                                            <v-icon @click="removeItemRow(index);removeItemModalRow(index)">delete</v-icon>
+                                                        </v-flex>
+                                                        <v-flex xs6>
+                                                            <v-layout overflow-x-scroll align-center justify-start
+                                                                class="text-no-wrap text-capitalize">
+                                                                <v-flex xs12 text-xs-left>
+                                                                    <div class="font-15 font-weight-bold">{{
+                                                                        cd.itemName }}</div>
+                                                                    <div class="font-13 ml-1 mb-2">
+                                                                        <span>{{ cd.mrp+" x "+cd.quantity }}</span>
+                                                                        <span v-if="configuration.taxes == 1">
+                                                                            {{ " x "+cd.gst+"%"}}
+                                                                        </span>
+                                                                    </div>
+                                                                </v-flex>
+                                                            </v-layout>
+                                                        </v-flex>
+                                                        <v-flex xs2 overflow-x-scroll font-weight-medium>
+                                                            {{ cd.subTotal }}
+                                                        </v-flex>
+                                                        <v-flex xs2>
+                                                            <v-icon @click="itemModalIndex = index;modalPreItem = true;">edit</v-icon>
                                                         </v-flex>
                                                     </v-layout>
-                                                </v-flex>
-                                                <v-flex xs2 overflow-x-scroll font-weight-medium>
-                                                    {{ cd.subTotal }}
-                                                </v-flex>
-                                                <v-flex xs2>
-                                                    <v-icon @click="itemModalIndex = index;modalPreItem = true;">edit</v-icon>
+                                                    <v-divider v-if="index < itemDetails.length - 2"></v-divider>
                                                 </v-flex>
                                             </v-layout>
-                                            <v-divider v-if="index < itemDetails.length - 2"></v-divider>
+                                        </v-card-text>
+                                    </v-card>
+                                    <v-layout mt-2 align-left justify-start row wrap overflow-x-hidden>
+                                        <v-flex xs12>
+                                            <v-btn round dark @click="modalPreItem = true;" class="width-90">Add Item</v-btn>
                                         </v-flex>
                                     </v-layout>
-                                </v-card-text>
-                            </v-card>
-                            <v-layout align-left justify-start row wrap overflow-x-hidden>
-                                <v-flex xs12>
-                                    <v-btn round dark @click="modalPreItem = true;" class="width-90">Add Item</v-btn>
                                 </v-flex>
                             </v-layout>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout px-2 mt-3 justify-end>
-                        <v-flex xs12 sm6>
-                            <v-layout align-center justify-end row wrap>
-                                <v-flex v-if="biggerScreen" class="text-lg-left" xs12 sm5>
-                                    <label class="font-15 font-weight-regular">Discount: </label>
-                                </v-flex>
-                                <v-flex xs10 sm6>
-                                    <v-text-field type="number" v-model.number="billDetail.discount" min="0" @keyup="getBillTotal"
-                                        @change="getBillTotal" label="Discount" :single-line="biggerScreen" height=20></v-text-field>
-                                </v-flex>
-                                <v-flex xs2 sm1>
-                                    <v-select :items="[{text:'Rs',value:'1'},{text:'%', value:'2'}]" item-text="text"
-                                        item-value="value" :rules="requiredRules" v-model="billDetail.discountType"
-                                        @change="getBillTotal" :single-line="biggerScreen" height=20></v-select>
-                                </v-flex>
-                            </v-layout>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout px-2 justify-end>
-                        <v-flex xs12 sm6>
-                            <v-layout align-center justify-end row wrap>
-                                <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
-                                    <label class="font-15 font-weight-regular">Charges: </label>
-                                </v-flex>
-                                <v-flex xs12 sm7>
-                                    <v-text-field type="number" min="0" v-model.number="billDetail.charges" @keyup="getBillTotal"
-                                        @change="getBillTotal" label="Charges" :single-line="biggerScreen" height=20></v-text-field>
+                            <v-layout px-2 mt-3 justify-end>
+                                <v-flex xs12 sm6>
+                                    <v-layout align-center justify-end row wrap>
+                                        <v-flex v-if="biggerScreen" class="text-lg-left" xs12 sm5>
+                                            <label class="font-15 font-weight-regular">Discount: </label>
+                                        </v-flex>
+                                        <v-flex xs10 sm6>
+                                            <v-text-field type="number" v-model.number="billDetail.discount" min="0"
+                                                @keyup="getBillTotal" @change="getBillTotal" label="Discount"
+                                                :single-line="biggerScreen" height=20></v-text-field>
+                                        </v-flex>
+                                        <v-flex xs2 sm1>
+                                            <v-select :items="[{text:'Rs',value:'1'},{text:'%', value:'2'}]" item-text="text"
+                                                item-value="value" :rules="requiredRules" v-model="billDetail.discountType"
+                                                @change="getBillTotal" :single-line="biggerScreen" height=20></v-select>
+                                        </v-flex>
+                                    </v-layout>
                                 </v-flex>
                             </v-layout>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout px-2 justify-end>
-                        <v-flex xs12 sm6>
-                            <v-layout align-center justify-end row wrap>
-                                <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
-                                    <label class="font-15 font-weight-regular">Round off: </label>
-                                </v-flex>
-                                <v-flex xs12 sm7>
-                                    <v-text-field type="number" step="any" v-model="billDetail.roundoff" label="Round off"
-                                        :single-line="biggerScreen" height=20 disabled></v-text-field>
-                                </v-flex>
-                            </v-layout>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout px-2 justify-end>
-                        <v-flex xs12 sm6>
-                            <v-layout align-center justify-end row wrap>
-                                <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
-                                    <label class="font-15 font-weight-regular">Total Payable Amount: </label>
-                                </v-flex>
-                                <v-flex xs12 sm7>
-                                    <v-text-field type="number" v-model="billDetail.totalPayableAmount" label="Total Payable Amount"
-                                        :single-line="biggerScreen" height=20 disabled></v-text-field>
+                            <v-layout px-2 justify-end>
+                                <v-flex xs12 sm6>
+                                    <v-layout align-center justify-end row wrap>
+                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                            <label class="font-15 font-weight-regular">Charges: </label>
+                                        </v-flex>
+                                        <v-flex xs12 sm7>
+                                            <v-text-field type="number" min="0" v-model.number="billDetail.charges"
+                                                @keyup="getBillTotal" @change="getBillTotal" label="Charges"
+                                                :single-line="biggerScreen" height=20></v-text-field>
+                                        </v-flex>
+                                    </v-layout>
                                 </v-flex>
                             </v-layout>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-                <v-container grid-list-xs>
-                    <v-layout column wrap>
-                        <v-flex xs3>
-                            <v-layout align-center justify-space-between>
-                                <label class="title">Payment Details:</label>
-                                <v-btn round dark>
-                                    Add Payment
-                                </v-btn>
+                            <v-layout px-2 justify-end>
+                                <v-flex xs12 sm6>
+                                    <v-layout align-center justify-end row wrap>
+                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                            <label class="font-15 font-weight-regular">Round off: </label>
+                                        </v-flex>
+                                        <v-flex xs12 sm7>
+                                            <v-text-field type="number" step="any" v-model="billDetail.roundoff" label="Round off"
+                                                :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-flex>
                             </v-layout>
-                        </v-flex>
-                        <v-flex xs12 mt-3>
-                            <v-data-table :headers="paymentheaders" :items="payment" hide-actions class="elevation-1">
-                                <template v-slot:items="props">
-                                    <td>
-                                        {{props.index+1}}
-                                    </td>
-                                    <td style="min-width:130px">
-                                        <v-dialog :ref="props.index" v-model="props.item.modalduedate"
-                                            :return-value.sync="props.item.dueDate" persistent lazy full-width width="290px">
-                                            <template v-slot:activator="{ on }">
-                                                <v-text-field v-model="props.item.dueDate" :single-line="biggerScreen"
-                                                    readonly v-on="on" height=20></v-text-field>
-                                            </template>
-                                            <v-date-picker v-model="props.item.dueDate" scrollable>
-                                                <v-spacer></v-spacer>
-                                                <v-btn flat color="primary" @click="props.item.modalduedate = false">Cancel</v-btn>
-                                                <v-btn flat color="primary" @click="$refs[props.index].save(props.item.dueDate)">OK</v-btn>
-                                            </v-date-picker>
-                                        </v-dialog>
-                                    </td>
-                                    <td style="min-width:100px" class="text-xs-right">
-                                        <v-select :items="['Cash','Cheque','Wallet','Card','other']" @change="paymentAdd(props.index)"
-                                            v-model="props.item.paymentMethod" height=20></v-select>
-                                    </td>
-                                    <td style="min-width:200px;" class="text-xs-right">
-                                        <v-textarea class="mt-3" v-model="props.item.notes" label="Notes" :single-line="true"
-                                            solo></v-textarea>
-                                    </td>
-                                    <td class="text-xs-right">
-                                        <v-text-field type="number" v-model="props.item.recievedAmount" label="Recieved Amount"
-                                            min="0" @keyup="getReceviable()" @change="getReceviable()" :disabled="props.item.id != null"
-                                            :single-line="true" height=20></v-text-field>
-                                    </td>
-                                    <td class="text-xs-right">
-                                        <v-btn @click="removePaymentRow(props.index)" flat icon>
-                                            <v-icon>delete</v-icon>
+                            <v-layout px-2 justify-end>
+                                <v-flex xs12 sm6>
+                                    <v-layout align-center justify-end row wrap>
+                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                            <label class="font-15 font-weight-regular">Total Payable Amount: </label>
+                                        </v-flex>
+                                        <v-flex xs12 sm7>
+                                            <v-text-field type="number" v-model="billDetail.totalPayableAmount" label="Total Payable Amount"
+                                                :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                    </v-card-title>
+                </v-card>
+                <v-card class="ma-3 border-radius-5">
+                    <v-card-title>
+                        <v-container style="max-width:100%" class="pa-0" grid-list-xs>
+                            <v-layout column wrap>
+                                <v-flex xs3>
+                                    <v-layout align-center justify-space-between>
+                                        <label class="title">Payment Details:</label>
+                                        <v-btn v-if="biggerScreen == true" round dark>
+                                            Add Payment
                                         </v-btn>
-                                    </td>
-                                </template>
-                            </v-data-table>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout px-2 mt-3 justify-end>
-                        <v-flex v-if="billDetail.receivable > 0" xs12 sm6>
-                            <v-layout align-center justify-end row wrap>
-                                <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
-                                    <label class="font-15 font-weight-regular">Due Date: </label>
+                                    </v-layout>
                                 </v-flex>
-                                <v-flex xs12 sm7>
-                                    <v-dialog ref="dialogduedate" v-model="modalduedate" :return-value.sync="billDetail.dueDate"
-                                        persistent lazy full-width width="290px">
-                                        <template v-slot:activator="{ on }">
-                                            <v-text-field v-model="billDetail.dueDate" :single-line="biggerScreen"
-                                                readonly v-on="on" height=20></v-text-field>
+                                <!-- Laptop View-->
+                                <v-flex v-if="biggerScreen == true" xs12 mt-3>
+                                    <v-data-table :headers="paymentheaders" :items="payment" hide-actions class="elevation-0">
+                                        <template v-slot:items="props">
+                                            <td>
+                                                {{props.index+1}}
+                                            </td>
+                                            <td style="min-width:130px">
+                                                <v-dialog :ref="props.index" v-model="props.item.modalduedate"
+                                                    :return-value.sync="props.item.dueDate" persistent lazy full-width
+                                                    width="290px">
+                                                    <template v-slot:activator="{ on }">
+                                                        <v-text-field v-model="props.item.dueDate" :single-line="biggerScreen"
+                                                            readonly v-on="on" height=20></v-text-field>
+                                                    </template>
+                                                    <v-date-picker v-model="props.item.dueDate" scrollable>
+                                                        <v-spacer></v-spacer>
+                                                        <v-btn flat color="primary" @click="props.item.modalduedate = false">Cancel</v-btn>
+                                                        <v-btn flat color="primary" @click="$refs[props.index].save(props.item.dueDate)">OK</v-btn>
+                                                    </v-date-picker>
+                                                </v-dialog>
+                                            </td>
+                                            <td style="min-width:100px" class="text-xs-right">
+                                                <v-select :items="['Cash','Cheque','Wallet','Card','other']" @change="paymentAdd(props.index)"
+                                                    v-model="props.item.paymentMethod" height=20></v-select>
+                                            </td>
+                                            <td style="min-width:200px;" class="text-xs-right">
+                                                <v-text-field v-model="props.item.notes" label="Notes" :single-line="true"
+                                                    height=20></v-text-field>
+                                            </td>
+                                            <td class="text-xs-right">
+                                                <v-text-field type="number" v-model="props.item.recievedAmount" label="Recieved Amount"
+                                                    min="0" @keyup="getReceviable()" @change="getReceviable()"
+                                                    :disabled="props.item.id != null" :single-line="true" height=20></v-text-field>
+                                            </td>
+                                            <td class="text-xs-right">
+                                                <v-btn @click="removePaymentRow(props.index)" flat icon>
+                                                    <v-icon>delete</v-icon>
+                                                </v-btn>
+                                            </td>
                                         </template>
-                                        <v-date-picker v-model="billDetail.dueDate" scrollable>
-                                            <v-spacer></v-spacer>
-                                            <v-btn flat color="primary" @click="modalduedate = false">Cancel</v-btn>
-                                            <v-btn flat color="primary" @click="$refs.dialogduedate.save(billDetail.dueDate)">OK</v-btn>
-                                        </v-date-picker>
-                                    </v-dialog>
+                                    </v-data-table>
+                                </v-flex>
+                                <!-- Mobile View Payment -->
+                                <v-flex v-else xs12 mt-3>
+                                    <v-card v-if="payment.length-1 > 0" class="border-radius-5">
+                                        <v-card-text class="pa-1" primary-title>
+                                            <v-layout v-for="(cd,index) in payment" :key="index" row wrap>
+                                                <v-flex v-if="index < payment.length-1" xs12>
+                                                    <v-layout align-center row wrap>
+                                                        <v-flex xs2>
+                                                            <v-icon @click="removePaymentRow(index)">delete</v-icon>
+                                                        </v-flex>
+                                                        <v-flex xs2 class="overflow-x-scroll">
+                                                            <span class="text-no-wrap">{{ new
+                                                                Date(cd.dueDate).getDate()+"/"+(new
+                                                                Date(cd.dueDate).getMonth()+1)+"/"+new
+                                                                Date(cd.dueDate).getFullYear() }}</span>
+                                                        </v-flex>
+                                                        <v-flex xs3 overflow-x-scroll font-weight-medium>
+                                                            <span class="text-no-wrap text-capitalize">{{
+                                                                cd.paymentMethod }}</span>
+                                                        </v-flex>
+                                                        <v-flex xs3>
+                                                            <span>{{ cd.recievedAmount }}</span>
+                                                        </v-flex>
+                                                        <v-flex xs2>
+                                                            <v-icon @click="paymentModalIndex = index;modalPrePayment = true;">edit</v-icon>
+                                                        </v-flex>
+                                                    </v-layout>
+                                                    <v-divider v-if="index < itemDetails.length - 2"></v-divider>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-card-text>
+                                    </v-card>
+                                    <v-layout mt-2 align-left justify-start row wrap overflow-x-hidden>
+                                        <v-flex xs12>
+                                            <v-btn round dark @click="modalPrePayment = true;" class="width-90">Add
+                                                Payment</v-btn>
+                                        </v-flex>
+                                    </v-layout>
                                 </v-flex>
                             </v-layout>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout px-2 justify-end>
-                        <v-flex xs12 sm6>
-                            <v-layout align-center justify-end row wrap>
-                                <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
-                                    <label class="font-15 font-weight-regular">Total Payable Amount: </label>
-                                </v-flex>
-                                <v-flex xs12 sm7>
-                                    <v-text-field type="number" v-model.number="billDetail.receivable" label="Total Payable Amount"
-                                        :single-line="biggerScreen" height=20 disabled></v-text-field>
+                            <v-layout px-2 mt-3 justify-end>
+                                <v-flex v-if="billDetail.receivable > 0" xs12 sm6>
+                                    <v-layout align-center justify-end row wrap>
+                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                            <label class="font-15 font-weight-regular">Due Date: </label>
+                                        </v-flex>
+                                        <v-flex xs12 sm7>
+                                            <v-dialog ref="dialogduedate" v-model="modalduedate" :return-value.sync="billDetail.dueDate"
+                                                persistent lazy full-width width="290px">
+                                                <template v-slot:activator="{ on }">
+                                                    <v-text-field v-model="billDetail.dueDate" :single-line="biggerScreen"
+                                                        readonly v-on="on" height=20></v-text-field>
+                                                </template>
+                                                <v-date-picker v-model="billDetail.dueDate" scrollable>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn flat color="primary" @click="modalduedate = false">Cancel</v-btn>
+                                                    <v-btn flat color="primary" @click="$refs.dialogduedate.save(billDetail.dueDate)">OK</v-btn>
+                                                </v-date-picker>
+                                            </v-dialog>
+                                        </v-flex>
+                                    </v-layout>
                                 </v-flex>
                             </v-layout>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout justify-end>
-                        <v-btn type="submit" dark round color="blue">Add Bill</v-btn>
-                    </v-layout>
-                </v-container>
+                            <v-layout px-2 justify-end>
+                                <v-flex xs12 sm6>
+                                    <v-layout align-center justify-end row wrap>
+                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                            <label class="font-15 font-weight-regular">Total Payable Amount: </label>
+                                        </v-flex>
+                                        <v-flex xs12 sm7>
+                                            <v-text-field type="number" v-model.number="billDetail.receivable" label="Total Payable Amount"
+                                                :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-flex>
+                            </v-layout>
+                            <v-layout justify-end>
+                                <v-btn v-if="id == null" type="submit" dark round color="blue">Add Bill</v-btn>
+                                <v-btn v-else type="submit" dark round color="blue">Update Bill</v-btn>
+                            </v-layout>
+                        </v-container>
+                    </v-card-title>
+                </v-card>
             </v-form>
         </v-flex>
         <!-- Modals -->
-        <v-dialog v-model="modalPreItem" fullscreen hide-overlay transition="dialog-bottom-transition">
+        <v-dialog v-if="itemDetails.length > 0" v-model="modalPreItem" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar dark color="primary">
                     <v-btn icon dark @click="modalPreItem = false;resetItemModal(itemModalDetails.length - 1)">
@@ -409,42 +467,104 @@
                     <v-toolbar-title>Add Item</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-toolbar-items>
-                        <v-btn dark flat v-if="itemModalIndex == (itemModalDetails.length - 1)" @click="itemInsertModal(itemModalIndex)">Insert</v-btn>
-                        <v-btn dark flat v-else @click="itemEditModal(itemModalIndex)">Update</v-btn>
+                        <v-btn dark flat v-if="itemModalIndex == (itemModalDetails.length - 1)" @click="itemInsertModal(itemModalIndex)">Add
+                            Item</v-btn>
+                        <v-btn dark flat v-else @click="itemEditModal(itemModalIndex)">Update Item</v-btn>
                     </v-toolbar-items>
                 </v-toolbar>
                 <v-container grid-list-md>
                     <v-layout wrap>
                         <v-flex xs12>
-                                <v-autocomplete v-model="itemModalDetails[itemModalIndex].itemId" @input="itemModalGenerate(itemModalIndex)"
-                                append-icon="search" v-if="itemModalDetails[itemModalIndex].check == 1" :items="itemsACVitems"
-                                :loading="itemsACV.isLoading" :search-input.sync="itemsACV.search"
+                            <v-autocomplete v-if="itemModalDetails[itemModalIndex].check == 1" v-model="itemModalDetails[itemModalIndex].itemId"
+                                @input="itemModalGenerate(itemModalIndex)" append-icon="search" :items="itemsModalACVitems"
+                                :loading="itemsModalACV.isLoading" :search-input.sync="itemsModalACV.search"
                                 hide-no-data hide-selected item-text="name" item-value="id" label="Item Name"
                                 placeholder="Item Name" return-string height=20></v-autocomplete>
-                            <v-text-field v-else v-model="itemModalDetails[itemModalIndex].itemName" height=20
-                                disabled></v-text-field>
+                            <v-text-field v-else v-model="itemModalDetails[itemModalIndex].itemName" height=20 disabled></v-text-field>
                         </v-flex>
                         <v-flex xs12>
-                                <v-text-field type="text" v-model="itemModalDetails[itemModalIndex].unitName" label="Unit"
+                            <v-text-field type="text" v-model="itemModalDetails[itemModalIndex].unitName" label="Unit"
                                 height=20 disabled></v-text-field>
                         </v-flex>
                         <v-flex xs12>
-                                <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].mrp" label="MRP" min="0" step="any"
-                                height=20  @keyup="getSubTotalModal(itemModalIndex)" @change="getSubTotalModal(itemModalIndex)"></v-text-field>
+                            <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].mrp" label="MRP" min="0"
+                                step="any" height=20 @keyup="getSubTotalModal(itemModalIndex)" @change="getSubTotalModal(itemModalIndex)"></v-text-field>
                         </v-flex>
                         <v-flex xs12 v-if="configuration.taxes == 1">
-                                <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].gst" label="GST" 
+                            <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].gst" label="GST"
                                 height=20 disabled></v-text-field>
                         </v-flex>
                         <v-flex xs12>
-                                <v-text-field type="number" min="1" :disabled="itemModalDetails[itemModalIndex].id != null" 
-                                v-model.number="itemModalDetails[itemModalIndex].quantity" 
-                                @change="getSubTotalModal(itemModalIndex)" @keyup="getSubTotalModal(itemModalIndex)" label="Quantity"
-                                 height=20></v-text-field>
+                            <v-text-field type="number" min="1" :disabled="itemModalDetails[itemModalIndex].id != null"
+                                v-model.number="itemModalDetails[itemModalIndex].quantity" @change="getSubTotalModal(itemModalIndex)"
+                                @keyup="getSubTotalModal(itemModalIndex)" label="Quantity" height=20></v-text-field>
                         </v-flex>
                         <v-flex xs12>
-                                <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].subTotal" label="Sub Total"
+                            <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].subTotal" label="Sub Total"
                                 height=20 disabled></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                            <v-layout justify-end>
+                                <v-btn dark round v-if="itemModalIndex == (itemModalDetails.length - 1)" @click="itemInsertModal(itemModalIndex)">Add
+                                    Item</v-btn>
+                                <v-btn dark round v-else @click="itemEditModal(itemModalIndex)">Update Item</v-btn>
+                            </v-layout>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="modalPrePayment" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <v-card>
+                <v-toolbar dark color="primary">
+                    <v-btn icon dark @click="modalPrePayment = false;paymentModalIndex = (payment.length - 1)">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Add Payment</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-items>
+                        <v-btn dark flat v-if="paymentModalIndex == (payment.length - 1)" @click="modalPrePayment = false;paymentAdd(paymentModalIndex);getReceviable();paymentModalIndex = payment.length - 1">Add
+                            Payment</v-btn>
+                        <v-btn dark flat v-else @click="modalPrePayment = false;getReceviable();paymentModalIndex = payment.length - 1">Update
+                            Payment</v-btn>
+                    </v-toolbar-items>
+                </v-toolbar>
+                <v-container grid-list-md>
+                    <v-layout wrap>
+                        <v-flex xs12>
+                            <v-dialog ref="modaldudate" v-model="payment[paymentModalIndex].modalduedate"
+                                :return-value.sync="payment[paymentModalIndex].dueDate" persistent lazy full-width
+                                width="290px">
+                                <template v-slot:activator="{ on }">
+                                    <v-text-field v-model="payment[paymentModalIndex].dueDate" readonly v-on="on"
+                                        height=20></v-text-field>
+                                </template>
+                                <v-date-picker v-model="payment[paymentModalIndex].dueDate" scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="payment[paymentModalIndex].modalduedate = false">Cancel</v-btn>
+                                    <v-btn flat color="primary" @click="$refs.modaldudate.save(payment[paymentModalIndex].dueDate)">OK</v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
+                        <v-flex xs12>
+                            <v-select :items="['Cash','Cheque','Wallet','Card','other']" label="Payment Method" v-model="payment[paymentModalIndex].paymentMethod"
+                                height=20></v-select>
+                        </v-flex>
+                        <v-flex xs12>
+                            <v-text-field v-model="payment[paymentModalIndex].notes" label="Notes" height=20></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                            <v-text-field type="number" v-model="payment[paymentModalIndex].recievedAmount" label="Recieved Amount"
+                                min="0" @keyup="getReceviable()" @change="getReceviable()" :disabled="payment[paymentModalIndex].id != null"
+                                height=20></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                            <v-layout justify-end>
+                                <v-btn dark round v-if="paymentModalIndex == (payment.length - 1)" @click="modalPrePayment = false;paymentAdd(paymentModalIndex);getReceviable();paymentModalIndex = payment.length - 1">Add
+                                    Payment</v-btn>
+                                <v-btn dark round v-else @click="modalPrePayment = false;getReceviable();paymentModalIndex = payment.length - 1">Update
+                                    Payment</v-btn>
+                            </v-layout>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -476,6 +596,11 @@
                 entries: []
             },
             itemsACV: {
+                isLoading: false,
+                entries: [],
+                search: null
+            },
+            itemsModalACV: {
                 isLoading: false,
                 entries: [],
                 search: null
@@ -607,7 +732,10 @@
             if (this.id != null) {
                 this.$axios.get("/" + this.$route.params.username + "/api/Orders?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id + "&filter[where][isenabled]=1")
                     .then(res => {
-                        if (res.data.length > 0) this.getDetails()
+                        if (res.data.length > 0) {
+                            this.getDetails()
+                            this.itemModalIndex = 0
+                        }
                         else {
                             return this.$nuxt.error({ statusCode: 404, message: "Page Not Found" })
                         }
@@ -651,6 +779,15 @@
             },
             itemsACVitems() {
                 return this.itemsACV.entries.map(entry => {
+                    const name = entry.name.length > this.descriptionLimit
+                        ? entry.name.slice(0, this.descriptionLimit) + '...'
+                        : entry.name
+                    const id = entry.id
+                    return Object.assign({}, entry, { id, name })
+                })
+            },
+            itemsModalACVitems() {
+                return this.itemsModalACV.entries.map(entry => {
                     const name = entry.name.length > this.descriptionLimit
                         ? entry.name.slice(0, this.descriptionLimit) + '...'
                         : entry.name
@@ -709,6 +846,23 @@
                         console.log(err)
                     })
                     .finally(() => (this.itemsACV.isLoading = false))
+            },
+            'itemsModalACV.search': function (val) {
+                // Items have already been requested
+                if (this.itemsModalACV.isLoading) return
+
+                this.itemsModalACV.isLoading = true
+
+                // Lazily load input items
+                this.$axios.get('/' + this.$route.params.username + '/api/Items/itemNames?access_token=' + this.$store.state.token + '&names=' + val)
+                    .then(res => {
+                        const { values } = res.data
+                        this.itemsModalACV.entries = values
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                    .finally(() => (this.itemsModalACV.isLoading = false))
             }
         },
         methods: {
@@ -1094,6 +1248,7 @@
                     if (this.itemModalDetails[index].stockId != null) this.deleteStockId.push(this.itemModalDetails[index].stockId)
                     this.itemModalDetails.splice(index, 1)
                     this.getBillTotal()
+                    this.itemModalIndex = 0
                 }
             },
             removePaymentRow(index) {
@@ -1101,7 +1256,7 @@
                 if (this.payment[index].id != null) this.deletePaymentId.push(this.payment[index].id)
                 this.payment.splice(index, 1)
                 this.getReceviable()
-
+                this.paymentModalIndex = 0
             },
             customerAmount() {
                 return new Promise((resolve, reject) => {

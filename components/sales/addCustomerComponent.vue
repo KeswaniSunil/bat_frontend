@@ -1,6 +1,6 @@
 <template>
                             <v-layout align-center justify-start row wrap>
-                                <form @submit.prevent="add">
+                                <v-form @submit.prevent="add" ref="form1" lazy-validation onkeypress="return event.keyCode != 13">
                                     <v-flex xs12 sm12>
                                         <v-layout align-center row wrap>
                                             <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-left">
@@ -23,6 +23,7 @@
                                                             label="First Name"
                                                             class="pa-0 ma-0"
                                                             type=text
+                                                            :rules="requiredRules"
                                                             :single-line="biggerScreen"
                                                             v-model="customerDetails.firstName"
                                                         ></v-text-field>
@@ -36,6 +37,7 @@
                                                     :single-line="biggerScreen"
                                                     type=text
                                                     class="pa-0 ma-0"
+                                                    :rules="requiredRules"
                                                     v-model="customerDetails.lastName"
                                                 ></v-text-field>
                                             </v-flex>
@@ -51,6 +53,7 @@
                                                     label=""
                                                     type=number
                                                     :single-line="biggerScreen"
+                                                    :rules="requiredRules"
                                                     class="pa-0 ma-0"
                                                     v-model="customerDetails.mobile"
                                                 ></v-text-field>
@@ -171,15 +174,13 @@
                                         </v-layout>    
                                     </v-flex>  
                                     <v-flex sm12>
-                                        <v-layout align-center row wrap>
-                                            <v-flex sm10></v-flex>
-                                            <v-flex sm2>
-                                                <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type=submit color="info" round dark @click="">
+                                        <v-layout text-xs-right row wrap>
+                                            <v-flex xs8 sm11></v-flex>
+                                            <v-flex xs4 sm1>
+                                                <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
                                                     Add
-                                                    <v-icon dark right class="ml-1">check_circle</v-icon>
-                                                    
                                                 </v-btn>
-                                                <v-btn v-else class="" :loading="btnLoading" type=submit color="info" round dark @click="">
+                                                <v-btn v-else class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
                                                     Save
                                                     <v-icon dark right class="ml-1">check_circle</v-icon>
                                                     
@@ -187,7 +188,7 @@
                                             </v-flex>
                                         </v-layout>
                                     </v-flex>
-                                </form>          
+                                </v-form>          
                             </v-layout>
                                      
 </template>
@@ -205,7 +206,6 @@ export default {
         }
     },  
     created(){
-        console.log(this.id+" aa")
         if(this.id != null)
         {
             this.propCheck=1
@@ -228,78 +228,84 @@ export default {
                gstn:"",
                stateCode:null
            },
+           requiredRules: [
+                v => !!v || 'This Field is required'
+            ],
            biggerScreen:true,
            btnLoading:false,
-           //editCustomerDtl:[],
+           editCustomerDtl:[],
            propCheck:0
         }
     },
     methods:{
         async add()
         {   
-            if(this.propCheck==0)
-            {   
-                this.btnLoading=true
-                var aa=this.customerDetails.ini+" "+this.customerDetails.firstName+" "+this.customerDetails.lastName;
-                await this.$axios.post("/"+this.$route.params.username+"/api/Customers?access_token="+this.$store.state.token,{
-                name:aa,
-                mobile:this.customerDetails.mobile,
-                email:this.customerDetails.email,
-                gstin:this.customerDetails.gstn,
-                street:this.customerDetails.street,
-                area:this.customerDetails.area,
-                city:this.customerDetails.city,
-                state:this.customerDetails.state,
-                pincode:this.customerDetails.pinCode,
-                statecode:this.customerDetails.stateCode,
-                isenabled:1,
-                createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
-                modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
-                createdById:this.$store.state.userId,
-                modifiedById:this.$store.state.userId,
-                customerTypeId:"0131ef88-91a1-4b63-9a5a-d5a36cd0252"
-                    
-                }
-                )
-                .then(res => {
-                    if(res)
-                    {
-                                //alert("Customer Succesfully Added")
-                                //window.location=""
-                        this.btnLoading=false        
-                        this.$emit('input', 2);
+            if (this.$refs.form1.validate())
+            {    
+                if(this.propCheck==0)
+                {   
+                    this.btnLoading=true
+                    var aa=this.customerDetails.ini+" "+this.customerDetails.firstName+" "+this.customerDetails.lastName;
+                    await this.$axios.post("/"+this.$route.params.username+"/api/Customers?access_token="+this.$store.state.token,{
+                    name:aa,
+                    mobile:this.customerDetails.mobile,
+                    email:this.customerDetails.email,
+                    gstin:this.customerDetails.gstn,
+                    street:this.customerDetails.street,
+                    area:this.customerDetails.area,
+                    city:this.customerDetails.city,
+                    state:this.customerDetails.state,
+                    pincode:this.customerDetails.pinCode,
+                    statecode:this.customerDetails.stateCode,
+                    isenabled:1,
+                    createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                    modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                    createdById:this.$store.state.userId,
+                    modifiedById:this.$store.state.userId,
+                    customerTypeId:"0131ef88-91a1-4b63-9a5a-d5a36cd0252"
+                        
                     }
-                });
-            }
-            else{
-                this.btnLoading=true
-                var aa=this.customerDetails.ini+" "+this.customerDetails.firstName+" "+this.customerDetails.lastName;
-                await this.$axios.post("/"+this.$route.params.username+"/api/Customers/update?access_token="+this.$store.state.token+"&where[id]="+this.id,
-                {
-                 name:aa,
-                mobile:this.customerDetails.mobile,
-                email:this.customerDetails.email,
-                gstin:this.customerDetails.gstn,
-                street:this.customerDetails.street,
-                area:this.customerDetails.area,
-                city:this.customerDetails.city,
-                state:this.customerDetails.state,
-                pincode:this.customerDetails.pinCode,
-                statecode:this.customerDetails.stateCode,
-                isenabled:1,
-                modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
-                modifiedById:this.$store.state.userId,
-                customerTypeId:"0131ef88-91a1-4b63-9a5a-d5a36cd0252"   
-                })
-                    .then(res1 => {
-                        if(res1){
-                                //alert("Customer Succesfully Edited and Saved")
-                                //window.location=""
-                                this.btnLoading=false
-                                this.$emit('input', 2);
-                            }
+                    )
+                    .then(res => {
+                        if(res)
+                        {
+                                    //alert("Customer Succesfully Added")
+                                    //window.location=""
+                            this.btnLoading=false        
+                            this.$emit('input', 2);
+                        }
                     });
+                }
+                else{
+                    this.btnLoading=true
+                    var aa=this.customerDetails.ini+" "+this.customerDetails.firstName+" "+this.customerDetails.lastName;
+                    await this.$axios.post("/"+this.$route.params.username+"/api/Customers/update?access_token="+this.$store.state.token+"&where[id]="+this.id,
+                    {
+                    name:aa,
+                    mobile:this.customerDetails.mobile,
+                    email:this.customerDetails.email,
+                    gstin:this.customerDetails.gstn,
+                    street:this.customerDetails.street,
+                    area:this.customerDetails.area,
+                    city:this.customerDetails.city,
+                    state:this.customerDetails.state,
+                    pincode:this.customerDetails.pinCode,
+                    statecode:this.customerDetails.stateCode,
+                    isenabled:1,
+                    modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                    modifiedById:this.$store.state.userId,
+                    customerTypeId:"0131ef88-91a1-4b63-9a5a-d5a36cd0252"   
+                    })
+                        .then(res1 => {
+                            if(res1){
+                                    //alert("Customer Succesfully Edited and Saved")
+                                    //window.location=""
+                                    this.btnLoading=false
+                                    this.$emit('input', 2);
+                                }
+                        });
 
+                }
             }
         },
         async fillData(){
