@@ -1,0 +1,172 @@
+.form-inline label{
+    justify-content: flex-start;
+    }
+    .button-green{
+        background-color:#30ba8f;
+        color:white;
+        font-size:13px;
+        margin-right:3px;
+    }
+    .button-blue{
+        background-color:#5a4fcf;;
+        color:white;
+        font-size:13px;
+        margin-right:3px;
+    }
+    .right-float{
+        float:right;
+    }
+    .left-float{
+        float:left;
+    }
+    .height-30{
+        height:30px;
+    }
+    .form-control .width-75{
+        width:75%;
+    }
+    .pagecontent{
+        background-color:whitesmoke;
+        border-radius: 15px;
+        padding:20px; 
+    }
+    .pagecontentnav{
+        background-color:whitesmoke;
+        border-radius:5px;
+        padding-top:10px; 
+    }
+    .registrationform{
+        background-color:rgb(224, 220, 220);
+        border-radius: 15px;
+        padding:20px;
+        margin:150px 100px;
+    }
+    .registrationcontent{
+        padding:20px;
+    }
+     .registration-backgroundimg {
+        background: rgba(0,0,0,0.5);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        transition: background .2s linear;
+    }
+    .registration-backgroundimg img{
+        max-width: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+    }
+    .myforms .form-inline label{
+    justify-content: flex-start;
+    }
+    .font-14{
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .font-16{
+        font-size: 16px;
+        font-weight: 600;
+    }
+    .font-12{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .font-20{
+        font-size: 20px;
+        font-weight: 600;
+    }
+    .font-18{
+        font-size: 18px;
+        font-weight: 500;
+    }
+    .padding-10{
+        padding:10px;
+    }
+    .text-center{
+        text-align: center
+    }
+    .myborder-bottom{
+        border-bottom:3px solid rgb(122, 120, 120)
+    }
+    .z-index-2020{
+        z-index: 2020;
+    }
+    .padding-0
+    {
+        padding:0;
+    }
+    .dropzone-bulk{
+        border:2px dashed #b6c2c9;
+        border-style:dashed groove dashed groove;
+        color:rgb(29, 28, 28);
+        padding:70px 40px;
+        font-size: 25px;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+    .text-capitalize{
+        text-transform:capitalize;
+    }
+    .text-uppercase{
+        text-transform:uppercase;
+    }
+    .name-linking{
+        cursor:pointer;
+        text-decoration:underline;
+        color:blue;
+    }
+    .shadow-card{
+        box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+        transition: box-shadow 0.58s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .shadow-card:hover{
+        box-shadow: 0px 8px 15px -7px rgba(0, 0, 0, 0.2), 0px 8px 16px 3px rgba(0, 0, 0, 0.14), 0px 9px 16px 0px rgba(0, 0, 0, 0.12);
+    }
+    .width-100{
+        width:100%;
+    }
+    .scroll-overflow-x{
+        overflow-x:scroll;
+    }
+    .nowrap-white-space{
+        white-space: nowrap;
+    }
+    .padding-topbottom-5{
+        padding:0 5px
+    }
+    .color-light-green{
+        background:#caffc6
+    }
+    .color-light-red{
+        background: #ffc6c7
+    }
+    @media print {
+        body * {
+          visibility: hidden;
+        }
+        body{
+            background: white;
+        }
+        #section-to-print, #section-to-print * {
+          visibility: visible;
+        }
+        .print-content {
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
+        .print-down{
+            position: relative;
+        }
+        .pagebreak
+        {
+            page-break-after: always;
+        }   
+      }

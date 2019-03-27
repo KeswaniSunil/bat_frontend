@@ -62,7 +62,7 @@
                   <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                 </td>
                 <td>{{props.index+1}}</td>
-                <td>{{ props.item.name }}</td>
+                <td @click="editCustomer(props.item.id)" style="cursor:pointer;" class="text-capitalize name-linking">{{ props.item.name }}</td>
                 <td>{{ props.item.mobile }}</td>
                 <td>{{ props.item.totalamount }}</td>
                 <td>{{ props.item.received }}</td>

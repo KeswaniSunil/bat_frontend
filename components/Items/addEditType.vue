@@ -18,7 +18,6 @@
                                 item-text="name"
                                 item-value="id"
                                 v-model="selectedTax"
-                                :rules="requiredRules"
                                 :single-line="biggerScreen"
                             ></v-select>
                         </v-flex>
@@ -151,6 +150,7 @@ export default {
                     .then(res => {
                         this.typeName=res.data.name;
                         this.selectedTax=res.data.tax.id;
+                        console.log(this.selectedTax)
                     });
 
         }

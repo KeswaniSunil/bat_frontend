@@ -1,6 +1,6 @@
 <template>
+                         <v-form @submit.prevent="add" ref="form1" lazy-validation onkeypress="return event.keyCode != 13">   
                             <v-layout align-center justify-start row wrap>
-                                <v-form @submit.prevent="add" ref="form1" lazy-validation onkeypress="return event.keyCode != 13">
                                     <v-flex xs12 sm12>
                                         <v-layout align-center row wrap>
                                             <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-left">
@@ -12,7 +12,9 @@
                                                     <v-flex xs3 sm2>
                                                         <v-select
                                                             class="pa-0 ma-0"
-                                                            :items="['','MR.','MRS.','MS.','MISS.']"
+                                                            :items="[{title:'',val:''},{title:'MR.',val:'MR.'},{title:'MRS.',val:'MRS.'},{title:'MS.',val:'MS.'},{title:'MISS.',val:'MISS.'}]"
+                                                            item-text="title"
+                                                            item-value="val"
                                                             v-model="customerDetails.ini"
                                                             :single-line="biggerScreen"
                                                         ></v-select>
@@ -80,6 +82,7 @@
                                             <v-flex xs12 sm10>
                                                 <v-textarea
                                                     solo
+                                                    full-width
                                                     rows="3"
                                                     :single-line="biggerScreen"
                                                     class="pa-0 ma-0"
@@ -175,8 +178,8 @@
                                     </v-flex>  
                                     <v-flex sm12>
                                         <v-layout text-xs-right row wrap>
-                                            <v-flex xs8 sm11></v-flex>
-                                            <v-flex xs4 sm1>
+                                            <v-flex xs8 sm10></v-flex>
+                                            <v-flex xs4 sm2>
                                                 <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
                                                     Add
                                                 </v-btn>
@@ -187,9 +190,9 @@
                                                 </v-btn>
                                             </v-flex>
                                         </v-layout>
-                                    </v-flex>
-                                </v-form>          
+                                    </v-flex>          
                             </v-layout>
+                        </v-form>    
                                      
 </template>
 <script>

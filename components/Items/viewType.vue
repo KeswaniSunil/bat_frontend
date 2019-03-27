@@ -66,7 +66,7 @@
                                     <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                 </td>
                                 <td width="6%">{{props.index+1}}</td>
-                                <td width="75%" class="text-lg-left mr-3">{{ props.item.name }}</td>
+                                <td width="75%" @click="editType(props.item.id)" style="cursor:pointer;" class="text-capitalize name-linking text-lg-left mr-3">{{ props.item.name }}</td>
                                 <td width="10%">
                                     <v-icon small class="mr-12" @click="editType(props.item.id)">edit
                                     </v-icon>

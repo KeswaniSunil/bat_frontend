@@ -33,9 +33,29 @@
         <v-icon>search</v-icon>
       </v-btn>
 
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
+      <v-menu offset-y>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                light
+                icon
+                v-on="on"
+              >
+                <v-icon>more_vert</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <v-list-tile  >
+                <v-list-tile-title><router-link style="text-decoration:none;" :to="'/'+this.$route.params.username+'/dashboard/CompanyDetails'" class="dropdown-item">View/Edit Profile</router-link></v-list-tile-title>
+              </v-list-tile>
+              <v-list-tile >
+                <v-list-tile-title>Company Configs</v-list-tile-title>
+              </v-list-tile>
+              <v-list-tile >
+                <v-list-tile-title>Log Out</v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
     </v-toolbar>
     <v-content class="padding-print-0 grey lighten-3">
       <v-container class="pa-0" style="max-width:100%">

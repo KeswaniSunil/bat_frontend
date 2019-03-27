@@ -47,7 +47,7 @@
                                 </v-flex>
                                 <v-flex xs9 sm8></v-flex>
                                 <v-flex xs12 sm3>
-                                <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field></v-flex>
+                                <v-text-field v-model="search" append-icon="search"  label="Search" single-line hide-details></v-text-field></v-flex>
                             </v-layout>
                         </v-flex>
                     </v-layout>
@@ -182,6 +182,15 @@
                         })
                 },
                 deep: true
+            },
+            search: {
+                handler(){
+                    this.getDataFromApi()
+                    .then(data => {
+                        this.orderDtl = data.items
+                        this.totalCustomer = data.total
+                    })
+                }
             }
         },
         mounted() {
@@ -207,6 +216,9 @@
                     }
                 }
             },
+            searchData(){
+                
+            },
             getDataFromApi() {
                 this.loading = true
                 return new Promise((resolve, reject) => {
@@ -214,7 +226,7 @@
                     let items = "";
                     let getDetails = new Promise((resolve1, reject1) => {
                         if (this.mode == "purchase") {
-                            // http://localhost:3030/jay/api/Purchases?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&filter={"where":{"or":[{"supplierId":{"regexp":"130"}},{"itemtotal":{"regexp":"130"}}]}}
+                            // http://localhost:3030/jay/api/Orders?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&filter={%22where%22:{%22and%22:[{%22billdate%22:{%22between%22:[%222019-01-01%22,%222019-02-02%22]}},{%22or%22:[{%22customerId%22:{%22regexp%22:%22a%22}},{%22itemtotal%22:{%22regexp%22:%22a%22}}]}]},%22include%22:%22customer%22}
                             this.$axios.get("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token + "&filter[where][isenabled]=1&filter[include]=supplier&filter[where][billdate][between][0]=" + this.startDate1 + "&filter[where][billdate][between][1]=" + this.endDate1)
                                 .then(res => {
                                     resolve1(res.data)
@@ -222,7 +234,7 @@
                         }
                         else if (this.mode == "sale") {
                             if (this.billBookId == null) {
-                                this.$axios.get("/" + this.$route.params.username + "/api/Orders?access_token=" + this.$store.state.token + "&filter[where][isenabled]=1&filter[include]=customer&filter[include]=billbook&filter[where][billdate][between][0]=" + this.startDate1 + "&filter[where][billdate][between][1]=" + this.endDate1)
+                                this.$axios.get('/' + this.$route.params.username + '/api/Orders/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'"}')
                                     .then(res => {
                                         resolve1(res.data)
                                     });
@@ -236,8 +248,8 @@
                         }
                     })
                     getDetails.then(resolve1 => {
-                        items = resolve1;
-                        const total = items.length
+                        items = resolve1.data;
+                        const total = resolve1.total
 
                         if (this.pagination.sortBy) {
                             items = items.sort((a, b) => {
@@ -256,9 +268,7 @@
                             })
                         }
 
-                        if (rowsPerPage > 0) {
-                            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
-                        }
+                        
 
                         this.loading = false
                         resolve({

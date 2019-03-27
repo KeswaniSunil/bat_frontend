@@ -16,7 +16,8 @@ module.exports = {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' },
-      { rel: 'stylesheet', href: '/style.css' }
+      { rel: 'stylesheet', href: '/style.css' },
+      { rel: 'stylesheet', href:'/css/custom.css' }
     ]
   },
 
@@ -53,11 +54,11 @@ module.exports = {
  axios: {
   // See https://github.com/nuxt-community/axios-module#options
   //baseURL: 'http://bcontrol.jdmit.in'
-  baseURL: 'http://192.168.2.7:3030'
+  baseURL: 'http://192.168.2.8:3030'
 },
 env:{
   //URL: 'http://bcontrol.jdmit.in'
-  URL: 'http://192.168.2.7:3030'
+  URL: 'http://192.168.2.8:3030'
 }, 
 
   /*

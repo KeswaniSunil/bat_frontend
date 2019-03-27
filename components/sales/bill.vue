@@ -55,7 +55,6 @@
                                             <label class="font-15 font-weight-regular">Bill Book: </label>
                                         </v-flex>
                                         <v-flex sm1>
-
                                         </v-flex>
                                         <v-flex xs12 sm8>
                                             <v-select :items="billBookDtl" label="Select Bill Book" :rules="requiredRules"

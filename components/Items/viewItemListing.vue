@@ -66,8 +66,7 @@
                                     <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                 </td>
                                 <td>{{props.index+1}}</td>
-                                <td>{{ props.item.name }}</td>
-                                <td>{{ props.item.billname }}</td>
+                                <td style="cursor:pointer;" class="text-capitalize name-linking" @click="editItem(props.item.id)">{{ props.item.name }}</td>
                                 <td>{{ props.item.unit.title }}</td>
                                 <td>{{ props.item.price }}</td>
                                 <td>{{ props.item.totalstock }}</td>
@@ -130,7 +129,6 @@ export default {
           value: 'ind'
         },
         { text: 'Name', value: 'name', sortable: false },
-        { text: 'Bill Name', value: 'billname' },
         { text: 'Unit', value: 'unit' },
         { text: 'Price', value: 'price' },
         { text: 'Total Stock', value: 'totalstock' },
