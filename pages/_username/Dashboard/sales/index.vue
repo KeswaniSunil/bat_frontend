@@ -2,7 +2,7 @@
   <v-layout row wrap>
     <v-flex xs12 text-xs-center>
       <div>
-        <v-tabs v-model="tab" color="grey lighten-2" grow light>
+        <v-tabs v-model="tab" class="tab-display-none" color="grey lighten-2" grow light>
           <v-tabs-slider color="black"></v-tabs-slider>
           <v-tab v-for="(item,index) in items" :key="index">
             {{ item.name }}

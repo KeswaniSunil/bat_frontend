@@ -78,11 +78,11 @@
                         </v-alert>
                     </v-data-table>
                     
-                    <v-dialog width="800" v-model="showModal" >
+                    <v-dialog width="400" v-model="showModal" >
                         <v-card>
                             <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
-                            <span style="font-size:18px;" v-if="editValue==null">Add Customer</span>
-                            <span style="font-size:18px;" v-else>Edit Customer</span>
+                            <span style="font-size:18px;" v-if="editValue==null">Add Type</span>
+                            <span style="font-size:18px;" v-else>Edit Type</span>
                             </v-card-title>
                             <v-card-text class="pa-0">
                             <v-container grid-list-xs>

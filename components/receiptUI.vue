@@ -380,20 +380,3 @@
         }
     }
 </script>
-<style>
-@media print {
-    body * {
-      visibility: hidden;
-    }
-    body{
-        background: white;
-    }
-    #section-to-print, #section-to-print * {
-      visibility: visible;
-    }
-    .pagebreak
-    {
-        page-break-after: always;
-    }   
-  }
-</style>

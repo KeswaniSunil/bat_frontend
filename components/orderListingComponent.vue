@@ -1,7 +1,15 @@
 <template>
     <v-layout>
-        <v-flex xs12 sm12>
-            <v-card class="border-radius-5">
+        <v-flex id="section-to-print" xs12 sm12>
+            <div v-if="clickPrint == 1">
+                <div class="pagebreak" v-for="(id,index) in selectOrder" :key="index">
+                    <Receipt :id="id.id" v-model="printOrderList[index]" :noofbill="1" :multiple="true" />
+                </div>
+            </div>
+            <div v-else-if="printid != '' ">
+                <Receipt :id="printid" v-model="printid" :onlyprint="true" :noofbill="2" />
+            </div>
+            <v-card v-else class="border-radius-5">
                 <v-card-text class="pt-0">
                     <v-layout class="pt-3" align-center justify-start row wrap>
                         <v-flex xs12 sm4>
@@ -40,12 +48,17 @@
                     <v-layout column>
                         <v-flex xs12>
                             <v-layout align-center row wrap>
-                                <v-flex xs3 sm1>
-                                    <v-btn v-if="selectOrder.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
-                                        <v-icon dark small class="mr-1">gavel</v-icon> Delete
-                                    </v-btn>
+                                <v-flex xs3 sm2>
+                                    <v-layout align-center justify-space-between>
+                                        <v-btn v-if="selectOrder.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
+                                            <v-icon dark small class="mr-1">gavel</v-icon> Delete
+                                        </v-btn>
+                                        <v-btn v-if="selectOrder.length > 0 && mode == 'sale'" round color="blue" @click="printOrder" dark>
+                                            <v-icon dark small class="mr-1">print</v-icon> Print
+                                        </v-btn>
+                                    </v-layout>
                                 </v-flex>
-                                <v-flex xs9 sm8></v-flex>
+                                <v-flex xs9 sm7></v-flex>
                                 <v-flex xs12 sm3>
                                 <v-text-field v-model="search" append-icon="search"  label="Search" single-line hide-details></v-text-field></v-flex>
                             </v-layout>
@@ -59,16 +72,17 @@
                                     <v-checkbox :input-value="props.all" :indeterminate="props.indeterminate" primary
                                         hide-details @click.stop="toggleAll"></v-checkbox>
                                 </th>
-                                <th v-for="header in props.headers" :key="header.text" :disable-initial-sort="header.value == 'name'" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                <th v-for="header in props.headers" :key="header.text" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
                                     @click="changeSort(header.value)">
-                                    <v-icon v-if="header.value != 'name'" small>arrow_upward</v-icon>
+                                    <v-icon small>arrow_upward</v-icon>
                                     {{ header.text }}
                                 </th>
+                                <th v-if="mode == 'sale'">Print</th>
                             </tr>
                         </template>
                         <template v-slot:no-data>
                             <v-alert :value="true" color="error" icon="warning">
-                                Sorry, nothing to display here :(
+                                No Data available :(
                             </v-alert>
                         </template>
                         <template v-slot:items="props">
@@ -76,7 +90,7 @@
                                 <td :active="props.selected" @click="props.selected = !props.selected">
                                     <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                 </td>
-                                <td>{{props.index+1}}</td>
+                                <td>{{props.item.index+1}}</td>
                                 <td>
                                     {{ new Date(props.item.billdate).getDate()+"/"+(new Date(props.item.billdate).getMonth()+1)+"/"+new Date(props.item.billdate).getFullYear() }}
                                 </td>
@@ -96,16 +110,17 @@
                                 </td>
                                 <td>{{ props.item.totalamount }}</td>
                                 <td v-if="mode == 'purchase'">
-                                    <router-link :to="'/'+$route.params.username+'/dashboard/purchase/order/'+props.item.id+'/edit'"
-                                        class="">
+                                    <v-btn :to="'/'+$route.params.username+'/dashboard/purchase/order/'+props.item.id+'/edit'" icon>
                                         <v-icon>edit</v-icon>
-                                    </router-link>
+                                    </v-btn>
                                 </td>
                                 <td v-else-if="mode == 'sale'">
-                                    <router-link :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/edit'"
-                                        class="">
+                                    <v-btn :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/edit'" icon>
                                         <v-icon>edit</v-icon>
-                                    </router-link>
+                                    </v-btn>
+                                </td>
+                                <td v-if="mode == 'sale'">
+                                    <v-btn icon @click="print(props.item.id)"><v-icon>print</v-icon></v-btn>
                                 </td>
                             </tr>
                         </template>
@@ -120,8 +135,10 @@
     </v-layout>
 </template>
 <script>
+    import Receipt from "~/components/receiptUI";
     export default {
         components: {
+            Receipt
         },
         props: {
             mode: {
@@ -146,10 +163,9 @@
                 header: [{
                     text: '#',
                     align: 'left',
-                    sortable: false,
-                    value: 'ind'
+                    value: 'name'
                 },
-                { text: 'Date', value: 'billdate', sortable: false },
+                { text: 'Date', value: 'billdate' },
                 { text: 'Bill No', value: 'billno' },
                 { text: 'Name', value: 'name' },
                 { text: 'Amount', value: 'totalamount' },
@@ -160,13 +176,35 @@
                 startDatemodal: false,
                 endDatemodal: false,
                 search: "",
+                clickPrint: 0,
                 orderDtl: [],
                 selectOrder: [],
                 startDate1: "",
                 endDate1: "",
-                printid: ""
+                printid: "",
+                printOrderList:[]
             }
 
+        },
+        updated(){
+            if(this.printOrderList.length > 0 && this.clickPrint == 1)
+            {
+                let flag
+                for(let i=0;i<this.printOrderList.length;i++)
+                {
+                    flag=0
+                    if(this.printOrderList[i] == "") flag=1
+                    else {
+                        flag=0
+                        break;
+                    }
+                }
+                if(flag == 1) {
+                    window.print()
+                    this.printOrderList = []
+                    this.clickPrint = 0
+                }
+            }
         },
         created() {
             this.startDate1 = this.startDate
@@ -202,22 +240,20 @@
                 })
         },
         methods: {
+            print(id) {
+                this.printid = id
+            },
             toggleAll() {
                 if (this.selectOrder.length) this.selectOrder = []
                 else this.selectOrder = this.orderDtl.slice()
             },
             changeSort(column) {
-                if(column != 'name'){
-                    if (this.pagination.sortBy === column) {
-                        this.pagination.descending = !this.pagination.descending
-                    } else {
-                        this.pagination.sortBy = column
-                        this.pagination.descending = false
-                    }
+                if (this.pagination.sortBy === column) {
+                    this.pagination.descending = !this.pagination.descending
+                } else {
+                    this.pagination.sortBy = column
+                    this.pagination.descending = false
                 }
-            },
-            searchData(){
-                
             },
             getDataFromApi() {
                 this.loading = true
@@ -227,20 +263,20 @@
                     let getDetails = new Promise((resolve1, reject1) => {
                         if (this.mode == "purchase") {
                             // http://localhost:3030/jay/api/Orders?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&filter={%22where%22:{%22and%22:[{%22billdate%22:{%22between%22:[%222019-01-01%22,%222019-02-02%22]}},{%22or%22:[{%22customerId%22:{%22regexp%22:%22a%22}},{%22itemtotal%22:{%22regexp%22:%22a%22}}]}]},%22include%22:%22customer%22}
-                            this.$axios.get("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token + "&filter[where][isenabled]=1&filter[include]=supplier&filter[where][billdate][between][0]=" + this.startDate1 + "&filter[where][billdate][between][1]=" + this.endDate1)
+                            this.$axios.get('/' + this.$route.params.username + '/api/Purchases/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
                                 .then(res => {
                                     resolve1(res.data)
                                 });
                         }
                         else if (this.mode == "sale") {
                             if (this.billBookId == null) {
-                                this.$axios.get('/' + this.$route.params.username + '/api/Orders/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'"}')
+                                this.$axios.get('/' + this.$route.params.username + '/api/Orders/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
                                     .then(res => {
                                         resolve1(res.data)
                                     });
                             }
                             else {
-                                this.$axios.get("/" + this.$route.params.username + "/api/Orders?access_token=" + this.$store.state.token + "&filter[where][isenabled]=1&filter[where][billbookId]=" + this.billBookId + "&filter[include]=customer&filter[include]=billbook&filter[where][billdate][between][0]=" + this.startDate1 + "&filter[where][billdate][between][1]=" + this.endDate1)
+                                this.$axios.get('/' + this.$route.params.username + '/api/Orders/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'","billbookId":"'+this.billBookId+'"}')
                                     .then(res => {
                                         resolve1(res.data)
                                     });
@@ -250,26 +286,6 @@
                     getDetails.then(resolve1 => {
                         items = resolve1.data;
                         const total = resolve1.total
-
-                        if (this.pagination.sortBy) {
-                            items = items.sort((a, b) => {
-                                const sortA = a[sortBy]
-                                const sortB = b[sortBy]
-
-                                if (descending) {
-                                    if (sortA < sortB) return 1
-                                    if (sortA > sortB) return -1
-                                    return 0
-                                } else {
-                                    if (sortA < sortB) return -1
-                                    if (sortA > sortB) return 1
-                                    return 0
-                                }
-                            })
-                        }
-
-                        
-
                         this.loading = false
                         resolve({
                             items,
@@ -284,6 +300,14 @@
                     this.orderDtl = data.items
                     this.totalCustomer = data.total
                 })
+            },
+            printOrder() {
+                console.log(this.selectOrder)
+                this.clickPrint = 1
+                for(let i=0;i<this.selectOrder.length;i++)
+                {
+                    this.printOrderList.push(this.selectOrder[i].id)
+                }
             },
             async deleteCustomer() {
                 if (this.mode == "purchase") {

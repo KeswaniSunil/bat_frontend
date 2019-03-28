@@ -3,7 +3,10 @@
         <v-flex xs12 sm12>
             <v-form @submit.prevent="addBill" ref="form" lazy-validation onkeypress="return event.keyCode != 13"
                 v-model="valid">
-                <v-card class="border-radius-5 ma-3">
+                <v-layout class="mt-3 mr-3" v-if="type != null" justify-end>
+                    <v-btn to="edit" round dark>Edit</v-btn>
+                </v-layout>
+                <v-card class="border-radius-5 ml-3 mr-3 mb-3">
                     <v-card-text primary-title>
                         <v-container grid-list-xs>
                             <v-layout align-center justify-start row wrap>
@@ -418,7 +421,7 @@
                 </v-container>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="modalPrePayment" fullscreen hide-overlay transition="dialog-bottom-transition">
+        <v-dialog v-if="payment.length-1 > 0" v-model="modalPrePayment" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar dark color="primary">
                     <v-btn icon dark @click="modalPrePayment = false;paymentModalIndex = (payment.length - 1)">
@@ -577,36 +580,8 @@
                     series: 0
                 }
             ],
-            itemModalDetails: [{
-                id: null,
-                stockId: null,
-                itemId: "",
-                unitName: "",
-                itemName: "",
-                mrp: 0,
-                gst: 0,
-                quantity: 1,
-                subTotal: 0,
-                check: 1,
-                taxAmount: 0,
-                series: 1
-            }],
-            itemDetails: [
-                {
-                    id: null,
-                    stockId: null,
-                    itemId: "",
-                    unitName: "",
-                    itemName: "",
-                    mrp: 0,
-                    gst: 0,
-                    quantity: 1,
-                    subTotal: 0,
-                    check: 1,
-                    taxAmount: 0,
-                    series: 1
-                }
-            ]
+            itemModalDetails: [],
+            itemDetails: []
         }),
         created() {
             this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
@@ -751,6 +726,8 @@
                         if (this.configuration.taxes == 0) {
                             this.itemheaders.splice(4, 1)
                         }
+                        this.createItemRow()
+                        this.createItemModalRow()
                     })
             },
             async getDetails() {

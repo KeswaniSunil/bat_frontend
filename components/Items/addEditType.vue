@@ -1,47 +1,33 @@
 <template>
     <v-form @submit.prevent="addType" ref="form1" lazy-validation onkeypress="return event.keyCode != 13">
-        <v-layout align-center justify-start row wrap>
-                <v-flex sm12>
-                    <v-layout align-center justify-start row wrap>
-                        <v-flex v-if="biggerScreen" xs12 sm1 class="text-lg-left">
-                            <label class="font-15 font-weight-regular">Type: </label>
-                        </v-flex>
-                        <v-flex xs12 sm4>
-                            <v-text-field label="" type=text :single-line="biggerScreen" :rules="requiredRules" v-model="typeName" class="pa-0 ma-0"></v-text-field>
-                        </v-flex>
-                        <v-flex sm1></v-flex>
-                        <v-flex xs12 sm1>Tax</v-flex>
-                        <v-flex xs12 sm4>
-                            <v-select
-                                class="pa-0 ma-0"
-                                :items="taxes"
-                                item-text="name"
-                                item-value="id"
-                                v-model="selectedTax"
-                                :single-line="biggerScreen"
-                            ></v-select>
-                        </v-flex>
-                        <v-flex sm1></v-flex>
-                    </v-layout>
-                </v-flex>        
-                <v-flex sm12>
-                                        <v-layout text-xs-right row wrap>
-                                            <v-flex xs8 sm10></v-flex>
-                                            <v-flex xs4 sm2>
-                                                <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
-                                                    Add
-                                                    <v-icon dark right class="ml-1">check_circle</v-icon>
-                                                </v-btn>
-                                                <v-btn v-else class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
-                                                    Save
-                                                    <v-icon dark right class="ml-1">check_circle</v-icon>
-                                                    
-                                                </v-btn>
-                                            </v-flex>
-                                        </v-layout>
-                                    </v-flex>
-            
-        </v-layout>
+        
+            <v-layout align-center justify-start row wrap class="mb-3">
+                <v-flex xs12 sm12>
+                    <label class="font-16 font-weight-regular " >Type Name</label>
+                    <v-text-field label="" type=text  :rules="requiredRules" v-model="typeName" height=25 class="pa-0 mt-1"></v-text-field>
+                </v-flex>
+            </v-layout>
+            <v-layout align-center justify-start row wrap class="mb-1" v-if="taxprop_p == 1 || taxprop_s == 1">
+                <v-flex xs12 sm12>
+                    <label class="font-16 font-weight-regular">Tax</label>
+                    <v-select :items="taxes" item-text="name" item-value="id" v-model="selectedTax"
+                     height=25 class="pa-0 mt-1"   ></v-select>
+                </v-flex>
+            </v-layout>
+            <v-layout align-center justify-start row wrap>
+                <v-flex xs7 sm9></v-flex>
+                <v-flex xs5 sm3>
+                    <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
+                        Add
+                        <v-icon dark right class="ml-1">check_circle</v-icon>
+                    </v-btn>
+                    <v-btn v-else class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
+                        Save
+                        <v-icon dark right class="ml-1">check_circle</v-icon>
+        
+                    </v-btn>
+                </v-flex>
+            </v-layout>
     </v-form>                
 </template>
 <script>
@@ -138,8 +124,7 @@ export default {
             if(this.taxprop_p==1 || this.taxprop_s==1){
                 await this.$axios.get("/"+this.$route.params.username+"/api/Taxes?access_token="+this.$store.state.token+"&filter[where][isenabled]=1")
                     .then(res => {
-                        this.taxes=res.data;
-                         
+                        this.taxes=res.data;                         
                     });
             }
             
@@ -150,7 +135,7 @@ export default {
                     .then(res => {
                         this.typeName=res.data.name;
                         this.selectedTax=res.data.tax.id;
-                        console.log(this.selectedTax)
+                        //console.log(this.selectedTax)
                     });
 
         }

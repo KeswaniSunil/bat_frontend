@@ -87,7 +87,8 @@
           { icon: 'apps', title: 'Welcome', to: '/' },
           { icon: 'bubble_chart', title: 'Sales', to: '/jay/Dashboard/sales' },
           { icon: 'bubble_chart', title: 'Purchases', to: '/jay/Dashboard/purchase' },
-          { icon: 'bubble_chart', title: 'Items', to: '/jay/Dashboard/items' }
+          { icon: 'bubble_chart', title: 'Items', to: '/jay/Dashboard/items' },
+          { icon: 'bubble_chart', title: 'Stock', to: '/jay/Dashboard/items/stock' }
         ],
         miniVariant: false,
         right: true,

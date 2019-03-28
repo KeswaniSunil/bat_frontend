@@ -16,8 +16,10 @@
                 <bill v-if="index == 0" />
                 
                 <!--  View Customer -->
-                <viewCustomer v-else-if="index == 1" />
+                <viewSupplier v-else-if="index == 1" />
               
+                <!-- Order Listing -->
+                <orderListing v-else-if="index == 2" mode="purchase" :startDate="startDate" :endDate="endDate"/>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -28,11 +30,31 @@
 </template>
 <script>
   import bill from "@/components/purchase/bill";
-  import viewCustomer from "@/components/sales/viewCustomer";
+  import viewSupplier from "@/components/purchase/viewSupplier";
+  import orderListing from '@/components/orderListingComponent';
   export default {
     components:{
       bill,
-      viewCustomer
+      viewSupplier,
+      orderListing
+    },
+    created(){
+        if(this.$route.query.startDate != null && this.$route.query.endDate != null)
+        {
+            this.startDate = this.$route.query.startDate
+            this.endDate = this.$route.query.endDate
+        }
+        else {
+            let date=new Date();
+            let month=date.getMonth();
+            let year=date.getFullYear();
+            let date1=""+new Date(year, month+1, 0).getDate();
+            let date2=""+new Date(year, month, 1).getDate();
+            if((date.getMonth()+1) < 10) month="0"+(date.getMonth()+1)
+            if(date2 <10) date2="0"+date2;
+            this.startDate=year+"-"+month+"-"+date2;
+            this.endDate=year+"-"+month+"-"+date1;
+        }
     },
     data() {
       return {
@@ -42,8 +64,11 @@
         active: 'red white--text',
         items: [
           { name:'New Bill' },
-          { name: 'Supplier' }
-        ]
+          { name: 'Supplier' },
+          { name: 'Order Listing'}
+        ],
+        startDate: null,
+        endDate: null
       }
     }
   }

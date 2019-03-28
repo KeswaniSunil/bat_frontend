@@ -694,36 +694,8 @@
                     series: 0
                 }
             ],
-            itemModalDetails: [{
-                id: null,
-                itemId: "",
-                unitName: "",
-                itemName: "",
-                maxquantity: 1,
-                mrp: 0,
-                gst: 0,
-                quantity: 1,
-                subTotal: 0,
-                check: 1,
-                taxAmount: 0,
-                series: 1
-            }],
-            itemDetails: [
-                {
-                    id: null,
-                    itemId: "",
-                    unitName: "",
-                    itemName: "",
-                    maxquantity: 1,
-                    mrp: 0,
-                    gst: 0,
-                    quantity: 1,
-                    subTotal: 0,
-                    check: 1,
-                    taxAmount: 0,
-                    series: 1
-                }
-            ]
+            itemModalDetails: [],
+            itemDetails: []
         }),
         created() {
             this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
@@ -901,6 +873,8 @@
                             if (this.configuration.taxes == 0) {
                                 this.itemheaders.splice(4, 1)
                             }
+                            this.createItemRow()
+                            this.createItemModalRow()
                             resolve("done")
                         })
                 })
