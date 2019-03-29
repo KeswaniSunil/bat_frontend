@@ -2,20 +2,20 @@
   <v-layout row wrap>
     <v-flex xs12 text-xs-center>
       <div>
-        <v-tabs v-model="tab" color="grey lighten-2" grow light>
+        <v-tabs v-model="tab" color="white" grow light>
           <v-tabs-slider color="black"></v-tabs-slider>
-          <v-tab v-for="(item,index) in items" :key="index">
+          <v-tab v-for="(item,index) in items" :key="index" :href="`#tab-${index}`">
             {{ item.name }}
           </v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab">
-          <v-tab-item v-for="(item,index) in items" :key="index">
+          <v-tab-item v-for="(item,index) in items" :key="index" :value="`tab-${index}`">
             <v-card flat>
-              <v-card-text class="grey lighten-3">
+              <v-card-text class="body-background">
                 <!--     New Bill  -->
-                <ItemListing v-if="index == 0" />
-                <Type v-else-if="index == 1" />
-                <SubType v-else-if="index == 2" />
+                <ItemListing v-if="index == 0" class="mt-3" />
+                <Type v-else-if="index == 1" class="mt-3" />
+                <SubType v-else-if="index == 2" class="mt-3" />
               
               </v-card-text>
             </v-card>
@@ -30,8 +30,15 @@
   import Type from "@/components/Items/viewType";
   import SubType from "@/components/Items/viewSubType";
   export default {
+    layout: "dashboard",
     components:{
       ItemListing,Type,SubType
+    },
+    mounted(){
+      if(this.$route.query.tab != null)
+      {
+        this.tab = this.$route.query.tab
+      }
     },
     data() {
       return {

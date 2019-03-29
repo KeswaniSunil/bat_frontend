@@ -65,7 +65,7 @@
                                 <td :active="props.selected" @click="props.selected = !props.selected">
                                     <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                 </td>
-                                <td>{{props.index+1}}</td>
+                                <td>{{props.item.index+1}}</td>
                                 <td style="cursor:pointer;" class="text-capitalize name-linking" @click="editItem(props.item.id)">{{ props.item.name }}</td>
                                 <td>{{ props.item.unit.title }}</td>
                                 <td>{{ props.item.price }}</td>
@@ -117,8 +117,6 @@ export default {
         addEditItem
     },
     created(){
-        this.$store.state.token ='5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
-            this.$store.state.userId=1
     },
     data() {
       return {
@@ -126,15 +124,15 @@ export default {
           text: '#',
           align: 'left',
           sortable: false,
-          value: 'ind'
+          value: 'name'
         },
         { text: 'Name', value: 'name', sortable: false },
         { text: 'Unit', value: 'unit' },
         { text: 'Price', value: 'price' },
         { text: 'Total Stock', value: 'totalstock' },
         { text: 'Used Stock', value: 'usedstock' },
-        { text: 'Available Stock', value: 'availablestock' },
-        { text: 'Edit', value: 'edit' }],
+        { text: 'Available Stock', value: 'pending' },
+        { text: 'Edit', value: 'name' }],
         loading: true,
         pagination: {},
         url: process.env.URL,
@@ -172,6 +170,15 @@ export default {
             })
         },
         deep: true
+      },
+      search: {
+          handler() {
+              this.getDataFromApi()
+                  .then(data => {
+                    this.itemDtl = data.items
+                    this.totalItem = data.total
+                })
+          }
       }
     },
     mounted() {
@@ -200,34 +207,12 @@ export default {
           const { sortBy, descending, page, rowsPerPage } = this.pagination
           //console.log("aa")
           let items = "";
-          this.$axios.get("/"+this.$route.params.username+"/api/Items?access_token="+this.$store.state.token+"&filter[where][isenabled]=1&filter[include]=unit&filter[include][subType]=type")
+          this.$axios.get('/'+this.$route.params.username+'/api/Items/getItems?access_token='+this.$store.state.token+'&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
             .then(res => {
               //console.log("bb")
-              items = res.data;
+              items = res.data.data;
               //console.log("cc")
-              const total = items.length
-
-              if (this.pagination.sortBy) {
-                items = items.sort((a, b) => {
-                  const sortA = a[sortBy]
-                  const sortB = b[sortBy]
-
-                  if (descending) {
-                    if (sortA < sortB) return 1
-                    if (sortA > sortB) return -1
-                    return 0
-                  } else {
-                    if (sortA < sortB) return -1
-                    if (sortA > sortB) return 1
-                    return 0
-                  }
-                })
-              }
-
-              if (rowsPerPage > 0) {
-                items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
-              }
-
+              const total = res.data.total
               this.loading = false
               resolve({
                 items,

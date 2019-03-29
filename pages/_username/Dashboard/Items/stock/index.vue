@@ -2,8 +2,8 @@
     <v-layout row wrap>
         <v-flex xs12 text-xs-center>
             <v-card flat>
-                <v-card-text class="grey lighten-3">
-                    <v-layout>
+                <v-card-text class="body-background">
+                    <v-layout class="mt-3">
                         <v-flex sm12>
                             <v-card class="border-radius-5">
                                 <v-card-text>
@@ -144,16 +144,13 @@
     </v-layout>
 </template>
 <script>
-
     import addStock from '@/components/Items/addStock.vue'
     export default {
         components: {
             addStock
         },
-        layout: "dashboard_ly",
+        layout: "dashboard",
         created() {
-            this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
-            this.$store.state.userId = 1
             this.generate();
         },
         beforeUpdate() {

@@ -8,6 +8,7 @@
 <script>
 import Receipt from "~/components/receiptUI";
 export default {
+    layout: "dashboard",
     components:{
        Receipt
     }

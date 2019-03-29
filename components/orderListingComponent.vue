@@ -232,7 +232,6 @@
             }
         },
         mounted() {
-            this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
             this.getDataFromApi()
                 .then(data => {
                     this.orderDtl = data.items

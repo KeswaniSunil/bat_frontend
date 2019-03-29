@@ -322,10 +322,8 @@
         </template>
         <script>
         export default {
-        layout:"default",
+        layout: "dashboard",
 created(){
-    this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
-      this.$store.state.userId = 1
     this.generate()
 },
 data(){

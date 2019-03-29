@@ -5,6 +5,7 @@
 <script>
 import bill from "~/components/purchase/bill";
 export default {
+    layout: "dashboard",
     components:{
        bill
     }

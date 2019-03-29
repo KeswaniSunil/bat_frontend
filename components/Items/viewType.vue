@@ -65,7 +65,7 @@
                                 <td width="9%" :active="props.selected" @click="props.selected = !props.selected">
                                     <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                 </td>
-                                <td width="6%">{{props.index+1}}</td>
+                                <td width="6%">{{props.item.index+1}}</td>
                                 <td width="75%" @click="editType(props.item.id)" style="cursor:pointer;" class="text-capitalize name-linking text-lg-left mr-3">{{ props.item.name }}</td>
                                 <td width="10%">
                                     <v-icon small class="mr-12" @click="editType(props.item.id)">edit
@@ -112,8 +112,6 @@ export default {
         addEditType
     },
     created(){
-        this.$store.state.token ='5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
-            this.$store.state.userId=1
     },
     data() {
       return {
@@ -121,10 +119,10 @@ export default {
           text: '#',
           align: 'left',
           sortable: false,
-          value: 'ind'
+          value: 'name'
         },
-        { text: 'Type', value: 'type',sortable: false },
-        { text: 'Edit', value: 'edit' }],
+        { text: 'Type', value: 'name',sortable: false },
+        { text: 'Edit', value: 'name' }],
         loading: true,
         pagination: {},
         url: process.env.URL,
@@ -161,6 +159,15 @@ export default {
             })
         },
         deep: true
+      },
+      search: {
+          handler() {
+              this.getDataFromApi()
+                  .then(data => {
+                    this.typeDtl = data.items
+                    this.totalType = data.total
+                })
+          }
       }
     },
     mounted() {
@@ -189,34 +196,12 @@ export default {
           const { sortBy, descending, page, rowsPerPage } = this.pagination
           //console.log("aa")
           let items = "";
-          this.$axios.get("/"+this.$route.params.username+"/api/Types?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&filter[where][isenabled]=1")
+          this.$axios.get('/'+this.$route.params.username+'/api/Types/getTypes?access_token='+this.$store.state.token+'&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
             .then(res => {
               //console.log("bb")
-              items = res.data;
+              items = res.data.data;
               //console.log("cc")
-              const total = items.length
-
-              if (this.pagination.sortBy) {
-                items = items.sort((a, b) => {
-                  const sortA = a[sortBy]
-                  const sortB = b[sortBy]
-
-                  if (descending) {
-                    if (sortA < sortB) return 1
-                    if (sortA > sortB) return -1
-                    return 0
-                  } else {
-                    if (sortA < sortB) return -1
-                    if (sortA > sortB) return 1
-                    return 0
-                  }
-                })
-              }
-
-              if (rowsPerPage > 0) {
-                items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
-              }
-
+              const total = res.data.total
               this.loading = false
               resolve({
                 items,

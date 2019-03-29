@@ -56,7 +56,7 @@
                 <td width="9%" :active="props.selected" @click="props.selected = !props.selected">
                   <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                 </td>
-                <td width="6%">{{props.index+1}}</td>
+                <td width="6%">{{props.item.index+1}}</td>
                 <td width="40%" style="cursor:pointer;" @click="editSubType(props.item.id)" class="text-capitalize name-linking text-lg-left mr-3">{{ props.item.name }}</td>
                 <td width="35" class="text-lg-left mr-3">{{ props.item.type.name }}</td>
                 <td width="10%">
@@ -104,8 +104,6 @@
       addEditSubType
     },
     created() {
-      this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
-      this.$store.state.userId = 1
     },
     data() {
       return {
@@ -113,11 +111,11 @@
           text: '#',
           align: 'left',
           sortable: false,
-          value: 'ind'
+          value: 'name'
         },
-        { text: 'Sub Type', value: 'subtype', sortable: false },
+        { text: 'Sub Type', value: 'name', sortable: false },
         { text: 'Type', value: 'type', sortable: false },
-        { text: 'Edit', value: 'edit' }],
+        { text: 'Edit', value: 'name' }],
         loading: true,
         pagination: {},
         url: process.env.URL,
@@ -151,6 +149,15 @@
             })
         },
         deep: true
+      },
+      search: {
+          handler() {
+              this.getDataFromApi()
+                  .then(data => {
+                    this.subTypeDtl = data.items
+                    this.totalSubType = data.total
+                })
+          }
       }
     },
     mounted() {
@@ -179,34 +186,12 @@
           const { sortBy, descending, page, rowsPerPage } = this.pagination
           //console.log("aa")
           let items = "";
-          this.$axios.get("/" + this.$route.params.username + "/api/Subtypes?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&filter[where][isenabled]=1&filter[include]=type")
+          this.$axios.get('/' + this.$route.params.username + '/api/Subtypes/getSubtypes?access_token='+this.$store.state.token+'&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
             .then(res => {
               //console.log("bb")
-              items = res.data;
+              items = res.data.data;
               //console.log("cc")
-              const total = items.length
-
-              if (this.pagination.sortBy) {
-                items = items.sort((a, b) => {
-                  const sortA = a[sortBy]
-                  const sortB = b[sortBy]
-
-                  if (descending) {
-                    if (sortA < sortB) return 1
-                    if (sortA > sortB) return -1
-                    return 0
-                  } else {
-                    if (sortA < sortB) return -1
-                    if (sortA > sortB) return 1
-                    return 0
-                  }
-                })
-              }
-
-              if (rowsPerPage > 0) {
-                items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
-              }
-
+              const total = res.data.total
               this.loading = false
               resolve({
                 items,
@@ -222,7 +207,7 @@
           let promise = new Promise((resolve, reject) => {
             for (let i = 0; i < this.selectSubType.length; i++) {
               //console.log(this.selectCustomer[i]);
-              this.$axios.post("/" + this.$route.params.username + "/api/Subtypes/update?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&where[id]=" + this.selectSubType[i].id,
+              this.$axios.post("/" + this.$route.params.username + "/api/Subtypes/update?access_token="+this.$store.state.token+"&where[id]=" + this.selectSubType[i].id,
                 {
                   isenabled: 0
                 })

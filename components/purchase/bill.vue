@@ -584,8 +584,6 @@
             itemDetails: []
         }),
         created() {
-            this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
-            this.$store.state.userId = 1
             if (this.id != null) {
                 this.$axios.get("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id + "&filter[where][isenabled]=1")
                     .then(res => {

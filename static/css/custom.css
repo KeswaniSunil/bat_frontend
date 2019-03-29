@@ -65,6 +65,10 @@
     .myforms .form-inline label{
     justify-content: flex-start;
     }
+    .font-12{
+        font-size: 12px;
+        font-weight: 500;
+    }
     .font-14{
         font-size: 14px;
         font-weight: 600;
@@ -73,17 +77,21 @@
         font-size: 16px;
         font-weight: 600;
     }
-    .font-12{
-        font-size: 12px;
+    .font-18{
+        font-size: 18px;
         font-weight: 500;
     }
     .font-20{
         font-size: 20px;
         font-weight: 600;
     }
-    .font-18{
-        font-size: 18px;
-        font-weight: 500;
+    .font-22{
+        font-size: 22px;
+        font-weight: 600;
+    }
+    .font-24{
+        font-size: 24px;
+        font-weight: 600;
     }
     .padding-10{
         padding:10px;
@@ -145,6 +153,9 @@
     }
     .color-light-red{
         background: #ffc6c7
+    }
+    .body-background{
+        background:#D9E0E7;
     }
 @media print {
     body * {

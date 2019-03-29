@@ -3,7 +3,7 @@
         <v-flex xs12 sm12>
             <v-form @submit.prevent="addBill" ref="form" lazy-validation onkeypress="return event.keyCode != 13"
                 v-model="valid">
-                <v-card class="border-radius-5 ma-3">
+                <v-card class="border-radius-5 mx-3">
                     <v-card-text primary-title>
                         <v-container grid-list-xs>
                             <v-layout align-center justify-start row wrap>
@@ -698,8 +698,6 @@
             itemDetails: []
         }),
         created() {
-            this.$store.state.token = '5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L'
-            this.$store.state.userId = 1
             if (this.id != null) {
                 this.$axios.get("/" + this.$route.params.username + "/api/Orders?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id + "&filter[where][isenabled]=1")
                     .then(res => {
