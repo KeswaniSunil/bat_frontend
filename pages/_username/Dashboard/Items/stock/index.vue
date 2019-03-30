@@ -1,20 +1,25 @@
 <template>
     <v-layout row wrap>
-        <v-flex xs12 text-xs-center>
+        <v-flex xs12 >
             <v-card flat>
-                <v-card-text class="body-background">
-                    <v-layout class="mt-3">
+                <v-card-text class="grey lighten-3">
+                    <v-layout>
                         <v-flex sm12>
                             <v-card class="border-radius-5">
                                 <v-card-text>
                                     <v-layout align-center justify-start row wrap class="mb-3">
-                                        <v-flex xs7 sm10></v-flex>
-                                        <v-flex xs5 sm2>
+                                        <v-flex  sm8></v-flex>
+                                        <v-flex  sm4>
                                             <v-layout align-center justify-start row wrap>
-                                                <v-flex sm4></v-flex>
-                                                <v-flex sm8>
+                                                <v-flex xs1 sm2></v-flex>
+                                                <v-flex xs5 sm5 text-sm-right>
                                                     <v-btn color="info" round class="pa-2" @click="showModal = true">
                                                         <v-icon dark small class="mr-2"> gavel</v-icon>Add Stock
+                                                    </v-btn>
+                                                </v-flex>
+                                                <v-flex xs6 sm5>
+                                                    <v-btn color="info" round class="pa-2" :to="'/'+this.$route.params.username+'/Dashboard/items/stock/subtypeWise'" nuxt>
+                                                        <v-icon dark small class="mr-2"> gavel</v-icon>SubType Wise  
                                                     </v-btn>
                                                 </v-flex>
                                             </v-layout>
@@ -52,9 +57,9 @@
                                         </v-flex>
                                         <v-flex xs12 sm3>
                                             <v-layout row wrap>
-                                                <v-flex xs8 sm3>
+                                                <v-flex xs7 sm3>
                                                 </v-flex>
-                                                <v-flex xs4 sm9>
+                                                <v-flex xs5 sm9>
                                                     <v-btn class="" dark round @click="getStock()">Get Stock</v-btn>
                                                 </v-flex>
                                             </v-layout>
@@ -63,13 +68,25 @@
                                     <v-layout column class="pb-2">
                                         <v-flex sm12>
                                             <v-layout align-center row wrap>
-
-                                                <v-flex sm9></v-flex>
+                                                <v-flex xs12 sm4>
+                                                    <v-layout v-if="purchase == true" row wrap>
+                                                        <v-flex sm12>
+                                                            <v-layout justify-space-between>
+                                                                <v-checkbox v-model="purchase" label="Purchase"></v-checkbox>
+                                                                <v-checkbox v-model="sales" label="Sales"></v-checkbox>
+                                                            </v-layout>
+                                                        </v-flex>
+                                                    </v-layout>
+                                                </v-flex>
+                                                <v-flex xs12 sm5></v-flex>
                                                 <v-flex xs12 sm3>
                                                     <v-text-field v-model="search" append-icon="search" label="Search"
                                                         single-line hide-details></v-text-field>
                                                 </v-flex>
                                             </v-layout>
+                                        </v-flex>
+                                        <v-flex sm12>
+
                                         </v-flex>
                                     </v-layout>
                                     <v-data-table v-model="selectStock" :headers="header" :items="stockDtl"
@@ -92,7 +109,7 @@
                                         <template v-slot:items="props">
                                             <tr :class="[(billNo_order[props.index] != null) ? colorred : colorgreen]">
 
-                                                <td width="6%">{{props.index+1}}</td>
+                                                <td width="6%">{{props.item.index+1}}</td>
                                                 <td>{{ props.item.item.name }}</td>
                                                 <td>{{ props.item.price }}</td>
                                                 <td>{{ props.item.quantity }}</td>
@@ -103,10 +120,6 @@
                                                 <td v-else>-</td>
                                                 <td>{{ changeToIST(props.item.date) }}</td>
                                                 <th>{{props.item.notes}}</th>
-                                                <td width="10%">
-                                                    <v-icon small class="mr-12" @click="editType(props.item.id)">edit
-                                                    </v-icon>
-                                                </td>
                                             </tr>
                                         </template>
                                         <v-alert v-slot:no-results :value="true" color="error" icon="warning">
@@ -144,6 +157,7 @@
     </v-layout>
 </template>
 <script>
+
     import addStock from '@/components/Items/addStock.vue'
     export default {
         components: {
@@ -151,6 +165,7 @@
         },
         layout: "dashboard",
         created() {
+            
             this.generate();
         },
         beforeUpdate() {
@@ -178,6 +193,15 @@
                         })
                 },
                 deep: true
+            },
+            search: {
+                handler() {
+                    this.getDataFromApi()
+                        .then(data => {
+                            this.stockDtl = data.items
+                            this.totalStock = data.total
+                        })
+                }
             }
         },
         mounted() {
@@ -198,15 +222,14 @@
                     text: '#',
                     align: 'left',
                     sortable: false,
-                    value: 'ind'
+                    value: 'itemname'
                 },
-                { text: 'Item Name', value: 'Item Name' },
-                { text: 'Price', value: 'Price' },
-                { text: 'Quantity', value: 'Quantity' },
-                { text: 'Bill No', value: 'Bill No' },
-                { text: 'Date', value: 'Date' },
-                { text: 'Notes', value: 'Notes' },
-                { text: 'Edit', value: 'edit' }],
+                { text: 'Item Name', value: 'itemname' },
+                { text: 'Price', value: 'price' },
+                { text: 'Quantity', value: 'quantity' },
+                { text: 'Bill No', value: 'billno' },
+                { text: 'Date', value: 'date' },
+                { text: 'Notes', value: 'notes' }],
                 loading: true,
                 pagination: {},
                 startDatemodal: false,
@@ -216,6 +239,8 @@
                 billNo_purchase: [],
                 startDate1: null,
                 endDate1: null,
+                purchase: false,
+                sales:true,
                 colorgreen: 'green lighten-4',
                 colorred: 'red lighten-4'
             }
@@ -238,19 +263,19 @@
                 return new Promise((resolve, reject) => {
                     const { sortBy, descending, page, rowsPerPage } = this.pagination
                     //console.log("aa")
-                    let items = "";
-                    this.$axios.get("/" + this.$route.params.username + "/api/Stocklogs?access_token=" + this.$store.state.token + "&filter[include]=item&filter[where][isenabled]=1&filter[include]=purchase&filter[include]=order&filter[where][date][between][0]=" + this.startDate1 + "&filter[where][date][between][1]=" + this.endDate1)
+                    let items = [];
+                    this.$axios.get('/' + this.$route.params.username + '/api/Stocklogs/getStocklogs?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","purchase":"'+this.purchase+'","sale":"'+this.sales+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
                         .then(res => {
-                            this.stockDtl = res.data;
+                            //this.stockDtl = res.data;
                             this.billNo_order = []
                             this.billNo_purchase = []
-                            for (let i = 0; i < res.data.length; i++) {
-                                if (res.data[i].purchaseId != null) {
-                                    this.billNo_purchase.push(res.data[i].purchase.billno)
+                            for (let i = 0; i < res.data.data.length; i++) {
+                                if (res.data.data[i].purchaseId != null) {
+                                    this.billNo_purchase.push(res.data.data[i].purchase.billno)
                                     this.billNo_order.push(null)
                                 }
-                                else if (res.data[i].orderId != null) {
-                                    this.billNo_order.push(res.data[i].order.billno)
+                                else if (res.data.data[i].orderId != null) {
+                                    this.billNo_order.push(res.data.data[i].order.billbook.prefix+""+res.data.data[i].order.billno)
                                     this.billNo_purchase.push(null)
                                 }
                                 else {
@@ -258,33 +283,10 @@
                                     this.billNo_purchase.push(null)
                                 }
                             }
-
                             //console.log("bb")
-                            items = res.data;
+                            items = res.data.data;
                             //console.log("cc")
-                            const total = items.length
-
-                            if (this.pagination.sortBy) {
-                                items = items.sort((a, b) => {
-                                    const sortA = a[sortBy]
-                                    const sortB = b[sortBy]
-
-                                    if (descending) {
-                                        if (sortA < sortB) return 1
-                                        if (sortA > sortB) return -1
-                                        return 0
-                                    } else {
-                                        if (sortA < sortB) return -1
-                                        if (sortA > sortB) return 1
-                                        return 0
-                                    }
-                                })
-                            }
-
-                            if (rowsPerPage > 0) {
-                                items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
-                            }
-
+                            const total = res.data.total
                             this.loading = false
                             resolve({
                                 items,
@@ -317,10 +319,10 @@
             },
             getStock() {
                 this.getDataFromApi()
-                    .then(data => {
-                        this.orderDtl = data.items
-                        this.totalCustomer = data.total
-                    })
+                        .then(data => {
+                            this.stockDtl = data.items
+                            this.totalStock = data.total
+                        })
             },
             sendId(event) {
                 this.checkAll = false;

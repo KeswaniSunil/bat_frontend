@@ -448,8 +448,8 @@
                                 </v-flex>
                             </v-layout>
                             <v-layout justify-end>
-                                <v-btn v-if="id == null" type="submit" dark round color="blue">Add Bill</v-btn>
-                                <v-btn v-else type="submit" dark round color="blue">Update Bill</v-btn>
+                                <v-btn v-if="id == null" type="submit" :loading="btnLoading" dark round color="blue">Add Bill</v-btn>
+                                <v-btn v-else type="submit" dark round :loading="btnLoading" color="blue">Update Bill</v-btn>
                             </v-layout>
                         </v-container>
                     </v-card-title>
@@ -580,6 +580,7 @@
             }
         },
         data: () => ({
+            btnLoading:false,
             biggerScreen: true,
             valid: false,
             requiredRules: [
@@ -1359,6 +1360,7 @@
             //     Bill Add
             async addBill() {
                 if (this.$refs.form.validate()) {
+                    this.btnLoading=true;
                     this.formsubmited = 1
                     if (this.id == null) {
                         let disamount = this.billDetail.discount
@@ -1458,6 +1460,7 @@
                                             }
                                             this.$axios.post("/" + this.$route.params.username + "/api/Orderpayments?access_token=" + this.$store.state.token, payment)
                                                 .then(res2 => {
+                                                    
                                                     var id = new String(res.data.id).substr(0, 35)
                                                     this.$router.push("/" + this.$route.params.username + "/dashboard/sales/order/" + id + "/view")
                                                 });

@@ -6,13 +6,10 @@
                     <v-layout  align-center justify-start row wrap>
                             <v-flex xs7 sm10></v-flex>
                             <v-flex xs5 sm2>
-                                <v-layout  align-center justify-start row wrap>
-                                    <v-flex sm4></v-flex>
-                                    <v-flex sm8>
-                                        <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                                                <v-icon dark small class="mr-2"> gavel</v-icon>Add Type
-                                        </v-btn>
-                                    </v-flex>    
+                                <v-layout  align-end justify-end row wrap>
+                                    <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+                                        <v-icon dark small class="mr-2"> gavel</v-icon>Add Transport
+                                    </v-btn>    
                                 </v-layout>
                             </v-flex>
                         </v-layout>    
@@ -66,16 +63,12 @@
                                     <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                 </td>
                                 <td width="6%">{{props.item.index+1}}</td>
-                                <td width="75%" @click="editType(props.item.id)" style="cursor:pointer;" class="text-capitalize name-linking text-lg-left mr-3">{{ props.item.name }}</td>
-                                <td v-if="(taxprop_p==1 || taxprop_s==1)">
-                                    <span v-if="props.item.taxId != ''">{{props.item.tax.percentage}}</span>
-                                    <span v-else>-</span>
-                                </td>
+                                <td width="65%" @click="editType(props.item.id)" style="cursor:pointer;" class="text-capitalize name-linking text-lg-left mr-3">{{ props.item.name }}</td>
+                                <td width="10%">{{props.item.vehicleno}}</td>
                                 <td width="10%">
                                     <v-icon small class="mr-12" @click="editType(props.item.id)">edit
                                     </v-icon>
                                 </td>
-                                
                             </tr>
                         </template>
                         <v-alert v-slot:no-results :value="true" color="error" icon="warning">
@@ -86,12 +79,12 @@
                     <v-dialog width="400" v-model="showModal" >
                         <v-card>
                             <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
-                            <span style="font-size:18px;" v-if="editValue==null">Add Type</span>
-                            <span style="font-size:18px;" v-else>Edit Type</span>
+                            <span style="font-size:18px;" v-if="editValue==null">Add Transport</span>
+                            <span style="font-size:18px;" v-else>Edit Transport</span>
                             </v-card-title>
                             <v-card-text class="pa-0">
                             <v-container grid-list-xs>
-                                <addEditType v-if="showModal==true" v-model="closeModal1" :id="editValue"></addEditType>
+                                <addEditTransport v-if="showModal==true" v-model="closeModal1" :id="editValue"></addEditTransport>
                             </v-container>
                             </v-card-text>
 
@@ -111,13 +104,12 @@
   </v-layout>
 </template>
 <script>
-import addEditType from '@/components/Items/addEditType.vue';
+import addEditTransport from '@/components/transport/addEditTransport.vue';
 export default {
     components:{
-        addEditType
+        addEditTransport
     },
     created(){
-        this.getTaxProp();
     },
     data() {
       return {
@@ -127,28 +119,21 @@ export default {
           sortable: false,
           value: 'name'
         },
-        { text: 'Type', value: 'name' },
-        {
-            text:'Tax(%)',value:'tax'
-        },
+        { text: 'Transport', value: 'name',sortable: false },
+        { text: 'Vehicle No', value: 'vehicleno',sortable: false },
         { text: 'Edit', value: 'name' }],
         loading: true,
         pagination: {},
-        url: process.env.URL,
         typeDtl: [],
         selectType: [],
         search: '',
-        addinBulk: 0,
         showModal: false,
         totalType: 0,
         editValue:null,
-        closeModal1:1,
-        taxprop_p: 0,
-                taxprop_s: 0,
+        closeModal1:1
       }
     },
     updated(){
-        //console.log(this.selectType)
         if(this.closeModal1 == 2)
         {
             this.showModal = false
@@ -158,7 +143,6 @@ export default {
                   this.typeDtl = data.items
                   this.totalType = data.total
             })
-            
         }
     },
     watch: {
@@ -190,28 +174,6 @@ export default {
         })
     },
     methods:{
-        async getTaxProp() {
-                await this.$axios.get("/" + this.$route.params.username + "/api/Configurations?access_token=" + this.$store.state.token)
-                    .then(res1 => {
-                        let promise1 = new Promise((resolve,reject)=>{
-                        
-                                for (let i = 0; i < res1.data.length; i++) {
-                                if (res1.data[i].alias == "calculate_taxes_sales") {
-                                    this.taxprop_s = res1.data[i].value
-                                }
-                                else if (res1.data[i].alias == "calculate_taxes_purchase") this.taxprop_p = res1.data[i].value
-                            }
-                            resolve()
-                        });
-                        promise1.then((resolve)=>{
-                            if(this.taxprop_p==0 && this.taxprop_s==0){
-                                this.header.splice(2,1)
-                            }
-                        });
-                        
-                    });
-                    
-            },
         toggleAll() {
         if (this.selectType.length) this.selectType = []
         else this.selectType = this.typeDtl.slice()
@@ -230,7 +192,7 @@ export default {
           const { sortBy, descending, page, rowsPerPage } = this.pagination
           //console.log("aa")
           let items = "";
-          this.$axios.get('/'+this.$route.params.username+'/api/Types/getTypes?access_token='+this.$store.state.token+'&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
+          this.$axios.get('/'+this.$route.params.username+'/api/Transports/getTransports?access_token='+this.$store.state.token+'&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
             .then(res => {
               //console.log("bb")
               items = res.data.data;
@@ -252,18 +214,12 @@ export default {
                 let promise = new Promise((resolve,reject)=>{ 
                     for (let i = 0; i < this.selectType.length; i++) {
                             //console.log(this.selectCustomer[i]);
-                            this.$axios.post("/" + this.$route.params.username + "/api/Types/update?access_token=" + this.$store.state.token + "&where[id]=" + this.selectType[i].id,
+                            this.$axios.post("/" + this.$route.params.username + "/api/Transports/update?access_token=" + this.$store.state.token + "&where[id]=" + this.selectType[i].id,
                                 {
                                     isenabled: 0
                                 })
                                 .then(res => {
-                                    this.$axios.post("/" + this.$route.params.username + "/api/Subtypes/update?access_token=" + this.$store.state.token + "&where[typeId]=" + this.selectType[i].id,
-                                        {
-                                            isenabled: 0
-                                        })
-                                        .then(res1 => {
-                                            resolve("1");
-                                        });
+                                    resolve("1");
                                 });
                     }
                });    

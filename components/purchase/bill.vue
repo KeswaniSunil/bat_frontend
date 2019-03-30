@@ -356,7 +356,7 @@
                         </v-flex>
                     </v-layout>
                     <v-layout justify-end>
-                        <v-btn v-if="id == null" type="submit" dark round color="blue">Add Bill</v-btn>
+                        <v-btn v-if="id == null" type="submit" :loading="btnLoading" dark round color="blue">Add Bill</v-btn>
                         <v-btn v-else-if="id != null && type == null" type="submit" dark round color="blue">Update Bill</v-btn>
                     </v-layout>
                 </v-container>
@@ -492,6 +492,7 @@
             }
         },
         data: () => ({
+            btnLoading:false,
             biggerScreen: true,
             valid: false,
             requiredRules: [
@@ -1139,6 +1140,7 @@
             },
             async addBill() {
                 if (this.$refs.form.validate()) {
+                    btnLoading=true;
                     this.formsubmited = 1
                     if (this.id == null) {
                         let disamount = this.billDetail.discount

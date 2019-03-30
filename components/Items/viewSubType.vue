@@ -32,7 +32,7 @@
             </v-flex>
           </v-layout>
           <v-data-table v-model="selectSubType" :headers="header" :items="subTypeDtl" :pagination.sync="pagination"
-            :total-items="totalSubType" :loading="loading" select-all item-key="id" class="elevation-1">
+            :total-items="totalSubType" :loading="loading" select-all item-key="id" class="elevation-0">
             <template v-slot:headers="props">
               <tr>
                 <th>
