@@ -24,8 +24,8 @@ module.exports = {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
-
+  loading: { color: '#42a5f5' },
+//loading: '~/components/loading.vue',
   /*
   ** Global CSS
   */
@@ -54,11 +54,11 @@ module.exports = {
  axios: {
   // See https://github.com/nuxt-community/axios-module#options
   //baseURL: 'http://bcontrol.jdmit.in'
-  baseURL: 'http://192.168.2.7:3030'
+  baseURL: 'http://192.168.2.5:3030'
 },
 env:{
   //URL: 'http://bcontrol.jdmit.in'
-  URL: 'http://192.168.2.7:3030'
+  URL: 'http://192.168.2.5:3030'
 }, 
 
   /*

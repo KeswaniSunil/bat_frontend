@@ -6,9 +6,9 @@
                     <v-layout  align-center justify-start row wrap>
                             <v-flex xs7 sm10></v-flex>
                             <v-flex xs5 sm2>
-                                <v-layout  align-end justify-end row wrap>
+                                <v-layout  align-center justify-end row wrap>
                                     <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                                        <v-icon dark small class="mr-2"> gavel</v-icon>Add Taxes
+                                        <v-icon dark small class="mr-2"> gavel</v-icon>Add Bill Book
                                     </v-btn>    
                                 </v-layout>
                             </v-flex>
@@ -58,12 +58,14 @@
                                     <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                 </td>
                                 <td width="6%">{{props.item.index+1}}</td>
-                                <td width="65%" @click="editType(props.item.id)" style="cursor:pointer;" class="text-capitalize name-linking text-lg-left mr-3">{{ props.item.name }}</td>
-                                <td width="10%">{{props.item.percentage}}</td>
+                                <td width="55%" @click="editType(props.item.id)" style="cursor:pointer;" class="text-capitalize name-linking text-lg-left mr-3">{{ props.item.title }}</td>
+                                <td width="10%">{{props.item.prefix}}</td>
+                                <td width="10%">{{props.item.series}}</td>
                                 <td width="10%">
                                     <v-icon small class="mr-12" @click="editType(props.item.id)">edit
                                     </v-icon>
                                 </td>
+                                
                             </tr>
                         </template>
                     </v-data-table>
@@ -71,12 +73,12 @@
                     <v-dialog width="400" v-model="showModal" >
                         <v-card>
                             <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
-                            <span style="font-size:18px;" v-if="editValue==null">Add Tax</span>
-                            <span style="font-size:18px;" v-else>Edit Tax</span>
+                            <span style="font-size:18px;" v-if="editValue==null">Add Billbook</span>
+                            <span style="font-size:18px;" v-else>Edit Billbook</span>
                             </v-card-title>
                             <v-card-text class="pa-0">
                             <v-container grid-list-xs>
-                                <addEditTax v-if="showModal==true" v-model="closeModal1" :id="editValue"></addEditTax>
+                                <addEditBillbook v-if="showModal==true" v-model="closeModal1" :id="editValue"></addEditBillbook>
                             </v-container>
                             </v-card-text>
 
@@ -96,12 +98,10 @@
   </v-layout>
 </template>
 <script>
-import addEditTax from '@/components/tax/addEditTax.vue';
+import addEditBillbook from '@/components/sales/billbook/addEditBillbook.vue';
 export default {
     components:{
-        addEditTax
-    },
-    created(){
+        addEditBillbook
     },
     data() {
       return {
@@ -109,11 +109,12 @@ export default {
           text: '#',
           align: 'left',
           sortable: false,
-          value: 'name'
+          value: 'title'
         },
-        { text: 'Taxes', value: 'name',sortable: false },
-        { text: 'Percentage', value: 'percentage',sortable: false },
-        { text: 'Edit', value: 'name' }],
+        { text: 'BillBook', value: 'title' },
+        { text: 'prefix', value: 'prefix' },
+        { text: 'series', value: 'series' },
+        { text: 'Edit', value: 'title' }],
         loading: true,
         pagination: {},
         typeDtl: [],
@@ -122,10 +123,11 @@ export default {
         showModal: false,
         totalType: 0,
         editValue:null,
-        closeModal1:1
+        closeModal1:1,
       }
     },
     updated(){
+        //console.log(this.selectType)
         if(this.closeModal1 == 2)
         {
             this.showModal = false
@@ -135,6 +137,7 @@ export default {
                   this.typeDtl = data.items
                   this.totalType = data.total
             })
+            
         }
     },
     watch: {
@@ -182,20 +185,16 @@ export default {
         this.loading = true
         return new Promise((resolve, reject) => {
           const { sortBy, descending, page, rowsPerPage } = this.pagination
-          //console.log("aa")
           let items = "";
-          this.$axios.get('/'+this.$route.params.username+'/api/Taxes/getTaxes?access_token='+this.$store.state.token+'&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
+          this.$axios.get('/'+this.$route.params.username+'/api/BillBooks/getBillbooks?access_token='+this.$store.state.token+'&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
             .then(res => {
-              //console.log("bb")
               items = res.data.data;
-              //console.log("cc")
               const total = res.data.total
               this.loading = false
               resolve({
                 items,
                 total
               })
-              //console.log(res.data)
             });
         })
       },
@@ -206,12 +205,18 @@ export default {
                 let promise = new Promise((resolve,reject)=>{ 
                     for (let i = 0; i < this.selectType.length; i++) {
                             //console.log(this.selectCustomer[i]);
-                            this.$axios.post("/" + this.$route.params.username + "/api/Taxes/update?access_token=" + this.$store.state.token + "&where[id]=" + this.selectType[i].id,
+                            this.$axios.post("/" + this.$route.params.username + "/api/Billbooks/update?access_token=" + this.$store.state.token + "&where[id]=" + this.selectType[i].id,
                                 {
                                     isenabled: 0
                                 })
                                 .then(res => {
-                                    resolve("1");
+                                    this.$axios.post("/" + this.$route.params.username + "/api/Orders/update?access_token=" + this.$store.state.token + "&where[billbookId]=" + this.selectType[i].id,
+                                        {
+                                            isenabled: 0
+                                        })
+                                        .then(res1 => {
+                                            resolve("1")
+                                        });
                                 });
                     }
                });    

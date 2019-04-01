@@ -170,12 +170,12 @@
                 handler(){
                     if(this.enableType==0 && this.addItemDtl.typeId!=''){
                         this.enableSubType=1
-                        console.log("bb"+"-"+this.addItemDtl.typeId)
+                        //console.log("bb"+"-"+this.addItemDtl.typeId)
                     }
                     else if(this.enableType==1){
                         this.enableSubType=0;
                         this.addItemDtl.subTypeId='';
-                        console.log("aa"+"-"+this.addItemDtl.typeId)
+                        //console.log("aa"+"-"+this.addItemDtl.typeId)
                     }
                 }
             },
@@ -387,9 +387,9 @@
                         this.addItemDtl.unitId = this.editItemDtl.unitId;
                         this.addItemDtl.typeId = this.editItemDtl.subType.typeId;
                         this.addItemDtl.subTypeId = this.editItemDtl.subTypeId;
-                        console.log(this.addItemDtl.typeName);
-                        console.log(this.editMode.type)
-                        console.log(this.editMode.subType)
+                        //console.log(this.addItemDtl.typeName);
+                        //console.log(this.editMode.type)
+                        //console.log(this.editMode.subType)
                         //console.log(this.addItemDtl.subTypeId);
                     });
 

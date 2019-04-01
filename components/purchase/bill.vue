@@ -9,6 +9,7 @@
                 <v-card class="border-radius-5 ml-3 mr-3 mb-3">
                     <v-card-text primary-title>
                         <v-container grid-list-xs>
+                            <loadercontent v-if="loader1" />
                             <v-layout align-center justify-start row wrap>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
@@ -73,6 +74,7 @@
                 <v-card class="ma-3 border-radius-5">
                 <v-card-title>
                 <v-container style="max-width:100%" class="pa-0" grid-list-xs>
+                    <loadercontent v-if="loader2" />
                     <v-layout column wrap>
                         <v-flex xs3>
                             <v-layout align-center justify-space-between>
@@ -231,6 +233,7 @@
                 <v-card class="ma-3 border-radius-5">
                 <v-card-title>
                 <v-container style="max-width:100%" class="pa-0" grid-list-xs>
+                    <loadercontent v-if="loader3" />
                     <v-layout column wrap>
                         <v-flex xs3>
                             <v-layout align-center justify-space-between>
@@ -480,6 +483,7 @@
     </v-layout>
 </template>
 <script>
+    import loadercontent from "@/components/loadercontent";
     export default {
         props: {
             id: {
@@ -491,7 +495,13 @@
                 required: false
             }
         },
+        components:{
+            loadercontent
+        },
         data: () => ({
+            loader1:true,
+            loader2:true,
+            loader3:true,
             btnLoading:false,
             biggerScreen: true,
             valid: false,
@@ -738,18 +748,8 @@
                 await this.$axios.get("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id)
                     .then((res) => {
                         this.idToBeSent.supplierId = res.data[0].supplierId
-                        let date = new Date(res.data[0].billdate);
-                        let month = "" + (date.getMonth() + 1)
-                        let date1 = "" + (date.getDate())
-                        if ((date.getMonth() + 1) < 10) month = "0" + (date.getMonth() + 1)
-                        if (date.getDate() < 10) date1 = "0" + date.getDate()
-                        this.billDetail.billDate = date.getFullYear() + "-" + month + '-' + date1;
-                        date = new Date(res.data[0].duedate);
-                        month = "" + (date.getMonth() + 1)
-                        date1 = "" + (date.getDate())
-                        if ((date.getMonth() + 1) < 10) month = "0" + (date.getMonth() + 1)
-                        if (date.getDate() < 10) date1 = "0" + date.getDate()
-                        this.billDetail.dueDate = date.getFullYear() + "-" + month + '-' + date1;
+                        this.billDetail.billDate = new Date(res.data[0].billdate).toISOString().substr(0,10);
+                        this.billDetail.dueDate = new Date(res.data[0].duedate).toISOString().substr(0,10);
                         let dis = "" + res.data[0].discount
                         if (dis.search('%') > -1) {
                             this.billDetail.discountType = '2'
@@ -759,6 +759,7 @@
                         this.billDetail.charges = res.data[0].charges
                         this.billDetail.totalPayableAmount = res.data[0].totalamount
                         this.billPreNo.billNo = res.data[0].billno
+                        this.loader1 = false
                     })
                 this.itemDetails = []
                 this.itemModalDetails = []
@@ -846,6 +847,7 @@
                                     this.itemModalIndex = this.itemModalDetails.length - 1
                                     this.paymentModalIndex = this.payment.length - 1
                                 }
+                                this.loader2 = false
                             })
                     })
                 this.$axios.get("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token + "&filter[where][purchaseId]=" + this.id + "&filter[purchase]=series")
@@ -871,6 +873,7 @@
                         else {
                             this.createPaymentRow()
                         }
+                        this.loader3 = false
                     })
             },
             itemInsertModal(index) {
@@ -1094,13 +1097,11 @@
                 }
             },
             async generate() {
-                let date = new Date();
-                let month = "" + (date.getMonth() + 1)
-                let date1 = "" + (date.getDate())
-                if ((date.getMonth() + 1) < 10) month = "0" + (date.getMonth() + 1)
-                if (date.getDate() < 10) date1 = "0" + date.getDate()
-                this.billDetail.billDate = date.getFullYear() + "-" + month + '-' + date1;
+                this.billDetail.billDate = new Date().toISOString().substr(0,10);
                 this.getConfiguration()
+                this.loader1 = false;
+                this.loader2 = false
+                this.loader3 = false
             },
             async itemGenerate(index) {
                 if (this.itemDetails[index].itemId == 0) this.modalItem = true

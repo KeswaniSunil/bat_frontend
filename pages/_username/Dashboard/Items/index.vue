@@ -8,7 +8,7 @@
             {{ item.name }}
           </v-tab>
         </v-tabs>
-        <v-tabs-items v-model="tab">
+        <v-tabs-items v-model="tab" touchless>
           <v-tab-item v-for="(item,index) in items" :key="index" :value="`tab-${index}`">
             <v-card flat>
               <v-card-text class="body-background">

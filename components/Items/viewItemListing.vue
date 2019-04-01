@@ -60,11 +60,6 @@
                         </th>
                         </tr>
                         </template>
-                        <template v-slot:no-data>
-                            <v-alert :value="true" color="error" icon="warning">
-                            Sorry, nothing to display here :(
-                            </v-alert>
-                        </template>
                         <template v-slot:items="props">
                             <tr>
                                 <td :active="props.selected" @click="props.selected = !props.selected">
@@ -83,9 +78,6 @@
                                 </td>
                             </tr>
                         </template>
-                        <v-alert v-slot:no-results :value="true" color="error" icon="warning">
-                            Your search for "{{ search }}" found no results.
-                        </v-alert>
                     </v-data-table>
                     
                     <v-dialog width="800" v-model="showModal" >
@@ -312,7 +304,7 @@ export default {
                                         
                                         if(data[i][0] != null && data[i][1] != null && data[i][2] != null && data[i][3] != null && data[i][4] != null && data[i][5] != null)
                                         {
-                                                a[j]=new Object()
+                                            a[j]=new Object()
                                             a[j].name = data[i][0];
                                             a[j].billname=data[i][1];
                                             a[j].price=data[i][2];
@@ -352,9 +344,7 @@ export default {
                                         else{
                                             //console.log('bb')
                                             d+=i+" , ";
-                                            }
-                                    
-                                        
+                                        }
                                     }
                                     resolve();
                                 });

@@ -46,11 +46,6 @@
                 </th>
               </tr>
             </template>
-            <template v-slot:no-data>
-              <v-alert :value="true" color="error" icon="warning">
-                Sorry, nothing to display here :(
-              </v-alert>
-            </template>
             <template v-slot:items="props">
               <tr>
                 <td width="9%" :active="props.selected" @click="props.selected = !props.selected">
@@ -65,9 +60,6 @@
                 </td>
               </tr>
             </template>
-            <v-alert v-slot:no-results :value="true" color="error" icon="warning">
-              Your search for "{{ search }}" found no results.
-            </v-alert>
           </v-data-table>
 
           <v-dialog width="400" v-model="showModal">

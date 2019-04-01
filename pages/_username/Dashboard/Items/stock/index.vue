@@ -2,7 +2,7 @@
     <v-layout row wrap>
         <v-flex xs12 >
             <v-card flat>
-                <v-card-text class="grey lighten-3">
+                <v-card-text class="body-background mt-3">
                     <v-layout>
                         <v-flex sm12>
                             <v-card class="border-radius-5">
@@ -69,11 +69,11 @@
                                         <v-flex sm12>
                                             <v-layout align-center row wrap>
                                                 <v-flex xs12 sm4>
-                                                    <v-layout v-if="purchase == true" row wrap>
+                                                    <v-layout row wrap>
                                                         <v-flex sm12>
                                                             <v-layout justify-space-between>
-                                                                <v-checkbox v-model="purchase" label="Purchase"></v-checkbox>
-                                                                <v-checkbox v-model="sales" label="Sales"></v-checkbox>
+                                                                <v-checkbox v-model="purchase" @change="getStock()" label="Purchase"></v-checkbox>
+                                                                <v-checkbox v-model="sales" @change="getStock()" label="Sales"></v-checkbox>
                                                             </v-layout>
                                                         </v-flex>
                                                     </v-layout>
@@ -89,9 +89,9 @@
 
                                         </v-flex>
                                     </v-layout>
-                                    <v-data-table v-model="selectStock" :headers="header" :items="stockDtl"
+                                    <v-data-table  :headers="header" :items="stockDtl"
                                         :pagination.sync="pagination" :total-items="totalStock" :loading="loading"
-                                        select-all item-key="id" class="elevation-1">
+                                        select-all item-key="id" class="elevation-0">
                                         <template v-slot:headers="props">
                                             <tr>
                                                 <th v-for="header in props.headers" :key="header.text" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
@@ -100,11 +100,6 @@
                                                     {{ header.text }}<v-icon small>arrow_upward</v-icon>
                                                 </th>
                                             </tr>
-                                        </template>
-                                        <template v-slot:no-data>
-                                            <v-alert :value="true" color="error" icon="warning">
-                                                Sorry, nothing to display here :(
-                                            </v-alert>
                                         </template>
                                         <template v-slot:items="props">
                                             <tr :class="[(billNo_order[props.index] != null) ? colorred : colorgreen]">
@@ -122,9 +117,6 @@
                                                 <th>{{props.item.notes}}</th>
                                             </tr>
                                         </template>
-                                        <v-alert v-slot:no-results :value="true" color="error" icon="warning">
-                                            Your search for "{{ search }}" found no results.
-                                        </v-alert>
                                     </v-data-table>
                                     <v-dialog width="500" v-model="showModal">
                                         <v-card>
@@ -214,7 +206,6 @@
         data() {
             return {
                 stockDtl: [],
-                selectStock: [],
                 closeModal1: 1,
                 totalStock: 0,
                 search: "",
@@ -239,7 +230,7 @@
                 billNo_purchase: [],
                 startDate1: null,
                 endDate1: null,
-                purchase: false,
+                purchase: true,
                 sales:true,
                 colorgreen: 'green lighten-4',
                 colorred: 'red lighten-4'
@@ -305,7 +296,7 @@
                 let str = dt + "-" + mn + "-" + rs.getFullYear();
                 return str
             },
-            async generate(val) {
+            async generate() {
                 let date = new Date();
                 let month = date.getMonth();
                 let year = date.getFullYear();
@@ -323,32 +314,7 @@
                             this.stockDtl = data.items
                             this.totalStock = data.total
                         })
-            },
-            sendId(event) {
-                this.checkAll = false;
-                if (event.target.checked) {
-                    this.enableDel = 1;
-                }
-                else {
-                    if (this.selectStock.length == 0) {
-                        this.enableDel = 0;
-                    }
-                }
-                //console.log(this.selectCustomer);
-                //console.log(this.selectCustomer.length)
-            },
-            allSelect() {
-                this.selectStock = [];
-                this.enableDel = 0;
-                if (this.checkAll) {
-                    this.enableDel = 1
-                    for (let i in this.stockDtl) {
-                        this.selectStock.push(this.stockDtl[i].id);
-                        // console.log(this.selectCustomer[i]);
-                    }
-                }
-                // console.log(this.selectCustomer)
-            },
+            }
         }
     }
 </script>

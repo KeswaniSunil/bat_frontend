@@ -1,11 +1,12 @@
 <template>
-    <v-layout>
+    <v-layout class="mt-3">
         <v-flex xs12 sm12>
             <v-form @submit.prevent="addBill" ref="form" lazy-validation onkeypress="return event.keyCode != 13"
                 v-model="valid">
                 <v-card class="border-radius-5 mx-3">
                     <v-card-text primary-title>
                         <v-container grid-list-xs>
+                            <loadercontent v-if="loader1" /> 
                             <v-layout align-center justify-start row wrap>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
@@ -156,6 +157,7 @@
                 <v-card class="ma-3 border-radius-5">
                     <v-card-title>
                         <v-container style="max-width:100%" class="pa-0" grid-list-xs>
+                            <loadercontent v-if="loader2" />
                             <v-layout column wrap>
                                 <v-flex xs3>
                                     <v-layout align-center justify-space-between>
@@ -319,6 +321,7 @@
                 <v-card class="ma-3 border-radius-5">
                     <v-card-title>
                         <v-container style="max-width:100%" class="pa-0" grid-list-xs>
+                            <loadercontent v-if="loader3" />
                             <v-layout column wrap>
                                 <v-flex xs3>
                                     <v-layout align-center justify-space-between>
@@ -572,6 +575,7 @@
     </v-layout>
 </template>
 <script>
+    import loadercontent from "@/components/loadercontent";
     export default {
         props: {
             id: {
@@ -579,8 +583,14 @@
                 required: false
             }
         },
+        components:{
+            loadercontent
+        },
         data: () => ({
             btnLoading:false,
+            loader1:true,
+            loader2:true,
+            loader3:true,
             biggerScreen: true,
             valid: false,
             requiredRules: [
@@ -907,26 +917,11 @@
                                 if (res.data[0].transportId != null) {
                                     this.transport.name = res.data[0].transport.name
                                     this.transport.vehicleNo = res.data[0].transport.vehicleno
-                                    let dateS = new Date(res.data[0].dateofsupply);
-                                    let monthS = "" + (dateS.getMonth() + 1)
-                                    let date1S = "" + (dateS.getDate())
-                                    if ((dateS.getMonth() + 1) < 10) monthS = "0" + (dateS.getMonth() + 1)
-                                    if (dateS.getDate() < 10) date1S = "0" + dateS.getDate()
-                                    this.transport.dateOfSupply = dateS.getFullYear() + "-" + monthS + '-' + date1S;
+                                    this.transport.dateOfSupply = new Date(res.data[0].dateofsupply).toISOString().substr(0,10);
                                 }
                                 this.transport.placeOfSupply = res.data[0].placeofsupply
-                                let date = new Date(res.data[0].billdate);
-                                let month = "" + (date.getMonth() + 1)
-                                let date1 = "" + (date.getDate())
-                                if ((date.getMonth() + 1) < 10) month = "0" + (date.getMonth() + 1)
-                                if (date.getDate() < 10) date1 = "0" + date.getDate()
-                                this.billDetail.billDate = date.getFullYear() + "-" + month + '-' + date1;
-                                date = new Date(res.data[0].duedate);
-                                month = "" + (date.getMonth() + 1)
-                                date1 = "" + (date.getDate())
-                                if ((date.getMonth() + 1) < 10) month = "0" + (date.getMonth() + 1)
-                                if (date.getDate() < 10) date1 = "0" + date.getDate()
-                                this.billDetail.dueDate = date.getFullYear() + "-" + month + '-' + date1;
+                                this.billDetail.billDate = new Date(res.data[0].billdate).toISOString().substr(0,10);
+                                this.billDetail.dueDate = new Date(res.data[0].duedate).toISOString().substr(0,10);
                                 let dis = res.data[0].discount
                                 if (dis.search('%') > -1) {
                                     this.billDetail.discountType = '2'
@@ -944,6 +939,7 @@
                                         this.billPreNo.prefix = res1.data.prefix
                                         this.billPreNo.number = res.data[0].billno
                                         this.billPreNo.billNo = res1.data.prefix + "" + res.data[0].billno
+                                        this.loader1 = false
                                     })
                             })
                         this.itemDetails = []
@@ -1029,6 +1025,7 @@
                                         this.createItemModalRow()
                                         this.itemModalIndex = this.itemModalDetails.length - 1
                                         this.paymentModalIndex = this.payment.length - 1
+                                        this.loader2 = false
                                     })
                             })
                         this.$axios.get("/" + this.$route.params.username + "/api/Orderpayments?access_token=" + this.$store.state.token + "&filter[where][orderId]=" + this.id + "&filter[order]=series")
@@ -1052,6 +1049,7 @@
                                     this.getReceviable()
                                 }
                                 this.createPaymentRow()
+                                this.loader3 = false
                             })
                     })
             },
@@ -1274,18 +1272,16 @@
                 })
             },
             async generate() {
-                let date = new Date();
-                let month = "" + (date.getMonth() + 1)
-                let date1 = "" + (date.getDate())
-                if ((date.getMonth() + 1) < 10) month = "0" + (date.getMonth() + 1)
-                if (date.getDate() < 10) date1 = "0" + date.getDate()
-                this.billDetail.billDate = date.getFullYear() + "-" + month + '-' + date1;
+                this.billDetail.billDate = new Date().toISOString().substr(0,10);
                 this.getConfiguration()
                     .then(resolve => {
                         this.$axios.get("/" + this.$route.params.username + "/api/BillBooks?access_token=" + this.$store.state.token + "&filter[where][isenabled]=1")
                             .then(res2 => {
                                 this.billBookDtl = res2.data;
                                 this.selectBillBook()
+                                this.loader1 = false
+                                this.loader2 = false
+                                this.loader3 = false
                             });
                     })
             },
