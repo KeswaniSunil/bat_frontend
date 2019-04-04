@@ -359,8 +359,8 @@
                         </v-flex>
                     </v-layout>
                     <v-layout justify-end>
-                        <v-btn v-if="id == null" type="submit" :loading="btnLoading" dark round color="blue">Add Bill</v-btn>
-                        <v-btn v-else-if="id != null && type == null" type="submit" dark round color="blue">Update Bill</v-btn>
+                        <v-btn v-if="id == null" type="submit" :loading="btnLoading" dark round color="info">Add Bill</v-btn>
+                        <v-btn v-else-if="id != null && type == null" type="submit" dark round color="info">Update Bill</v-btn>
                     </v-layout>
                 </v-container>
                 </v-card-title>
@@ -1141,7 +1141,7 @@
             },
             async addBill() {
                 if (this.$refs.form.validate()) {
-                    btnLoading=true;
+                    this.btnLoading=true;
                     this.formsubmited = 1
                     if (this.id == null) {
                         let disamount = this.billDetail.discount
@@ -1212,8 +1212,7 @@
                                         .then(res5 => {
                                             let payment
                                             if (this.payment.length <= 0) {
-                                                var id = new String(res.data.id).substr(0, 35)
-                                                this.$router.push("/" + this.$route.params.username + "/dashboard/purchase/order/" + id + "/view");
+                                                this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + res.data.id + "/view");
                                             }
                                             else {
                                                 payment = []
@@ -1238,8 +1237,7 @@
 
                                             this.$axios.post("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token, payment)
                                                 .then(res2 => {
-                                                    var id = new String(res.data.id).substr(0, 35)
-                                                    this.$router.push("/" + this.$route.params.username + "/dashboard/purchase/order/" + id + "/view")
+                                                    this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + res.data.id + "/view")
                                                 });
                                         })
                                 });
@@ -1353,7 +1351,7 @@
                                                                                     let payment
                                                                                     if (this.payment.length <= 0) {
                                                                                         for (let i = 0; i < this.deletePaymentId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Purchasepayments/" + this.deletePaymentId[i] + "?access_token=" + this.$store.state.token)
-                                                                                        this.$router.push("/" + this.$route.params.username + "/dashboard/purchase/order/" + this.id + "/view")
+                                                                                        this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + this.id + "/view")
                                                                                     }
                                                                                     else {
                                                                                         payment = []
@@ -1390,7 +1388,7 @@
                                                                                         for (let i = 0; i < this.deletePaymentId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Purchasepayments/" + this.deletePaymentId[i] + "?access_token=" + this.$store.state.token)
                                                                                         this.$axios.post("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token, payment)
                                                                                             .then(res => {
-                                                                                                this.$router.push("/" + this.$route.params.username + "/dashboard/purchase/order/" + this.id + "/view")
+                                                                                                this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + this.id + "/view")
                                                                                             })
                                                                                     }
                                                                                 })

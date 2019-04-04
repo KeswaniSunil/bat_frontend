@@ -9,14 +9,6 @@
             </v-layout>  
             <v-card class="border-radius-5 mr-3 mb-3 ml-3" > 
                 <v-card-text>
-                    <v-layout justify-start row wrap class="mb-1">
-                        <v-flex xs5 sm10></v-flex>
-                        <v-flex xs7 sm2>
-                            <v-btn color="info" class="pa-1" @click="showModal=true">
-                                <v-icon dark small > edit</v-icon>Change Password
-                            </v-btn>    
-                        </v-flex>    
-                    </v-layout>
                     <v-form @submit.prevent="editDetail" onkeypress="return event.keyCode != 13">
                         <v-layout row wrap class="mb-4">
                             <v-flex xs12 sm12>
@@ -250,73 +242,6 @@
                 </v-card-text>
             </v-card>          
             
-            <v-dialog width="400" v-model="showModal" >
-          <v-card>
-            <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
-              <span style="font-size:18px;">Change Password</span>
-            </v-card-title>
-            <v-card-text class="pa-0">
-              <v-form @submit.prevent="changePass" ref="form1" lazy-validation onkeypress="return event.keyCode != 13">
-                <v-container grid-list-xs class="pa-4">
-                    <v-layout align-center justify-start row wrap class="mb-3">
-                        <v-flex xs12 sm12>
-                            <label class="font-16 font-weight-regular">Old Password </label>
-                                <v-text-field
-                                    class="pa-0 ma-0"
-                                    label=""
-                                    height=22
-                                    type=text
-                                    v-model="credentials.oldPass"
-                                    :rules="requiredRules"
-                                ></v-text-field>
-                        </v-flex>    
-                    </v-layout>
-                    <v-layout align-center justify-start row wrap class="mb-3">
-                        <v-flex xs12 sm12>
-                            <label class="font-16 font-weight-regular">New Password  </label>
-                                <v-text-field
-                                    class="pa-0 ma-0"
-                                    label=""
-                                    height=22
-                                    type=text
-                                    v-model="credentials.newPass"
-                                    :rules="requiredRules"
-                                ></v-text-field>
-                        </v-flex>    
-                    </v-layout>
-                    <v-layout align-center justify-start row wrap class="mb-2">
-                        <v-flex xs12 sm12>
-                            <label class="font-16 font-weight-regular">Confirm Password  </label>
-                                <v-text-field
-                                    class="pa-0 ma-0"
-                                    label=""
-                                    height=22
-                                    type=text
-                                    v-model="credentials.confPass"
-                                    :rules="requiredRules"
-                                ></v-text-field>
-                        </v-flex>    
-                    </v-layout>  
-                    <v-layout align-center justify-start row wrap>
-                        <v-flex xs7 sm8></v-flex>
-                        <v-flex xs5 sm4>
-                            <v-btn color="info" type=submit>
-                                <v-icon dark small class="mr-1"> edit</v-icon>Change
-                            </v-btn>
-                        </v-flex>
-                    </v-layout>       
-                </v-container>
-              </v-form>
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" flat @click="showModal = false">
-                Close
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
         </v-flex>
             </v-layout>        
         </template>
@@ -403,22 +328,6 @@ methods:{
 			.then(res=>{
                 alert("Details Edited and Saved")
             });
-    },
-    async changePass(){
-        if (this.$refs.form1.validate())
-        {    if(this.credentials.newPass==this.credentials.confPass){
-                this.$axios.post("/"+this.$route.params.username+"/api/Users/change-password?access_token="+this.$store.state.token,{
-                    oldPassword:this.credentials.oldPass,
-                    newPassword:this.credentials.confPass
-                }).then(res=>{
-                    alert("Password Changed Successfully")
-                    window.location=""
-                })
-            }
-            else{
-                alert("New password and confirm Password should be same")
-            }
-        }
     }
 }
 }

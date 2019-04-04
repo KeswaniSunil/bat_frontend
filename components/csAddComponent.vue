@@ -3,41 +3,32 @@
         <v-layout align-center justify-start row wrap>
             <v-flex xs12 sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-left">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
                         <label v-if="mode == 'customer'" class="font-15 font-weight-regular">Customer Name: </label>
                         <label v-if="mode == 'supplier'" class="font-15 font-weight-regular">Supplier Name: </label>
                     </v-flex>
-                    <v-flex xs12 sm6>
-                        <v-layout align-center row wrap>
-                            <v-flex xs1 sm1></v-flex>
-                            <v-flex xs3 sm2>
-                                <v-select class="pa-0 ma-0" :items="[{title:'',val:''},{title:'Mr.',val:'Mr.'},{title:'Mrs.',val:'Mrs.'},{title:'Ms.',val:'Ms.'},{title:'Miss.',val:'Miss.'}]"
-                                    item-text="title" item-value="val" v-model="customerDetails.ini" :single-line="biggerScreen"></v-select>
-                            </v-flex>
-                            <v-flex xs1 sm1></v-flex>
-                            <v-flex xs8 sm7>
-                                <v-text-field label="First Name" class="pa-0 ma-0" type=text :rules="requiredRules"
+                    <v-flex xs12 sm4>
+                        <v-text-field  class="pa-0 ma-0" type=text :rules="requiredRules"
                                     :single-line="biggerScreen" v-model="customerDetails.firstName"></v-text-field>
-                            </v-flex>
-                            <v-flex sm1></v-flex>
-                        </v-layout>
+                    </v-flex>
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
+                        <label class="font-15 font-weight-regular">Gstn: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="Last Name" :single-line="biggerScreen" type=text class="pa-0 ma-0" :rules="requiredRules"
-                            v-model="customerDetails.lastName"></v-text-field>
+                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.gstn"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-left">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">Mobile No: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
                         <v-text-field label="" type=number :single-line="biggerScreen" :rules="requiredRules" class="pa-0 ma-0"
                             v-model="customerDetails.mobile"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">Email: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
@@ -47,7 +38,7 @@
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-left">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">Street: </label>
                     </v-flex>
                     <v-flex xs12 sm10>
@@ -58,13 +49,13 @@
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-left">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">Area: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
                         <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.area"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">Pincode: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
@@ -74,13 +65,13 @@
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-left">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">City: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
                         <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.city"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">State: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
@@ -90,24 +81,24 @@
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-left">
+                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">State Code: </label>
                     </v-flex>
-                    <v-flex xs12 sm4>
+                    <v-flex xs12 sm3>
                         <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.stateCode"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center">
-                        <label class="font-15 font-weight-regular">Gstn: </label>
+                    <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-center text-xs-left">
+                        <label class="font-15 font-weight-regular">Opening Balance: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.gstn"></v-text-field>
+                        <v-text-field label="" type=number :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.balance"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
             <v-flex sm12>
-                <v-layout text-xs-right row wrap>
-                    <v-flex xs8 sm10></v-flex>
-                    <v-flex xs4 sm2>
+                <v-layout align-center row wrap>
+                    <v-flex xs12 sm12>
+                        <v-layout align-start justify-end row wrap>
                         <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark
                             @click="">
                             Add
@@ -117,6 +108,7 @@
                             <v-icon dark right class="ml-1">check_circle</v-icon>
 
                         </v-btn>
+                        </v-layout>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -150,9 +142,8 @@
         data() {
             return {
                 customerDetails: {
-                    ini: "",
+                    
                     firstName: "",
-                    lastName: "",
                     mobile: "",
                     email: "",
                     street: "",
@@ -161,7 +152,8 @@
                     city: "",
                     state: "",
                     gstn: "",
-                    stateCode: null
+                    stateCode: null,
+                    balance:null
                 },
                 requiredRules: [
                     v => !!v || 'This Field is required'
@@ -177,16 +169,11 @@
                 if (this.$refs.form1.validate()) {
                     if (this.propCheck == 0) {
                         this.btnLoading = true
-                        if (this.customerDetails.ini == '') {
-                            var aa = this.customerDetails.firstName + " " + this.customerDetails.lastName;
-                        }
-                        else {
-                            var aa = this.customerDetails.ini + " " + this.customerDetails.firstName + " " + this.customerDetails.lastName;
-                        }
+                        
                         if(this.mode == 'customer')
                         {
                             await this.$axios.post("/" + this.$route.params.username + "/api/Customers?access_token=" + this.$store.state.token, {
-                                name: aa,
+                                name: this.customerDetails.firstName,
                                 mobile: this.customerDetails.mobile,
                                 email: this.customerDetails.email,
                                 gstin: this.customerDetails.gstn,
@@ -197,6 +184,7 @@
                                 pincode: this.customerDetails.pinCode,
                                 statecode: this.customerDetails.stateCode,
                                 isenabled: 1,
+                                balance:this.customerDetails.balance,
                                 createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 createdById: this.$store.state.userId,
@@ -214,7 +202,7 @@
                         else if (this.mode == 'supplier')
                         {
                             await this.$axios.post("/" + this.$route.params.username + "/api/Suppliers?access_token=" + this.$store.state.token, {
-                                name: aa,
+                                name: this.customerDetails.firstName,
                                 mobile: this.customerDetails.mobile,
                                 email: this.customerDetails.email,
                                 gstin: this.customerDetails.gstn,
@@ -224,6 +212,7 @@
                                 state: this.customerDetails.state,
                                 pincode: this.customerDetails.pinCode,
                                 statecode: this.customerDetails.stateCode,
+                                balance:this.customerDetails.balance,
                                 isenabled: 1,
                                 createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
@@ -240,16 +229,11 @@
                     }
                     else {
                         this.btnLoading = true
-                        if (this.customerDetails.ini == '') {
-                            var aa = this.customerDetails.firstName + " " + this.customerDetails.lastName;
-                        }
-                        else {
-                            var aa = this.customerDetails.ini + " " + this.customerDetails.firstName + " " + this.customerDetails.lastName;
-                        }
+                        
                         if(this.mode == 'customer') {
                             await this.$axios.post("/" + this.$route.params.username + "/api/Customers/update?access_token=" + this.$store.state.token + "&where[id]=" + this.id,
                             {
-                                name: aa,
+                                name: this.customerDetails.firstName,
                                 mobile: this.customerDetails.mobile,
                                 email: this.customerDetails.email,
                                 gstin: this.customerDetails.gstn,
@@ -259,6 +243,7 @@
                                 state: this.customerDetails.state,
                                 pincode: this.customerDetails.pinCode,
                                 statecode: this.customerDetails.stateCode,
+                                balance:this.customerDetails.balance,
                                 isenabled: 1,
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedById: this.$store.state.userId,
@@ -277,7 +262,7 @@
                         {
                             await this.$axios.post("/" + this.$route.params.username + "/api/Suppliers/update?access_token=" + this.$store.state.token + "&where[id]=" + this.id,
                             {
-                                name: aa,
+                                name: this.customerDetails.firstName,
                                 mobile: this.customerDetails.mobile,
                                 email: this.customerDetails.email,
                                 gstin: this.customerDetails.gstn,
@@ -287,6 +272,7 @@
                                 state: this.customerDetails.state,
                                 pincode: this.customerDetails.pinCode,
                                 statecode: this.customerDetails.stateCode,
+                                balance:this.customerDetails.balance,
                                 isenabled: 1,
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedById: this.$store.state.userId
@@ -309,17 +295,7 @@
                     await this.$axios.get("/" + this.$route.params.username + "/api/Customers/" + this.id + "?access_token=" + this.$store.state.token)
                     .then(res => {
                         this.editCustomerDtl = res.data;
-                        var a = this.editCustomerDtl.name;
-                        var aa = a.split(" ")
-                        if (aa.length == 3) {
-                            this.customerDetails.ini = aa[0];
-                            this.customerDetails.firstName = aa[1];
-                            this.customerDetails.lastName = aa[2];
-                        }
-                        else {
-                            this.customerDetails.firstName = aa[0];
-                            this.customerDetails.lastName = aa[1];
-                        }
+                        this.customerDetails.firstName=this.editCustomerDtl.name;
                         this.customerDetails.mobile = this.editCustomerDtl.mobile;
                         this.customerDetails.email = this.editCustomerDtl.email;
                         this.customerDetails.street = this.editCustomerDtl.street;
@@ -329,6 +305,7 @@
                         this.customerDetails.state = this.editCustomerDtl.state;
                         this.customerDetails.gstn = this.editCustomerDtl.gstin;
                         this.customerDetails.stateCode = this.editCustomerDtl.statecode;
+                        this.customerDetails.balance=this.editCustomerDtl.balance
                     });
                 }
                 else if (this.mode == 'supplier')
@@ -336,17 +313,7 @@
                     await this.$axios.get("/" + this.$route.params.username + "/api/Suppliers/" + this.id + "?access_token=" + this.$store.state.token)
                     .then(res => {
                         this.editCustomerDtl = res.data;
-                        var a = this.editCustomerDtl.name;
-                        var aa = a.split(" ")
-                        if (aa.length == 3) {
-                            this.customerDetails.ini = aa[0];
-                            this.customerDetails.firstName = aa[1];
-                            this.customerDetails.lastName = aa[2];
-                        }
-                        else {
-                            this.customerDetails.firstName = aa[0];
-                            this.customerDetails.lastName = aa[1];
-                        }
+                        this.customerDetails.firstName=this.editCustomerDtl.name;                        
                         this.customerDetails.mobile = this.editCustomerDtl.mobile;
                         this.customerDetails.email = this.editCustomerDtl.email;
                         this.customerDetails.street = this.editCustomerDtl.street;

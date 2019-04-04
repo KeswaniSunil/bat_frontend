@@ -16,21 +16,37 @@
               </v-layout>
             </v-flex>
           </v-layout>
-          <v-layout column class="pb-2">
-            <v-flex sm12>
-              <v-layout align-center row wrap>
-                <v-flex xs3 sm1>
-                  <v-btn v-if="selectSubType.length > 0" color="error" round class="pa-0" @click="deleteSubType">
-                    <v-icon dark small class="mr-1">gavel</v-icon> Delete
-                  </v-btn>
-                </v-flex>
-                <v-flex xs9 sm8></v-flex>
-                <v-flex xs12 sm3>
-                  <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-flex>
-          </v-layout>
+          <v-layout row wrap class="mb-2">
+                        <v-flex sm1 xs3>
+                            <v-btn v-if="selectSubType.length > 0" color="error" round class="pa-0" @click="deleteSubType">
+                                        <v-icon dark small class="mr-1">delete</v-icon> Delete
+                            </v-btn>
+                        </v-flex>
+                        <v-flex sm11 xs9></v-flex>
+                    </v-layout>    
+                    <v-card class="elevation-5" style="border-radius:5px;">
+                        <v-card-title  class="pa-2 primary white--text">
+                            List of All SubTypes:-
+                        </v-card-title>
+                        <v-card-text>
+                            <v-layout row wrap >
+                                <v-flex xs12 sm9 class="mb-3">
+                                    <v-layout align-start justify-start row wrap>
+                                        
+                                        <v-btn color="primary" round class="pa-0 mr-1" :loading="loadingPDF" @click="_export('pdf')">
+                                        <v-icon dark small class="mr-2"  reverse>cloud_download</v-icon>Pdf
+                                    </v-btn>
+                                    <v-btn color="primary" round  class="pa-0 " :loading="loadingExcel" @click="_export('excel')">
+                                                <v-icon dark small class="mr-2"  reverse>cloud_download</v-icon>Excel   
+                                            </v-btn>
+                                            
+                                    </v-layout>    
+                                </v-flex>
+                                <v-flex xs12 sm3 class="mb-3">
+                                    <v-text-field v-model="search" append-icon="search" label="Search" class="pa-0 ma-0" single-line hide-details></v-text-field>
+                                </v-flex>
+                            
+                            </v-layout>
           <v-data-table v-model="selectSubType" :headers="header" :items="subTypeDtl" :pagination.sync="pagination"
             :total-items="totalSubType" :loading="loading" select-all item-key="id" class="elevation-0">
             <template v-slot:headers="props">
@@ -61,7 +77,8 @@
               </tr>
             </template>
           </v-data-table>
-
+          </v-card-text>
+          </v-card>
           <v-dialog width="400" v-model="showModal">
             <v-card>
               <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
@@ -117,7 +134,9 @@
         showModal: false,
         totalSubType: 0,
         editValue: null,
-        closeModal1: 1
+        closeModal1: 1,
+        loadingPDF:false,
+        loadingExcel:false
       }
     },
     updated() {
@@ -171,6 +190,32 @@
           this.pagination.sortBy = column
           this.pagination.descending = false
         }
+      },
+      _export(type){
+          if(type == "pdf") this.loadingPDF = true
+          else this.loadingExcel = true
+          const { sortBy, descending, page, rowsPerPage } = this.pagination
+          //console.log("aa")
+          this.getDataFromApi()
+          .then(res => {
+              let item = res.items;
+              let header = []
+              header[0] = []
+              for(let i = 0;i<this.header.length;i++) if(this.header[i].text != 'Edit') header[0].push(this.header[i].text)
+              let body = []
+              for(let i = 0;i<item.length;i++)
+              {
+                  body[i] = [(item[i].index+1),item[i].name,item[i].type.name]
+              }
+              if(type == "pdf") {
+                this.$createPDF(header,body,"Subtype Listing",process)
+                    .then((resolve)=>{this.loadingPDF=false})
+              }
+              else {
+                  this.$createExcel(header,body,"Subtype Listing",process)
+                    .then((resolve)=>{this.loadingExcel=false})
+              }
+            });
       },
       getDataFromApi() {
         this.loading = true

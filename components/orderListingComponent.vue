@@ -19,7 +19,7 @@
                                     <v-text-field v-model="startDate1" label="Start Date" prepend-icon="event" readonly
                                         v-on="on"></v-text-field>
                                 </template>
-                                <v-date-picker v-model="startDate1" scrollable>
+                                <v-date-picker v-model="startDate1" :max="endDate1" scrollable>
                                     <v-spacer></v-spacer>
                                     <v-btn flat color="primary" @click="startDatemodal = false">Cancel</v-btn>
                                     <v-btn flat color="primary" @click="$refs.startdate.save(startDate1)">OK</v-btn>
@@ -53,18 +53,42 @@
                                         <v-btn v-if="selectOrder.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
                                             <v-icon dark small class="mr-1">gavel</v-icon> Delete
                                         </v-btn>
-                                        <v-btn v-if="selectOrder.length > 0 && mode == 'sale'" round color="blue" @click="printOrder" dark>
+                                        <v-btn v-if="selectOrder.length > 0 && (mode == 'sale' || mode == 'customer') " round color="blue" @click="printOrder" dark>
                                             <v-icon dark small class="mr-1">print</v-icon> Print
                                         </v-btn>
                                     </v-layout>
                                 </v-flex>
-                                <v-flex xs9 sm7></v-flex>
-                                <v-flex xs12 sm3>
-                                <v-text-field v-model="search" append-icon="search"  label="Search" single-line hide-details></v-text-field></v-flex>
+                                <v-flex xs9 sm10></v-flex>
                             </v-layout>
                         </v-flex>
                     </v-layout>
-                    <v-data-table v-model="selectOrder" :headers="header" :items="orderDtl" :pagination.sync="pagination"
+                    <v-card class="elevation-5 mt-2" style="border-radius:5px;">
+                        <v-card-title v-if="mode=='sale'"  class="pa-2 primary white--text">
+                            List of All Sale's Orders:-
+                        </v-card-title>
+                        <v-card-title v-else class="pa-2 primary white--text">
+                            List of All Purchase's Orders:-
+                        </v-card-title>
+                        <v-card-text>
+                            <v-layout row wrap >
+                                <v-flex xs12 sm9 class="mb-3">
+                                    <v-layout align-start justify-start row wrap>
+                                        
+                                        <v-btn color="primary" round class="pa-0 mr-1" :loading="loadingPDF" @click="_export('pdf')">
+                                        <v-icon dark small class="mr-2"  reverse>cloud_download</v-icon>Pdf
+                                    </v-btn>
+                                    <v-btn color="primary" round  class="pa-0 " :loading="loadingExcel" @click="_export('excel')">
+                                                <v-icon dark small class="mr-2"  reverse>cloud_download</v-icon>Excel   
+                                            </v-btn>
+                                            
+                                    </v-layout>    
+                                </v-flex>
+                                <v-flex xs12 sm3 class="mb-3">
+                                    <v-text-field v-model="search" append-icon="search" label="Search" class="pa-0 ma-0" single-line hide-details></v-text-field>
+                                </v-flex>
+                            
+                            </v-layout>
+                    <v-data-table v-if="mode == 'sale' || mode == 'purchase'" v-model="selectOrder" :headers="header" :items="orderDtl" :pagination.sync="pagination"
                         :total-items="totalCustomer" :loading="loading" select-all item-key="id" class="elevation-0">
                         <template v-slot:headers="props">
                             <tr>
@@ -77,7 +101,7 @@
                                     <v-icon small>arrow_upward</v-icon>
                                     {{ header.text }}
                                 </th>
-                                <th v-if="mode == 'sale'">Print</th>
+                                <th v-if="mode == 'sale' || mode == 'customer'">Print</th>
                             </tr>
                         </template>
                         <template v-slot:items="props">
@@ -90,36 +114,90 @@
                                     {{ new Date(props.item.billdate).getDate()+"/"+(new Date(props.item.billdate).getMonth()+1)+"/"+new Date(props.item.billdate).getFullYear() }}
                                 </td>
                                 <td v-if="mode == 'purchase'">
-                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/dashboard/purchase/order/'+props.item.id+'/view'">{{
+                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/Dashboard/purchase/order/'+props.item.id+'/view'">{{
                                         props.item.billno }}</router-link>
                                 </td>
                                 <td v-else-if="mode == 'sale'">
-                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/view'">{{props.item.billbook.prefix+""+props.item.billno
+                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/Dashboard/sales/order/'+props.item.id+'/view'">{{props.item.billbook.prefix+""+props.item.billno
                                         }}</router-link>
                                 </td>
                                 <td v-if="mode == 'purchase'">
-                                    <router-link class="text-capitalize" :to="'/'+$route.params.username+'/dashboard/purchase/supplier/'+props.item.supplier.id+'/viewAllDetails'">{{props.item.supplier.name}}</router-link>
+                                    <router-link class="text-capitalize" :to="'/'+$route.params.username+'/Dashboard/purchase/supplier/'+props.item.supplier.id+'/viewAllDetails'">{{props.item.supplier.name}}</router-link>
                                 </td>
                                 <td v-else-if="mode == 'sale'">
-                                    <router-link class="text-capitalize" :to="'/'+$route.params.username+'/dashboard/sales/customer/'+props.item.customer.id+'/viewAllDetails'">{{props.item.customer.name}}</router-link>
+                                    <router-link class="text-capitalize" :to="'/'+$route.params.username+'/Dashboard/sales/customer/'+props.item.customer.id+'/viewAllDetails'">{{props.item.customer.name}}</router-link>
                                 </td>
                                 <td>{{ props.item.totalamount }}</td>
                                 <td v-if="mode == 'purchase'">
-                                    <v-btn :to="'/'+$route.params.username+'/dashboard/purchase/order/'+props.item.id+'/edit'" icon>
+                                    <v-btn :to="'/'+$route.params.username+'/Dashboard/purchase/order/'+props.item.id+'/edit'" icon>
                                         <v-icon>edit</v-icon>
                                     </v-btn>
                                 </td>
                                 <td v-else-if="mode == 'sale'">
                                     <v-btn :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/edit'" icon>
-                                        <v-icon>edit</v-icon>
+                                        <v-icon class="grey--text text--darken-2">edit</v-icon>
                                     </v-btn>
                                 </td>
                                 <td v-if="mode == 'sale'">
-                                    <v-btn icon @click="print(props.item.id)"><v-icon>print</v-icon></v-btn>
+                                    <v-btn icon @click="print(props.item.id)"><v-icon class="grey--text text--darken-2">print</v-icon></v-btn>
                                 </td>
                             </tr>
                         </template>
                     </v-data-table>
+                    <v-data-table v-else v-model="selectOrder" :headers="header2" :items="orderDtl" :pagination.sync="pagination"
+                        :total-items="totalCustomer" :loading="loading" select-all item-key="id" class="elevation-0">
+                        <template v-slot:headers="props">
+                            <tr>
+                                <th>
+                                    <v-checkbox :input-value="props.all" :indeterminate="props.indeterminate" primary
+                                        hide-details @click.stop="toggleAll"></v-checkbox>
+                                </th>
+                                <th v-for="header in props.headers" :key="header.text" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                    @click="changeSort(header.value)">
+                                    <v-icon small>arrow_upward</v-icon>
+                                    {{ header.text }}
+                                </th>
+                                <th v-if="mode == 'sale' || mode == 'customer'">Print</th>
+                            </tr>
+                        </template>
+                        <template v-slot:items="props">
+                            <tr>
+                                <td :active="props.selected" @click="props.selected = !props.selected">
+                                    <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
+                                </td>
+                                <td>{{props.item.index+1}}</td>
+                                <td>
+                                    {{ new Date(props.item.billdate).getDate()+"/"+(new Date(props.item.billdate).getMonth()+1)+"/"+new Date(props.item.billdate).getFullYear() }}
+                                </td>
+                                <td v-if="mode == 'supplier'">
+                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/dashboard/purchase/order/'+props.item.id+'/view'">{{
+                                        props.item.billno }}</router-link>
+                                </td>
+                                <td v-else-if="mode == 'customer'">
+                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/view'">{{props.item.billbook.prefix+""+props.item.billno}}</router-link>
+                                </td>
+                                <td>{{props.item.itemtotal}}</td>
+                                <td>{{props.item.charges}}</td>
+                                <td v-if="taxstatus == 1">{{props.item.taxamount}}</td>
+                                <td>{{ props.item.totalamount }}</td>
+                                <td v-if="mode == 'supplier'">
+                                    <v-btn :to="'/'+$route.params.username+'/dashboard/purchase/order/'+props.item.id+'/edit'" icon>
+                                        <v-icon>edit</v-icon>
+                                    </v-btn>
+                                </td>
+                                <td v-else-if="mode == 'customer'">
+                                    <v-btn :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/edit'" icon>
+                                        <v-icon class="grey--text text--darken-2">edit</v-icon>
+                                    </v-btn>
+                                </td>
+                                <td v-if="mode == 'customer'">
+                                    <v-btn icon @click="print(props.item.id)"><v-icon class="grey--text text--darken-2">print</v-icon></v-btn>
+                                </td>
+                            </tr>
+                        </template>
+                    </v-data-table>
+                    </v-card-text>
+                    </v-card>
 
                 </v-card-text>
             </v-card>
@@ -148,6 +226,10 @@
             billBookId: {
                 type: String,
                 required: false
+            },
+            csid: {
+                type:String,
+                required : false
             }
         },
         data() {
@@ -161,7 +243,19 @@
                 { text: 'Bill No', value: 'billno' },
                 { text: 'Name', value: 'name' },
                 { text: 'Amount', value: 'totalamount' },
-                { text: 'Edit', value: 'edit' }],
+                { text: 'Edit', value: 'name' }],
+                header2: [{
+                    text: '#',
+                    align: 'left',
+                    value: 'billno'
+                },
+                { text: 'Date', value: 'billdate' },
+                { text: 'Bill No', value: 'billno' },
+                { text: 'Basic Amount(Rs)', value: 'itemtotal' },
+                { text: 'Charges(Rs)', value: 'charges'},
+                { text: 'Tax(Rs)', value: 'taxamount'},
+                { text: 'Final Amount', value: 'totalamount' },
+                { text: 'Edit', value: 'billno' }],
                 loading: true,
                 pagination: {},
                 totalCustomer: 0,
@@ -174,7 +268,10 @@
                 startDate1: "",
                 endDate1: "",
                 printid: "",
-                printOrderList:[]
+                printOrderList:[],
+                loadingPDF:false,
+                loadingExcel:false,
+                taxstatus:1
             }
 
         },
@@ -201,6 +298,7 @@
         created() {
             this.startDate1 = this.startDate
             this.endDate1 = this.endDate
+            this.getConfiguration().then(res=>{});
         },
         watch: {
             pagination: {
@@ -246,20 +344,120 @@
                     this.pagination.descending = false
                 }
             },
+            getConfiguration() {
+                return new Promise((resolve, reject) => {
+                    this.$axios.get("/" + this.$route.params.username + "/api/Configurations?access_token=" + this.$store.state.token)
+                        .then(res => {
+                            for (let i = 0; i < res.data.length; i++) {
+                                if(this.mode == 'customer') {
+                                    if (res.data[i].alias == "calculate_taxes_sales") this.taxstatus = res.data[i].value
+                                }
+                                else if(this.mode == 'supplier') {
+                                    if(res.data[i].alias == 'calculate_taxes_purchase') this.taxstatus = res.data[i].value
+                                }
+                            }
+                            if (this.taxstatus == 0) {
+                                this.header2.splice(5, 1)
+                                resolve()
+                            }
+                            else resolve()
+                        })
+                })
+            },
+            _export(type){
+                if(type == "pdf") this.loadingPDF = true
+                else this.loadingExcel = true
+                const { sortBy, descending, page, rowsPerPage } = this.pagination
+                this.getDataFromApi()
+                .then(res => {
+                    let item = res.items;
+                    let header = []
+                    header[0] = []
+                    let promise = new Promise(resolve=>{
+                        if(this.mode == 'sale' || this.mode == 'purchase') {
+                            for(let i = 0;i<this.header.length;i++) {
+                                if(this.header[i].text != 'Edit' && this.header[i].text != 'Print') {
+                                    header[0].push(this.header[i].text)
+                                    if(i == this.header.length - 1) resolve()
+                                }
+                                else if(i == this.header.length - 1) resolve()
+                            }
+                        }
+                        else if (this.mode == 'customer' || this.mode == 'supplier') {
+                            for(let i = 0;i<this.header2.length;i++) {
+                                if(this.header2[i].text != 'Edit' && this.header2[i].text != 'Print') {
+                                    header[0].push(this.header2[i].text)
+                                    if(i == this.header2.length - 1) resolve()
+                                }
+                                else {
+                                    if(i == this.header2.length - 1) resolve()
+                                }
+                            }
+                        }
+                    })
+                    promise.then(resolve=>{
+                        let body = []
+                        for(let i = 0;i<item.length;i++)
+                        {
+                            let date = new Date(item[i].billdate).getDate()+"/"+(new Date(item[i].billdate).getMonth()+1)+"/"+new Date(item[i].billdate).getFullYear()
+                            if(this.mode == "sale") {
+                                body[i] = [(item[i].index+1),date,(item[i].billbook.prefix+""+item[i].billno),item[i].customer.name,item[i].totalamount]
+                            }
+                            else if(this.mode == 'purchase'){
+                                body[i] = [(item[i].index+1),date,item[i].billno,item[i].supplier.name,item[i].totalamount]
+                            }
+                            else if(this.mode == "customer") {
+                                if(this.taxstatus == 1)
+                                    body[i] = [(item[i].index+1),date,(item[i].billbook.prefix+""+item[i].billno),item[i].itemtotal,item[i].charges,item[i].taxamount,item[i].totalamount]
+                                else
+                                    body[i] = [(item[i].index+1),date,(item[i].billbook.prefix+""+item[i].billno),item[i].itemtotal,item[i].charges,item[i].totalamount]
+                            }
+                            else if(this.mode == "supplier") {
+                                if(this.taxstatus == 1)
+                                    body[i] = [(item[i].index+1),date,item[i].billno,item[i].itemtotal,item[i].charges,item[i].taxamount,item[i].totalamount]
+                                else
+                                    body[i] = [(item[i].index+1),date,item[i].billno,item[i].itemtotal,item[i].charges,item[i].totalamount]
+                            }
+                        }
+                        let name = this.mode=="purchase" ? "Purchase" : "Sales"
+                        if(type == "pdf") {
+                            this.$createPDF(header,body,name+" Listing",process)
+                                .then((resolve)=>{this.loadingPDF=false})
+                        }
+                        else {
+                            this.$createExcel(header,body,name+" Listing",process)
+                                .then((resolve)=>{this.loadingExcel=false})
+                        }
+                    })
+                });
+            },
             getDataFromApi() {
                 this.loading = true
                 return new Promise((resolve, reject) => {
                     const { sortBy, descending, page, rowsPerPage } = this.pagination
                     let items = "";
                     let getDetails = new Promise((resolve1, reject1) => {
-                        if (this.mode == "purchase") {
+                        if (this.mode == "supplier") {
                             // http://localhost:3030/jay/api/Orders?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&filter={%22where%22:{%22and%22:[{%22billdate%22:{%22between%22:[%222019-01-01%22,%222019-02-02%22]}},{%22or%22:[{%22customerId%22:{%22regexp%22:%22a%22}},{%22itemtotal%22:{%22regexp%22:%22a%22}}]}]},%22include%22:%22customer%22}
+                            this.$axios.get('/' + this.$route.params.username + '/api/Purchases/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'","supplierId":"'+this.csid+'"}')
+                                .then(res => {
+                                    resolve1(res.data)
+                                });
+                        }
+                        else if (this.mode == "customer") {
+                            this.$axios.get('/' + this.$route.params.username + '/api/Orders/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'","customerId":"'+this.csid+'"}')
+                                .then(res => {
+                                    resolve1(res.data)
+                                });
+                        }
+                        else if(this.mode == 'purchase')
+                        {
                             this.$axios.get('/' + this.$route.params.username + '/api/Purchases/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
                                 .then(res => {
                                     resolve1(res.data)
                                 });
                         }
-                        else if (this.mode == "sale") {
+                        else if(this.mode == 'sale') {
                             if (this.billBookId == null) {
                                 this.$axios.get('/' + this.$route.params.username + '/api/Orders/getOrders?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
                                     .then(res => {
@@ -293,7 +491,6 @@
                 })
             },
             printOrder() {
-                console.log(this.selectOrder)
                 this.clickPrint = 1
                 for(let i=0;i<this.selectOrder.length;i++)
                 {

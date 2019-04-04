@@ -15,8 +15,8 @@
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap>
-                <v-flex xs7 sm9></v-flex>
-                <v-flex xs5 sm3>
+                <v-flex xs12 sm12>
+                    <v-layout align-start justify-end>
                     <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
                         Add
                         <v-icon dark right class="ml-1">check_circle</v-icon>
@@ -26,6 +26,7 @@
                         <v-icon dark right class="ml-1">check_circle</v-icon>
         
                     </v-btn>
+                    </v-layout>
                 </v-flex>
             </v-layout>
     </v-form>                

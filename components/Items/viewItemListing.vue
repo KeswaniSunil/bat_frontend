@@ -2,84 +2,91 @@
     <v-layout>
         <v-flex sm12>
             <v-card class="border-radius-5">
-                <v-card-text >
-                    <v-layout align-center justify-start row wrap>
-                        <v-flex sm8></v-flex>
-                        <v-flex sm4>
-                            <v-layout align-center justify-start row wrap>
-                            <v-flex xs1 sm3></v-flex>
-                            <v-flex xs5 sm4 >
-                                <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+                <v-card-text>
+                    <v-layout align-start justify-end row wrap class="mb-2">
+                        <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
                                 <v-icon dark small class="mr-2"> gavel</v-icon>Add Items
                                 </v-btn>
-                            </v-flex>
-                            <v-flex xs6 sm5>
                                 <v-btn color="info" round class="pa-2" @click="showBulk = true">
                                 <v-icon dark small class="mr-2"> gavel</v-icon>Add In Bulk
                                 </v-btn>
-                            </v-flex>
-                            </v-layout>
-                        </v-flex>
                     </v-layout>    
-                    <v-layout column class="pb-2" >
-                        <v-flex sm12>
-                            <v-layout align-center row wrap>
-                                <v-flex xs3 sm1>
-                                    <v-btn v-if="selectItem.length > 0" color="error" round class="pa-0" @click="deleteItem">
-                                        <v-icon dark small class="mr-1">gavel</v-icon> Delete
-                                    </v-btn>
-                                </v-flex>
-                                <v-flex xs9 sm8></v-flex>
-                                <v-flex xs12 sm3>
-                                <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field></v-flex>
-                            </v-layout>
+                    <v-layout row wrap class="mb-2">
+                        <v-flex sm1 xs3>
+                            <v-btn v-if="selectItem.length > 0" color="error" round class="pa-0" @click="deleteItem">
+                                        <v-icon dark small class="mr-1">delete</v-icon> Delete
+                            </v-btn>
                         </v-flex>
-                    </v-layout>
-                    
-                    <v-data-table v-model="selectItem" :headers="header" :items="itemDtl" :pagination.sync="pagination"
-                    :total-items="totalItem" :loading="loading" select-all item-key="id" class="elevation-0">
-                        <template v-slot:headers="props">
-                        <tr>
-                        <th>
-                            <v-checkbox
-                            :input-value="props.all"
-                            :indeterminate="props.indeterminate"
-                            primary
-                            hide-details
-                            @click.stop="toggleAll"
-                            ></v-checkbox>
-                        </th>
-                        <th
-                            v-for="header in props.headers"
-                            :key="header.text"
-                            :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
-                            @click="changeSort(header.value)"
-                        >
-                            <v-icon small>arrow_upward</v-icon>
-                            {{ header.text }}
-                        </th>
-                        </tr>
-                        </template>
-                        <template v-slot:items="props">
-                            <tr>
-                                <td :active="props.selected" @click="props.selected = !props.selected">
-                                    <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
-                                </td>
-                                <td>{{props.item.index+1}}</td>
-                                <td style="cursor:pointer;" class="text-capitalize name-linking" @click="editItem(props.item.id)">{{ props.item.name }}</td>
-                                <td>{{ props.item.unit.title }}</td>
-                                <td>{{ props.item.price }}</td>
-                                <td>{{ props.item.totalstock }}</td>
-                                <td>{{ props.item.usedstock }}</td>
-                                <td>{{ props.item.totalstock - props.item.usedstock }}</td>
-                                <td>
-                                    <v-icon small class="mr-12" @click="editItem(props.item.id)">edit
-                                    </v-icon>
-                                </td>
-                            </tr>
-                        </template>
-                    </v-data-table>
-                    
+                        <v-flex sm10 xs9></v-flex>
+                    </v-layout>    
+                    <v-card class="elevation-5" style="border-radius:5px;">
+                        <v-card-title  class="pa-2 primary white--text">
+                            List of All Items:-
+                        </v-card-title>
+                        <v-card-text>
+                            <v-layout row wrap >
+                                <v-flex xs12 sm9 class="mb-3">
+                                    <v-layout align-start justify-start row wrap>
+                                        
+                                        <v-btn color="primary" round class="pa-0 mr-1" :loading="loadingPDF" @click="_export('pdf')">
+                                        <v-icon dark small class="mr-2"  reverse>cloud_download</v-icon>Pdf
+                                    </v-btn>
+                                    <v-btn color="primary" round  class="pa-0 " :loading="loadingExcel" @click="_export('excel')">
+                                                <v-icon dark small class="mr-2"  reverse>cloud_download</v-icon>Excel   
+                                            </v-btn>
+                                            
+                                    </v-layout>    
+                                </v-flex>
+                                <v-flex xs12 sm3 class="mb-3">
+                                    <v-text-field v-model="search" append-icon="search" label="Search" class="pa-0 ma-0" single-line hide-details></v-text-field>
+                                </v-flex>
+                            
+                            </v-layout>
+                            <v-data-table v-model="selectItem" :headers="header" :items="itemDtl" :pagination.sync="pagination"
+                            :total-items="totalItem" :loading="loading" select-all item-key="id" class="elevation-0">
+                                <template v-slot:headers="props">
+                                <tr>
+                                <th>
+                                    <v-checkbox
+                                    :input-value="props.all"
+                                    :indeterminate="props.indeterminate"
+                                    primary
+                                    hide-details
+                                    @click.stop="toggleAll"
+                                    ></v-checkbox>
+                                </th>
+                                <th
+                                    v-for="header in props.headers"
+                                    :key="header.text"
+                                    :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                    @click="changeSort(header.value)"
+                                >
+                                    <v-icon small>arrow_upward</v-icon>
+                                    {{ header.text }}
+                                </th>
+                                </tr>
+                                </template>
+                                <template v-slot:items="props">
+                                    <tr>
+                                        <td :active="props.selected" @click="props.selected = !props.selected">
+                                            <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
+                                        </td>
+                                        <td>{{props.item.index+1}}</td>
+                                        <td style="cursor:pointer;" class="text-capitalize name-linking" @click="editItem(props.item.id)">{{ props.item.name }}</td>
+                                        <td>{{ props.item.unit.title }}</td>
+                                        <td>{{ props.item.price }}</td>
+                                        <td><router-link class="text-uppercase name-linking" :to="'/'+$route.params.username+'/Dashboard/Items/'+props.item.id+'/totalStock'">{{ props.item.totalstock}}</router-link></td>
+                                        <td><router-link class="text-uppercase name-linking" :to="'/'+$route.params.username+'/Dashboard/Items/'+props.item.id+'/usedStock'">{{ props.item.usedstock}}</router-link></td>
+                                        <td>{{ props.item.totalstock - props.item.usedstock }}</td>
+                                        <td>
+                                            <v-icon small class="mr-12" @click="editItem(props.item.id)">edit
+                                            </v-icon>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </v-data-table>
+                        </v-card-text> 
+                    </v-card>                   
                     <v-dialog width="800" v-model="showModal" >
                         <v-card>
                             <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
@@ -176,8 +183,6 @@ export default {
     components:{
         addEditItem
     },
-    created(){
-    },
     data() {
       return {
         header: [{
@@ -205,7 +210,9 @@ export default {
         totalItem: 0,
         SheetJSFT: _SheetJSFT,
         editValue:null,
-        closeModal1:1
+        closeModal1:1,
+        loadingPDF:false,
+        loadingExcel:false
       }
     },
     updated(){
@@ -389,6 +396,32 @@ export default {
           this.pagination.sortBy = column
           this.pagination.descending = false
         }
+      },
+      _export(type){
+          if(type == "pdf") this.loadingPDF = true
+          else this.loadingExcel = true
+          const { sortBy, descending, page, rowsPerPage } = this.pagination
+          //console.log("aa")
+          this.getDataFromApi()
+          .then(res => {
+              let item = res.items;
+              let header = []
+              header[0] = []
+              for(let i = 0;i<this.header.length;i++) if(this.header[i].text != 'Edit') header[0].push(this.header[i].text)
+              let body = []
+              for(let i = 0;i<item.length;i++)
+              {
+                  body[i] = [(item[i].index+1),item[i].name,item[i].unit.title,item[i].price,item[i].totalstock,item[i].usedstock,(item[i].totalstock - item[i].usedstock)]
+              }
+              if(type == "pdf") {
+                this.$createPDF(header,body,"Items Listing",process)
+                    .then((resolve)=>{this.loadingPDF=false})
+              }
+              else {
+                  this.$createExcel(header,body,"Items Listing",process)
+                    .then((resolve)=>{this.loadingExcel=false})
+              }
+            });
       },
       getDataFromApi() {
         this.loading = true

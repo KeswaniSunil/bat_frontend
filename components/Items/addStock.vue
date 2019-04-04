@@ -65,11 +65,14 @@
                         </v-flex>    
                     </v-layout>  
                     <v-layout align-center justify-start row wrap>
-                        <v-flex xs7 sm9></v-flex>
-                        <v-flex xs5 sm3>
-                            <v-btn color="info" type=submit>
+                        
+                        <v-flex xs12 sm12>
+                    <v-layout align-start justify-end>
+
+                            <v-btn color="info" round type=submit>
                                 <v-icon dark small class="mr-1"> edit</v-icon>Add
                             </v-btn>
+                            </v-layout>
                         </v-flex>
                     </v-layout>
               </v-form>

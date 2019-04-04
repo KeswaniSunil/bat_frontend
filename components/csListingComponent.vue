@@ -8,13 +8,36 @@
                     <v-icon dark small class="mr-1">gavel</v-icon> Delete
                   </v-btn>
                 </v-flex>
-                <v-flex xs9 sm8></v-flex>
-                <v-flex xs12 sm3>
-                  <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                </v-flex>
+                <v-flex xs9 sm11></v-flex>
               </v-layout>
             </v-flex>
-          </v-layout>
+          </v-layout>    
+                    <v-card class="elevation-5" style="border-radius:5px;">
+                        <v-card-title v-if="mode=='customer'" class="pa-2 primary white--text">
+                            List of All Customers:-
+                        </v-card-title>
+                        <v-card-title v-else class="pa-2 primary white--text">
+                            List of All Suppliers:-
+                        </v-card-title>
+                        <v-card-text>
+                            <v-layout row wrap >
+                                <v-flex xs12 sm9 class="mb-3">
+                                    <v-layout align-start justify-start row wrap>
+                                        
+                                        <v-btn color="primary" round class="pa-0 mr-1" :loading="loadingPDF" @click="_export('pdf')">
+                                        <v-icon dark small class="mr-2"  reverse>cloud_download</v-icon>Pdf
+                                    </v-btn>
+                                    <v-btn color="primary" round  class="pa-0 " :loading="loadingExcel" @click="_export('excel')">
+                                                <v-icon dark small class="mr-2"  reverse>cloud_download</v-icon>Excel   
+                                            </v-btn>
+                                            
+                                    </v-layout>    
+                                </v-flex>
+                                <v-flex xs12 sm3 class="mb-3">
+                                    <v-text-field v-model="search" append-icon="search" label="Search" class="pa-0 ma-0" single-line hide-details></v-text-field>
+                                </v-flex>
+                            
+                            </v-layout>
         <v-data-table v-model="selectCustomer" :headers="header" :items="customerDtl" :pagination.sync="pagination"
           :total-items="totalCustomer" :loading="loading" select-all item-key="id" class="elevation-0">
           <template v-slot:headers="props">
@@ -45,7 +68,16 @@
                   <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                 </td>
                 <td>{{props.item.index+1}}</td>
-                <td @click="editCustomer(props.item.id)" class="text-capitalize name-linking">{{ props.item.name }}</td>
+                <td v-if="mode=='customer'" class="text-capitalize name-linking">
+                  <router-link :to="'/'+$route.params.username+'/Dashboard/sales/customer/'+props.item.id+'/view'">
+                    {{props.item.name}}
+                  </router-link>
+                </td>
+                <td v-else  class="text-capitalize name-linking">
+                  <router-link :to="'/'+$route.params.username+'/Dashboard/purchase/supplier/'+props.item.id+'/view'">
+                    {{props.item.name}}
+                  </router-link>
+                </td>
                 <td>{{ props.item.mobile }}</td>
                 <td>{{ props.item.totalamount }}</td>
                 <td v-if="mode == 'customer'">{{ props.item.received }}</td>
@@ -53,12 +85,15 @@
                 <td v-if="mode == 'customer'"> {{parseFloat(props.item.totalamount) - parseFloat(props.item.received)}} </td>
                 <td v-if="mode == 'supplier'"> {{parseFloat(props.item.totalamount) - parseFloat(props.item.paid)}} </td>
                 <td>
-                  <v-icon class="mr-12" @click="editCustomer(props.item.id)">edit
-                  </v-icon>
+                  <v-btn icon flat @click="editCustomer(props.item.id)">
+                    <v-icon class="grey--text text--darken-2" >edit</v-icon>
+                  </v-btn>
                 </td>
               </tr>  
           </template>
         </v-data-table>
+        </v-card-text>
+        </v-card>
     </div>  
 </template>
 <script>
@@ -97,6 +132,8 @@
         selectCustomer: [],
         search: '',
         totalCustomer: 0,
+        loadingPDF:false,
+        loadingExcel:false
       }
     },
     watch: {
@@ -181,12 +218,12 @@
               }
               else if(this.mode == 'supplier')
               {
-                  this.$axios.post("/"+this.$route.params.username+"/api/Suppliers/update?access_token="+this.$store.state.token+"&where[id]="+this.selectSupplier[i],
+                  this.$axios.post("/"+this.$route.params.username+"/api/Suppliers/update?access_token="+this.$store.state.token+"&where[id]="+this.selectCustomer[i].id,
                         {
                             isenabled:0
                         })
                         .then(res => {
-                        this.$axios.post("/"+this.$route.params.username+"/api/Purchases/update?access_token="+this.$store.state.token+"&where[supplierId]="+this.selectSupplier[i],
+                        this.$axios.post("/"+this.$route.params.username+"/api/Purchases/update?access_token="+this.$store.state.token+"&where[supplierId]="+this.selectCustomer[i].id,
                             {
                                 isenabled:0
                             })
@@ -211,6 +248,39 @@
             }
           })
         }
+      },
+      _export(type){
+          if(type == "pdf") this.loadingPDF = true
+          else this.loadingExcel = true
+          const { sortBy, descending, page, rowsPerPage } = this.pagination
+          //console.log("aa")
+          this.getDataFromApi()
+          .then(res => {
+              let item = res.items;
+              let header = []
+              header[0] = []
+              for(let i = 0;i<this.header.length;i++) if(this.header[i].text != 'Edit') header[0].push(this.header[i].text)
+              let body = []
+              for(let i = 0;i<item.length;i++)
+              {
+                if(this.mode == 'customer')
+                {
+                  body[i] = [(item[i].index+1),item[i].name,item[i].mobile,item[i].totalamount,item[i].received,(item[i].totalamount - item[i].received)]
+                }
+                else if(this.mode == 'supplier'){
+                  body[i] = [(item[i].index+1),item[i].name,item[i].mobile,item[i].totalamount,item[i].paid,(item[i].totalamount - item[i].paid)]
+                }
+              }
+              let name = this.mode == 'customer' ? "Customer" : "Supplier"
+              if(type == "pdf") {
+                this.$createPDF(header,body,name + " Listing",process)
+                    .then((resolve)=>{this.loadingPDF=false})
+              }
+              else {
+                  this.$createExcel(header,body,name + " Listing",process)
+                    .then((resolve)=>{this.loadingExcel=false})
+              }
+            });
       },
       getDataFromApi() {
         this.loading = true

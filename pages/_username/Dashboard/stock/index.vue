@@ -1,29 +1,21 @@
 <template>
     <v-layout row wrap>
-        <v-flex xs12 >
+        <v-flex xs12>
             <v-card flat>
                 <v-card-text class="body-background mt-3">
                     <v-layout>
                         <v-flex sm12>
                             <v-card class="border-radius-5">
                                 <v-card-text>
-                                    <v-layout align-center justify-start row wrap class="mb-3">
-                                        <v-flex  sm8></v-flex>
-                                        <v-flex  sm4>
-                                            <v-layout align-center justify-start row wrap>
-                                                <v-flex xs1 sm2></v-flex>
-                                                <v-flex xs5 sm5 text-sm-right>
+                                    <v-layout align-start justify-end row wrap class="mb-3">
                                                     <v-btn color="info" round class="pa-2" @click="showModal = true">
                                                         <v-icon dark small class="mr-2"> gavel</v-icon>Add Stock
                                                     </v-btn>
-                                                </v-flex>
-                                                <v-flex xs6 sm5>
-                                                    <v-btn color="info" round class="pa-2" :to="'/'+this.$route.params.username+'/Dashboard/items/stock/subtypeWise'" nuxt>
-                                                        <v-icon dark small class="mr-2"> gavel</v-icon>SubType Wise  
+                                                    <v-btn color="info" round class="pa-2" :to="'/'+this.$route.params.username+'/Dashboard/items/stock/subtypeWise'"
+                                                        nuxt>
+                                                        <v-icon dark small class="mr-2"> gavel</v-icon>SubType Wise
                                                     </v-btn>
-                                                </v-flex>
-                                            </v-layout>
-                                        </v-flex>
+                                                
                                     </v-layout>
                                     <v-layout class="pt-3" align-center justify-start row wrap>
                                         <v-flex xs12 sm4>
@@ -33,7 +25,7 @@
                                                     <v-text-field v-model="startDate1" label="Start Date" prepend-icon="event"
                                                         readonly v-on="on"></v-text-field>
                                                 </template>
-                                                <v-date-picker v-model="startDate1" scrollable>
+                                                <v-date-picker v-model="startDate1" scrollable :max="endDate1">
                                                     <v-spacer></v-spacer>
                                                     <v-btn flat color="primary" @click="startDatemodal = false">Cancel</v-btn>
                                                     <v-btn flat color="primary" @click="$refs.startdate.save(startDate1)">OK</v-btn>
@@ -72,52 +64,78 @@
                                                     <v-layout row wrap>
                                                         <v-flex sm12>
                                                             <v-layout justify-space-between>
-                                                                <v-checkbox v-model="purchase" @change="getStock()" label="Purchase"></v-checkbox>
+                                                                <v-checkbox v-model="purchase" @change="getStock()"
+                                                                    label="Purchase"></v-checkbox>
                                                                 <v-checkbox v-model="sales" @change="getStock()" label="Sales"></v-checkbox>
                                                             </v-layout>
                                                         </v-flex>
                                                     </v-layout>
                                                 </v-flex>
-                                                <v-flex xs12 sm5></v-flex>
-                                                <v-flex xs12 sm3>
-                                                    <v-text-field v-model="search" append-icon="search" label="Search"
-                                                        single-line hide-details></v-text-field>
-                                                </v-flex>
+                                                <v-flex xs12 sm8></v-flex>
+
                                             </v-layout>
                                         </v-flex>
                                         <v-flex sm12>
 
                                         </v-flex>
                                     </v-layout>
-                                    <v-data-table  :headers="header" :items="stockDtl"
-                                        :pagination.sync="pagination" :total-items="totalStock" :loading="loading"
-                                        select-all item-key="id" class="elevation-0">
-                                        <template v-slot:headers="props">
-                                            <tr>
-                                                <th v-for="header in props.headers" :key="header.text" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
-                                                    @click="changeSort(header.value)" style="text-align:left;">
+                                    <v-card class="elevation-5" style="border-radius:5px;">
+                                        <v-card-title class="pa-2 primary white--text">
+                                            StockLogs of All Items:-
+                                        </v-card-title>
+                                        <v-card-text>
+                                            <v-layout row wrap>
+                                                <v-flex xs12 sm9 class="mb-3">
+                                                    <v-layout align-start justify-start row wrap>
 
-                                                    {{ header.text }}<v-icon small>arrow_upward</v-icon>
-                                                </th>
-                                            </tr>
-                                        </template>
-                                        <template v-slot:items="props">
-                                            <tr :class="[(billNo_order[props.index] != null) ? colorred : colorgreen]">
+                                                        <v-btn color="primary" round class="pa-0 mr-1" :loading="loadingPDF"
+                                                            @click="_export('pdf')">
+                                                            <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Pdf
+                                                        </v-btn>
+                                                        <v-btn color="primary" round class="pa-0 " :loading="loadingExcel"
+                                                            @click="_export('excel')">
+                                                            <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Excel
+                                                        </v-btn>
 
-                                                <td width="6%">{{props.item.index+1}}</td>
-                                                <td>{{ props.item.item.name }}</td>
-                                                <td>{{ props.item.price }}</td>
-                                                <td>{{ props.item.quantity }}</td>
-                                                <td v-if="billNo_purchase[props.index] != null">{{
-                                                    billNo_purchase[props.index] }}</td>
-                                                <td v-else-if="billNo_order[props.index] != null">{{
-                                                    billNo_order[props.index] }}</td>
-                                                <td v-else>-</td>
-                                                <td>{{ changeToIST(props.item.date) }}</td>
-                                                <th>{{props.item.notes}}</th>
-                                            </tr>
-                                        </template>
-                                    </v-data-table>
+                                                    </v-layout>
+                                                </v-flex>
+                                                <v-flex xs12 sm3 class="mb-3">
+                                                    <v-text-field v-model="search" append-icon="search" label="Search"
+                                                        class="pa-0 ma-0" single-line hide-details></v-text-field>
+                                                </v-flex>
+
+                                            </v-layout>
+                                            <v-data-table :headers="header" :items="stockDtl" :pagination.sync="pagination"
+                                                :total-items="totalStock" :loading="loading" select-all item-key="id"
+                                                class="elevation-0">
+                                                <template v-slot:headers="props">
+                                                    <tr>
+                                                        <th v-for="header in props.headers" :key="header.text" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                                            @click="changeSort(header.value)" style="text-align:left;">
+
+                                                            {{ header.text }}<v-icon small>arrow_upward</v-icon>
+                                                        </th>
+                                                    </tr>
+                                                </template>
+                                                <template v-slot:items="props">
+                                                    <tr :class="[(billNo_order[props.index] != null) ? colorred : colorgreen]">
+
+                                                        <td width="6%">{{props.item.index+1}}</td>
+                                                        <td>{{ props.item.item.name }}</td>
+                                                        <td>{{ props.item.price }}</td>
+                                                        <td>{{ props.item.quantity }}</td>
+                                                        <td v-if="billNo_purchase[props.index] != null">{{
+                                                            billNo_purchase[props.index] }}</td>
+                                                        <td v-else-if="billNo_order[props.index] != null">{{
+                                                            billNo_order[props.index] }}</td>
+                                                        <td v-else>-</td>
+                                                        <td>{{ changeToIST(props.item.date) }}</td>
+                                                        <th>{{props.item.notes}}</th>
+                                                    </tr>
+                                                </template>
+                                            </v-data-table>
+                                        </v-card-text>
+                                    </v-card>
                                     <v-dialog width="500" v-model="showModal">
                                         <v-card>
                                             <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
@@ -157,12 +175,7 @@
         },
         layout: "dashboard",
         created() {
-            
             this.generate();
-        },
-        beforeUpdate() {
-
-
         },
         updated() {
             if (this.closeModal1 == 2) {
@@ -231,9 +244,11 @@
                 startDate1: null,
                 endDate1: null,
                 purchase: true,
-                sales:true,
+                sales: true,
                 colorgreen: 'green lighten-4',
-                colorred: 'red lighten-4'
+                colorred: 'red lighten-4',
+                loadingPDF: false,
+                loadingExcel: false
             }
         },
         methods: {
@@ -249,13 +264,50 @@
                     this.pagination.descending = false
                 }
             },
+            _export(type) {
+                if (type == "pdf") this.loadingPDF = true
+                else this.loadingExcel = true
+                const { sortBy, descending, page, rowsPerPage } = this.pagination
+                //console.log("aa")
+                this.getDataFromApi()
+                    .then(res => {
+                        let item = res.items;
+                        let header = []
+                        header[0] = []
+                        for (let i = 0; i < this.header.length; i++) if (this.header[i].text != 'Edit') header[0].push(this.header[i].text)
+                        let body = []
+                        for (let i = 0; i < item.length; i++) {
+                            if (this.billNo_purchase[item[i].index] != null)
+                                body[i] = [(item[i].index + 1), item[i].item.name, item[i].price, item[i].quantity, this.billNo_purchase[item[i].index], this.changeToIST(item[i].date), item[i].notes]
+                            else if (this.billNo_order[item[i].index] != null)
+                                body[i] = [(item[i].index + 1), item[i].item.name, item[i].price, item[i].quantity, this.billNo_order[item[i].index], this.changeToIST(item[i].date), item[i].notes]
+                            else
+                                body[i] = [(item[i].index + 1), item[i].item.name, item[i].price, item[i].quantity, "-", this.changeToIST(item[i].date), item[i].notes]
+                        }
+                        let $this = this
+                        let name = (function () {
+                            if ($this.purchase == true && $this.sales == true) return "Purchase Sales"
+                            else if ($this.purchase == true) return "Purchase"
+                            else if ($this.sales == true) return "Sales"
+                            else ""
+                        })();
+                        if (type == "pdf") {
+                            this.$createPDF(header, body, name + " Stock Listing", process)
+                                .then((resolve) => { this.loadingPDF = false })
+                        }
+                        else {
+                            this.$createExcel(header, body, name + " Stock Listing", process)
+                                .then((resolve) => { this.loadingExcel = false })
+                        }
+                    });
+            },
             getDataFromApi() {
                 this.loading = true
                 return new Promise((resolve, reject) => {
                     const { sortBy, descending, page, rowsPerPage } = this.pagination
                     //console.log("aa")
                     let items = [];
-                    this.$axios.get('/' + this.$route.params.username + '/api/Stocklogs/getStocklogs?access_token=' + this.$store.state.token + '&filter={"skip":"'+parseInt(rowsPerPage * (page-1))+'","limit":"'+rowsPerPage+'","startdate":"'+this.startDate1+'","enddate":"'+this.endDate1+'","purchase":"'+this.purchase+'","sale":"'+this.sales+'","search":"'+this.search+'","sort":"'+sortBy+'","descending":"'+descending+'"}')
+                    this.$axios.get('/' + this.$route.params.username + '/api/Stocklogs/getStocklogs?access_token=' + this.$store.state.token + '&filter={"skip":"' + parseInt(rowsPerPage * (page - 1)) + '","limit":"' + rowsPerPage + '","startdate":"' + this.startDate1 + '","enddate":"' + this.endDate1 + '","purchase":"' + this.purchase + '","sale":"' + this.sales + '","search":"' + this.search + '","sort":"' + sortBy + '","descending":"' + descending + '"}')
                         .then(res => {
                             //this.stockDtl = res.data;
                             this.billNo_order = []
@@ -266,7 +318,7 @@
                                     this.billNo_order.push(null)
                                 }
                                 else if (res.data.data[i].orderId != null) {
-                                    this.billNo_order.push(res.data.data[i].order.billbook.prefix+""+res.data.data[i].order.billno)
+                                    this.billNo_order.push(res.data.data[i].order.billbook.prefix + "" + res.data.data[i].order.billno)
                                     this.billNo_purchase.push(null)
                                 }
                                 else {
@@ -310,10 +362,10 @@
             },
             getStock() {
                 this.getDataFromApi()
-                        .then(data => {
-                            this.stockDtl = data.items
-                            this.totalStock = data.total
-                        })
+                    .then(data => {
+                        this.stockDtl = data.items
+                        this.totalStock = data.total
+                    })
             }
         }
     }

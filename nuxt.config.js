@@ -18,14 +18,16 @@ module.exports = {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' },
       { rel: 'stylesheet', href: '/style.css' },
       { rel: 'stylesheet', href:'/css/custom.css' }
+    ],
+    script: [
     ]
   },
 
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#42a5f5' },
-//loading: '~/components/loading.vue',
+  //loading: { color: '#42a5f5' },
+  loading: '~/components/loading.vue',
   /*
   ** Global CSS
   */
@@ -37,7 +39,8 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/vuetify'
+    '@/plugins/vuetify',
+    '@/plugins/export'
   ],
 
   /*
@@ -54,11 +57,11 @@ module.exports = {
  axios: {
   // See https://github.com/nuxt-community/axios-module#options
   //baseURL: 'http://bcontrol.jdmit.in'
-  baseURL: 'http://192.168.2.5:3030'
+  baseURL: 'http://192.168.2.3:3030'
 },
 env:{
   //URL: 'http://bcontrol.jdmit.in'
-  URL: 'http://192.168.2.5:3030'
+  URL: 'http://192.168.2.3:3030'
 }, 
 
   /*

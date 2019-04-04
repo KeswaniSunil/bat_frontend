@@ -89,11 +89,17 @@
                                         <v-flex sm1>
                                         </v-flex>
                                         <v-flex xs12 sm8>
-                                            <v-autocomplete v-model="transport.Id" @input="getvehicleno" :items="transportACVitems"
+                                            <v-autocomplete v-if="transport.check == 1" v-model="transport.Id" @input="getvehicleno" :items="transportACVitems"
                                                 append-icon="search" :loading="transportACV.isLoading"
                                                 :search-input.sync="transportACV.search" hide-no-data hide-selected
                                                 item-text="name" item-value="id" label="Transport Name" placeholder="Transport Name"
                                                 return-string height=20 :single-line="biggerScreen"></v-autocomplete>
+                                            <v-layout row v-else>
+                                                <v-text-field v-model="transport.name" label="Transport Name"
+                                                :single-line="biggerScreen" readonly disabled height=20 ></v-text-field>
+                                                <div style="flex-grow:0.1"></div>
+                                                <v-icon @click="transport.check = 1;transport.Id=null;transport.vehicleNo=null">edit</v-icon>
+                                            </v-layout>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -121,7 +127,7 @@
                                         </v-flex>
                                         <v-flex xs12 sm8>
                                             <v-text-field v-model="transport.placeOfSupply" label="Place of Supply"
-                                                :single-line="biggerScreen" readonly height=20></v-text-field>
+                                                :single-line="biggerScreen" height=20></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -451,8 +457,8 @@
                                 </v-flex>
                             </v-layout>
                             <v-layout justify-end>
-                                <v-btn v-if="id == null" type="submit" :loading="btnLoading" dark round color="blue">Add Bill</v-btn>
-                                <v-btn v-else type="submit" dark round :loading="btnLoading" color="blue">Update Bill</v-btn>
+                                <v-btn v-if="id == null" type="submit" :loading="btnLoading" dark round color="info">Add Bill</v-btn>
+                                <v-btn v-else type="submit" dark round :loading="btnLoading" color="info">Update Bill</v-btn>
                             </v-layout>
                         </v-container>
                     </v-card-title>
@@ -1139,7 +1145,6 @@
                 }
             },
             paymentAdd(index) {
-                console.log(this.$refs);
                 this.payment[index].series = index
                 let v = 0
                 for (let i = 0; i < this.payment.length; i++) {
@@ -1431,8 +1436,7 @@
                                         .then(res5 => {
                                             let payment
                                             if (this.payment.length <= 0) {
-                                                var id = new String(res.data.id).substr(0, 35)
-                                                this.$router.push("/" + this.$route.params.username + "/dashboard/sales/order/" + id + "/view");
+                                                this.$router.push("/" + this.$route.params.username + "/Dashboard/sales/order/" + res.data.id + "/view");
                                             }
                                             else {
                                                 payment = []
@@ -1457,8 +1461,7 @@
                                             this.$axios.post("/" + this.$route.params.username + "/api/Orderpayments?access_token=" + this.$store.state.token, payment)
                                                 .then(res2 => {
                                                     
-                                                    var id = new String(res.data.id).substr(0, 35)
-                                                    this.$router.push("/" + this.$route.params.username + "/dashboard/sales/order/" + id + "/view")
+                                                    this.$router.push("/" + this.$route.params.username + "/Dashboard/sales/order/" + res.data.id + "/view")
                                                 });
                                         })
                                 });
@@ -1577,7 +1580,7 @@
                                                                                     let payment
                                                                                     if (this.payment.length <= 0) {
                                                                                         for (let i = 0; i < this.deletePaymentId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Orderpayments/" + this.deletePaymentId[i] + "?access_token=" + this.$store.state.token)
-                                                                                        this.$router.push("/" + this.$route.params.username + "/dashboard/sales/order/" + this.id + "/view")
+                                                                                        this.$router.push("/" + this.$route.params.username + "/Dashboard/sales/order/" + this.id + "/view")
                                                                                     }
                                                                                     else {
                                                                                         payment = []
@@ -1614,7 +1617,7 @@
                                                                                         for (let i = 0; i < this.deletePaymentId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Orderpayments/" + this.deletePaymentId[i] + "?access_token=" + this.$store.state.token)
                                                                                         this.$axios.post("/" + this.$route.params.username + "/api/Orderpayments?access_token=" + this.$store.state.token, payment)
                                                                                             .then(res => {
-                                                                                                this.$router.push("/" + this.$route.params.username + "/dashboard/sales/order/" + this.id + "/view")
+                                                                                                this.$router.push("/" + this.$route.params.username + "/Dashboard/sales/order/" + this.id + "/view")
                                                                                             })
                                                                                     }
                                                                                 })

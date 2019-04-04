@@ -3,28 +3,14 @@
     <v-flex xs12 sm12>
       <v-card class="border-radius-5">
         <v-card-text>
-          <v-layout align-center justify-start row wrap>
-            <v-flex xs1 sm8></v-flex>
-            <v-flex xs6 sm2>
-              <v-layout align-center justify-start row wrap>
-                <v-flex sm3></v-flex>
-                <v-flex sm9>
-                  <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                    <v-icon dark small class="mr-2"> gavel</v-icon>Add Customer
+          <v-layout align-start justify-end row wrap>
+               <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+                    <v-icon dark small class="mr-1"> gavel</v-icon>Add Customer
                   </v-btn>
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-flex xs5 sm2>
-              <v-layout align-center justify-start row wrap>
-                <v-flex sm2></v-flex>
-                <v-flex sm10>
-                  <v-btn color="info" round class="pa-2" @click="showBulk = true">
+                 <v-btn color="info" round class="pa-2" @click="showBulk = true">
                     <v-icon dark small class="mr-2"> gavel</v-icon>Add In Bulk
                   </v-btn>
-                </v-flex>
-              </v-layout>
-            </v-flex>
+                
           </v-layout>
 
           <csListingComponent v-model="editValue" :modalAction="closeModal1" mode="customer" />
@@ -74,7 +60,7 @@
                   </v-layout>
                   <v-layout row wrap class="mb-3">
                     <v-flex sm12 class="font-14">a) Customer name , b) Mobile No , c) Email , d) Street , e) Area , f)
-                      Pincode , g) City , h) State , i) Gstn , j) StateCode</v-flex>
+                      Pincode , g) City , h) State , i) Gstn , j) StateCode , k) Opening Balance</v-flex>
                   </v-layout>
                   <v-layout row wrap class="mb-3">
                     <v-flex sm12 class="font-18">[<b>Note</b>:- Customer Name,Mobile No. are compulsory Fields]</v-flex>
@@ -198,6 +184,7 @@
                 a[j].state = data[i][7];
                 a[j].gstin = data[i][8];
                 a[j].statecode = data[i][9];
+                a[j].balance=data[i][10];
                 a[j].isenabled = 1;
                 a[j].createdon = new Date();
                 a[j].modifiedon = new Date();

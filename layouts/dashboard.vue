@@ -1,20 +1,25 @@
 <template>
   <v-app>
+    <snack-bar/>
     <v-navigation-drawer :mini-variant="miniVariant" :clipped="clipped" v-model="drawer" width="250" fixed app dark
-      class="side-menu">
+      class="primary">
       <loadercontent v-if="loader1" />
-      <v-list class="mx-3" style="background:transparent">
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title class="text-xs-center title font-weight-bold">{{title}}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-divider width="220" class="white"></v-divider>
-
-        <v-list-tile v-for="(item, i) in items" :to="item.to" :key="i" router exact active-class="my-3 blue lighten-1 white--text border-radius-5"
-          class=" my-3 transparent white--text border-radius-5" :ripple="true">
+        <v-list style="margin-top:50px;background:transparent">
+          <v-list-tile style="height:80px;">
+            <v-list-tile-content class="height-100">
+              <v-list-tile-title class="text-xs-center title font-weight-bold height-100">
+                <v-avatar size="100px">
+                  <img src="https://justatic.com/v/20190228102703/shared/images/icons/placeholders/profile.png" alt="Avatar" />
+                </v-avatar>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      <v-list class="ml-4">
+        <v-list-tile v-for="(item, i) in items" :to="item.to" :key="i" router active-class="my-3 info white--text border-radius-left-25"
+          class="my-3 transparent white--text border-radius-left-25" :ripple="true">
           <v-list-tile-action style="min-width:40px">
-            <v-icon>dashboard</v-icon>
+            <v-icon>{{item.icon}}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title v-text="item.title" class="font-weight-light" />
@@ -23,36 +28,62 @@
 
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar color="white" v-if="toolbarview" class="elevation-0" :clipped-left="clipped" app light>
-      <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
+    <v-toolbar color="white" v-if="toolbarview" class="elevation-0" :clipped-left="clipped"  app light>
+      <v-toolbar-side-icon @click="drawer = !drawer"><v-icon>list</v-icon></v-toolbar-side-icon>
 
-      <v-toolbar-title>Dashboard</v-toolbar-title>
+      <v-toolbar-title>Bussiness Automation Tool</v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-menu offset-y bottom left>
+      <v-menu offset-y bottom left transition="slide-x-transition" light>
         <template v-slot:activator="{ on }">
           <div light flat round v-on="on" class="pa-0 ma-0 text-capitalize" style="cursor:pointer">
-            <span class="title">{{$store.state.username}}</span>
-            <v-icon>expand_more</v-icon>
+            <v-btn flat icon  large>
+              <v-avatar size="36px">
+                <img src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-circle-512.png" alt="Avatar" />
+              </v-avatar>
+            </v-btn>
           </div>
         </template>
 
-        <v-list>
-          <v-list-tile>
+        <v-list >
+          <v-list-tile :to="'/'+this.$route.params.username+'/dashboard/CompanyDetails'">
+            <v-icon style="padding-right: 10px;">account_circle</v-icon>
             <v-list-tile-title>
-              <router-link style="text-decoration:none;" :to="'/'+this.$route.params.username+'/dashboard/CompanyDetails'"
-                class="dropdown-item">View/Edit Profile</router-link>
+            Profile
             </v-list-tile-title>
           </v-list-tile>
-          <v-list-tile>
-            <v-list-tile-title style="cursor:pointer" @click="showModal= true,getConfig()">Company Configs</v-list-tile-title>
+          <v-list-tile @click="showModal= true,getConfig()">
+            <v-icon style="padding-right: 10px;">settings</v-icon>
+            <v-list-tile-title>Company Configs</v-list-tile-title>
           </v-list-tile>
-          <v-list-tile>
-            <v-list-tile-title style="cursor:pointer" @click="logout()">Log Out</v-list-tile-title>
+          <v-list-tile @click="modalChngPass= true">
+            <v-icon style="padding-right: 10px;">vpn_key</v-icon>
+            <v-list-tile-title>Change Password</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile @click="logout()">
+            <v-icon style="padding-right: 10px;">power_settings_new</v-icon>
+            <v-list-tile-title>Log Out</v-list-tile-title>
           </v-list-tile>
         </v-list>
       </v-menu>
     </v-toolbar>
+    <v-dialog v-model="modalChngPass" width="400">
+      <v-card>
+        <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
+            <span style="font-size:18px;">Change Password</span>
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <changepassword  v-model="modalChngPass"/>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" flat @click="modalChngPass = false">
+                Close
+            </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog width="300" v-model="showModal">
       <v-card v-if="showModal==true">
         <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
@@ -100,10 +131,14 @@
 
 <script>
   import loadercontent from "@/components/loadercontent";
+  import changepassword from "@/components/auth/changepassword";
+  import SnackBar from "@/components/_page/Snackbar";
   export default {
     middleware: 'authenticated',
     components:{
-      loadercontent
+      loadercontent,
+      changepassword,
+      SnackBar
     },
     created() {
       this.getConfig()
@@ -118,14 +153,15 @@
         showModal: false,
         fixed: false,
         btnLoading: false,
+        modalChngPass:false,
         items: [
-          { icon: 'bubble_chart', title: 'Sales', to: '/' + this.$route.params.username + '/Dashboard/sales' },
-          { icon: 'bubble_chart', title: 'Purchases', to: '/' + this.$route.params.username + '/Dashboard/purchase' },
-          { icon: 'bubble_chart', title: 'Items', to: '/' + this.$route.params.username + '/Dashboard/items' },
-          { icon: 'bubble_chart', title: 'Stock', to: '/' + this.$route.params.username + '/Dashboard/items/stock' },
-          { icon: 'bubble_chart', title: 'Transport', to: '/' + this.$route.params.username + '/Dashboard/transport' },
-          { icon: 'bubble_chart', title: 'Taxes', to: '/' + this.$route.params.username + '/Dashboard/taxes' },
-          { icon: 'bubble_chart', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/sales/billbook' },
+          { icon: 'store', title: 'Sales', to: '/' + this.$route.params.username + '/Dashboard/sales' },
+          { icon: 'shopping_cart', title: 'Purchases', to: '/' + this.$route.params.username + '/Dashboard/purchase' },
+          { icon: 'dashboard', title: 'Items', to: '/' + this.$route.params.username + '/Dashboard/items' },
+          { icon: 'dashboard', title: 'Stock', to: '/' + this.$route.params.username + '/Dashboard/stock' },
+          { icon: 'dashboard', title: 'Transport', to: '/' + this.$route.params.username + '/Dashboard/transport' },
+          { icon: 'dashboard', title: 'Taxes', to: '/' + this.$route.params.username + '/Dashboard/taxes' },
+          { icon: 'dashboard', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/billbook' },
         ],
         miniVariant: false,
         right: true,
@@ -205,8 +241,3 @@
     }
   }
 </script>
-<style>
-  .border-radius-5 {
-    border-radius: 5px;
-  }
-</style>

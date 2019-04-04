@@ -35,13 +35,13 @@ export default {
 }
 .loading-page .spin-icon {
   margin: auto;
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
 
   border: solid 3px transparent;
   border-top-color:  #666;
   border-left-color: #666;
-  border-radius: 80px;
+  border-radius: 50px;
 
   -webkit-animation: loading-spinner 500ms linear infinite;
   -moz-animation:    loading-spinner 500ms linear infinite;

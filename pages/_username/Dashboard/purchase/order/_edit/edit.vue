@@ -1,5 +1,5 @@
 <template>
-    <bill :id="$route.params.edit" />
+    <bill :id="$route.params.edit" class="mt-3"/>
 </template>
 
 <script>
