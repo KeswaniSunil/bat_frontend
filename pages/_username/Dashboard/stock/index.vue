@@ -9,11 +9,11 @@
                                 <v-card-text>
                                     <v-layout align-start justify-end row wrap class="mb-3">
                                                     <v-btn color="info" round class="pa-2" @click="showModal = true">
-                                                        <v-icon dark small class="mr-2"> gavel</v-icon>Add Stock
+                                                        <v-icon dark small class="mr-2"> flash_on</v-icon>Add Stock
                                                     </v-btn>
                                                     <v-btn color="info" round class="pa-2" :to="'/'+this.$route.params.username+'/Dashboard/items/stock/subtypeWise'"
                                                         nuxt>
-                                                        <v-icon dark small class="mr-2"> gavel</v-icon>SubType Wise
+                                                        <v-icon dark small class="mr-2"> flash_on</v-icon>SubType Wise
                                                     </v-btn>
                                                 
                                     </v-layout>

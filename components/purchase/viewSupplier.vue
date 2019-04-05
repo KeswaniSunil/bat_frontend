@@ -5,11 +5,11 @@
         <v-card-text>
           <v-layout align-start justify-end row wrap>
                   <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                    <v-icon dark small class="mr-1"> gavel</v-icon>Add Supplier
+                    <v-icon dark small class="mr-1"> person_add</v-icon>Add Supplier
                   </v-btn>
 
                   <v-btn color="info" round class="pa-2" @click="showBulk = true">
-                    <v-icon dark small class="mr-2"> gavel</v-icon>Add In Bulk
+                    <v-icon dark small class="mr-2"> equalizer</v-icon>Add In Bulk
                   </v-btn>
           </v-layout>
 

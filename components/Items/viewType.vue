@@ -10,7 +10,7 @@
                                     <v-flex sm4></v-flex>
                                     <v-flex sm8>
                                         <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                                                <v-icon dark small class="mr-2"> gavel</v-icon>Add Type
+                                                <v-icon dark small class="mr-2"> flash_on</v-icon>Add Type
                                         </v-btn>
                                     </v-flex>    
                                 </v-layout>

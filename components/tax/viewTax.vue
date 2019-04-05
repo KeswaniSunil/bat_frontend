@@ -8,7 +8,7 @@
                             <v-flex xs5 sm2>
                                 <v-layout  align-end justify-end row wrap>
                                     <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                                        <v-icon dark small class="mr-2"> gavel</v-icon>Add Taxes
+                                        <v-icon dark small class="mr-2"> flash_on</v-icon>Add Taxes
                                     </v-btn>    
                                 </v-layout>
                             </v-flex>
@@ -18,7 +18,7 @@
                                 <v-layout align-center row wrap>
                                     <v-flex xs3 sm1>
                                         <v-btn v-if="selectType.length > 0" color="error" round class="pa-0" @click="deleteType">
-                                            <v-icon dark small class="mr-1">gavel</v-icon> Delete
+                                            <v-icon dark small class="mr-1">delete</v-icon> Delete
                                         </v-btn>
                                     </v-flex>
                                     <v-flex xs9 sm8></v-flex>

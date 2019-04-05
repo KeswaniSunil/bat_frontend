@@ -51,7 +51,7 @@
                                 <v-flex xs3 sm2>
                                     <v-layout align-center justify-space-between>
                                         <v-btn v-if="selectOrder.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
-                                            <v-icon dark small class="mr-1">gavel</v-icon> Delete
+                                            <v-icon dark small class="mr-1">delete</v-icon> Delete
                                         </v-btn>
                                         <v-btn v-if="selectOrder.length > 0 && (mode == 'sale' || mode == 'customer') " round color="blue" @click="printOrder" dark>
                                             <v-icon dark small class="mr-1">print</v-icon> Print

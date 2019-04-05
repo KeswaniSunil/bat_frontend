@@ -5,7 +5,7 @@
               <v-layout align-center row wrap>
                 <v-flex xs3 sm1>
                   <v-btn v-if="selectCustomer.length > 0" color="error" round class="pa-0" @click="deleteCustomer">
-                    <v-icon dark small class="mr-1">gavel</v-icon> Delete
+                    <v-icon dark small class="mr-1">delete</v-icon> Delete
                   </v-btn>
                 </v-flex>
                 <v-flex xs9 sm11></v-flex>
