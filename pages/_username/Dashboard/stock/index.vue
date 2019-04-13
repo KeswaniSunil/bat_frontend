@@ -1,6 +1,4 @@
 <template>
-    <v-layout row wrap>
-        <v-flex xs12>
             <v-card flat>
                 <v-card-text class="body-background mt-3">
                     <v-layout>
@@ -11,7 +9,7 @@
                                                     <v-btn color="info" round class="pa-2" @click="showModal = true">
                                                         <v-icon dark small class="mr-2"> flash_on</v-icon>Add Stock
                                                     </v-btn>
-                                                    <v-btn color="info" round class="pa-2" :to="'/'+this.$route.params.username+'/Dashboard/items/stock/subtypeWise'"
+                                                    <v-btn color="info" round class="pa-2" :to="'/'+this.$route.params.username+'/Dashboard/stock/subtypeWise'"
                                                         nuxt>
                                                         <v-icon dark small class="mr-2"> flash_on</v-icon>SubType Wise
                                                     </v-btn>
@@ -163,8 +161,6 @@
                     </v-layout>
                 </v-card-text>
             </v-card>
-        </v-flex>
-    </v-layout>
 </template>
 <script>
 

@@ -4,12 +4,12 @@
       <div>
         <v-tabs v-model="tab" class="tab-display-none"  color="white" grow light>
           <v-tabs-slider color="black"></v-tabs-slider>
-          <v-tab v-for="(item,index) in items" :key="index" :href="`#tab-${index}`">
+          <v-tab v-for="(item,index) in items" :key="index" :href="`#tab-${index+1}`">
             {{ item.name }}
           </v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab" touchless>
-          <v-tab-item v-for="(item,index) in items" :key="index" :value="`tab-${index}`">
+          <v-tab-item v-for="(item,index) in items" :key="index" :value="`tab-${index+1}`">
             <v-card flat>
               <v-card-text class="body-background">
                 <!--     New Bill  -->
@@ -32,19 +32,35 @@
   import bill from "@/components/sales/bill";
   import viewCustomer from "@/components/sales/viewCustomer";
   import orderListing from '@/components/orderListingComponent';
+  import loadercontent from "@/components/loadercontent";
   export default {
     layout: "dashboard",
     components:{
       bill,
       viewCustomer,
-      orderListing
+      orderListing,
+      loadercontent
+    },
+    mounted(){
+      if(this.$route.hash.search("tab") > -1)
+      {
+        this.tab = this.$route.hash.substr(1)
+      }
+    },
+    beforeUpdate(){
+      if(this.$route.query.startDate != null && this.$route.query.endDate != null)
+      {
+        this.$router.push(new String(this.$route.fullPath).replace(this.$route.hash,"#"+this.tab))
+      }
+      else {
+        this.$router.push("#"+this.tab)
+      }
+    },
+    updated(){
+      this.loading = false;
     },
     created(){
-      if(this.$route.query.tab != null)
-      {
-        this.tab = this.$route.query.tab
-      }
-        if(this.$route.query.startDate != null && this.$route.query.endDate != null || this.$route.query.id != null)
+      if(this.$route.query.startDate != null && this.$route.query.endDate != null || this.$route.query.id != null)
         {
             this.startDate = this.$route.query.startDate
             this.endDate = this.$route.query.endDate
@@ -66,6 +82,7 @@
       return {
         tab: null,
         isActive: 0,
+        loading:true,
         notactive: 'red red--text text--lighten-4',
         active: 'red white--text',
         items: [

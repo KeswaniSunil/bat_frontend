@@ -2,14 +2,12 @@
     <v-form @submit.prevent="addTax" ref="form1" lazy-validation onkeypress="return event.keyCode != 13">
         <v-layout align-center justify-start row wrap class="mb-3">
                 <v-flex xs12 sm12>
-                    <label class="font-16 font-weight-regular " >Tax Name*</label>
-                    <v-text-field label="" type=text  :rules="requiredRules" v-model="taxname" height=25 class="pa-0 mt-1"></v-text-field>
+                    <v-text-field label="Tax Name" type=text  :rules="requiredRules" v-model="taxname"></v-text-field>
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap class="mb-1">
                 <v-flex xs12 sm12>
-                    <label class="font-16 font-weight-regular">Percentage.*</label>
-                    <v-text-field label="" type=number  :rules="requiredRules" v-model="percentage" height=25 class="pa-0 mt-1"></v-text-field>
+                    <v-text-field label="Percentage" type=number  :rules="numberRules" v-model="percentage"></v-text-field>
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap>
@@ -56,6 +54,9 @@ export default {
             propCheck:0,
             requiredRules: [
                 v => !!v || 'This Field is required'
+            ],
+            numberRules:[
+                v => (v != "" && v >= 0) || 'Value is more than or equal to 0'
             ],
            biggerScreen:true,
            btnLoading:false

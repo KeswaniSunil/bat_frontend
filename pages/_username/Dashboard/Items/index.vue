@@ -4,12 +4,12 @@
       <div>
         <v-tabs v-model="tab" color="white" grow light>
           <v-tabs-slider color="black"></v-tabs-slider>
-          <v-tab v-for="(item,index) in items" :key="index" :href="`#tab-${index}`">
+          <v-tab v-for="(item,index) in items" :key="index" :href="`#tab-${index+1}`">
             {{ item.name }}
           </v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab" touchless>
-          <v-tab-item v-for="(item,index) in items" :key="index" :value="`tab-${index}`">
+          <v-tab-item v-for="(item,index) in items" :key="index" :value="`tab-${index+1}`">
             <v-card flat>
               <v-card-text class="body-background">
                 <!--     New Bill  -->
@@ -35,10 +35,13 @@
       ItemListing,Type,SubType
     },
     mounted(){
-      if(this.$route.query.tab != null)
+      if(this.$route.hash.search("tab") > -1)
       {
-        this.tab = this.$route.query.tab
+        this.tab = this.$route.hash.substr(1)
       }
+    },
+    beforeUpdate(){
+      this.$router.push("#"+this.tab)
     },
     data() {
       return {

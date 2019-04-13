@@ -3,14 +3,20 @@
     <v-flex xs12 sm12>
       <v-card class="border-radius-5">
         <v-card-text>
-          <v-layout align-start justify-end row wrap>
-                  <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                    <v-icon dark small class="mr-1"> person_add</v-icon>Add Supplier
-                  </v-btn>
-
-                  <v-btn color="info" round class="pa-2" @click="showBulk = true">
-                    <v-icon dark small class="mr-2"> equalizer</v-icon>Add In Bulk
-                  </v-btn>
+          <v-layout align-start justify-space-between row wrap>
+            <div>
+              <v-btn color="secondary" round class="pa-2" @click="modalSettlement = true">
+                <v-icon dark small class="mr-1"> person_add</v-icon>Amount Settlement
+              </v-btn>
+            </div>
+            <div>
+              <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+                <v-icon dark small class="mr-1"> person_add</v-icon>Add Supplier
+              </v-btn>
+              <v-btn color="info" round class="pa-2" @click="showBulk = true">
+                <v-icon dark small class="mr-2"> equalizer </v-icon>Add In Bulk
+              </v-btn>
+            </div>
           </v-layout>
 
           <csListingComponent v-model="editValue" :modalAction="closeModal1" mode="supplier" />
@@ -32,6 +38,27 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" flat @click="showModal = false,editValue=null">
+                  Close
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog width="400" v-model="modalSettlement" persistent>
+            <v-card>
+              <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
+                <span style="font-size:18px;">Add Settlement</span>
+              </v-card-title>
+              <v-card-text class="pa-0">
+                <v-container grid-list-xs>
+                  <csSettlement v-if="modalSettlement==true" v-model="closeModal2" mode="supplier"></csSettlement>
+                </v-container>
+              </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" flat @click="modalSettlement = false">
                   Close
                 </v-btn>
               </v-card-actions>
@@ -105,6 +132,7 @@
 <script>
   import csAddComponent from "~/components/csAddComponent";
   import csListingComponent from "~/components/csListingComponent";
+  import csSettlement from "~/components/csSettlement";
   var XLSX = require('xlsx')
   const _SheetJSFT = [
     "xlsx", "xlsb", "xlsm", "xls", "xml", "csv", "txt", "ods", "fods", "uos", "sylk", "dif", "dbf", "prn", "qpw", "123", "wb*", "wq*", "html", "htm"
@@ -112,15 +140,18 @@
   export default {
     components: {
       csAddComponent,
-      csListingComponent
+      csListingComponent,
+      csSettlement
     },
     data() {
       return {
         addinBulk: 0,
         showModal: false,
         showBulk: false,
+        modalSettlement: false,
         editValue: null,
         closeModal1: 1,
+        closeModal2: 1,
         url: process.env.URL,
         SheetJSFT: _SheetJSFT
       }
@@ -130,6 +161,12 @@
       // closeModal = 2 means reload the datatable
       if (this.closeModal1 == 2) {
         this.showModal = false
+      }
+      if(this.closeModal2 == 2){
+        this.modalSettlement = false
+        this.closeModal1 = 2
+        this.editValue = null
+        this.closeModal2 = 0
       }
     },
     watch: {
@@ -187,6 +224,7 @@
                 a[j].gstin = data[i][8];
                 a[j].statecode = data[i][9];
                 a[j].balance = data[i][10];
+                a[j].closingbal = data[i][10];
                 a[j].isenabled = 1;
                 a[j].createdon = new Date();
                 a[j].modifiedon = new Date();

@@ -3,25 +3,23 @@
         
             <v-layout align-center justify-start row wrap class="mb-3">
                 <v-flex xs12 sm12>
-                    <label class="font-16 font-weight-regular " >Type Name</label>
-                    <v-text-field label="" type=text  :rules="requiredRules" v-model="typeName" height=25 class="pa-0 mt-1"></v-text-field>
+                    <v-text-field label="Type Name" type=text  :rules="requiredRules" v-model="typeName" height=25 class="pa-0 mt-1"></v-text-field>
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap class="mb-1" v-if="taxprop_p == 1 || taxprop_s == 1">
                 <v-flex xs12 sm12>
-                    <label class="font-16 font-weight-regular">Tax</label>
-                    <v-select :items="taxes" item-text="name" item-value="id" v-model="selectedTax"
+                    <v-select :items="taxes" label="Tax" item-text="name" item-value="id" v-model="selectedTax"
                      height=25 class="pa-0 mt-1"   ></v-select>
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap>
                 <v-flex xs12 sm12>
                     <v-layout align-start justify-end>
-                    <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
+                    <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark >
                         Add
                         <v-icon dark right class="ml-1">check_circle</v-icon>
                     </v-btn>
-                    <v-btn v-else class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
+                    <v-btn v-else class="" :loading="btnLoading" type="submit" color="info" round dark>
                         Save
                         <v-icon dark right class="ml-1">check_circle</v-icon>
         

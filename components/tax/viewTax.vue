@@ -3,16 +3,11 @@
         <v-flex sm12>
         <v-card class="border-radius-5">
                 <v-card-text>
-                    <v-layout  align-center justify-start row wrap>
-                            <v-flex xs7 sm10></v-flex>
-                            <v-flex xs5 sm2>
-                                <v-layout  align-end justify-end row wrap>
-                                    <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                                        <v-icon dark small class="mr-2"> flash_on</v-icon>Add Taxes
-                                    </v-btn>    
-                                </v-layout>
-                            </v-flex>
-                        </v-layout>    
+                    <v-layout align-end justify-end row wrap>
+                        <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+                            <v-icon dark small class="mr-2"> flash_on</v-icon>Add Taxes
+                        </v-btn>
+                    </v-layout>    
                         <v-layout column class="pb-2" >
                             <v-flex sm12>
                                 <v-layout align-center row wrap>

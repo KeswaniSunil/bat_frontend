@@ -105,7 +105,7 @@
                                             :single-line="true" height=20 disabled></v-text-field>
                                     </td>
                                     <td style="min-width:100px" class="text-xs-right">
-                                        <v-text-field type="number" v-model="props.item.mrp" label="MRP" step="any" min="0"
+                                        <v-text-field type="number" v-model="props.item.mrp" :rules="numberRules" label="MRP" step="any" min="0"
                                             :single-line="true" height=20 :disabled="type != null" @keyup="getSubTotal(props.index)"></v-text-field>
                                     </td>
                                     <td v-if="configuration.taxes == 1" class="text-xs-right">
@@ -114,7 +114,7 @@
                                     </td>
                                     <td class="text-xs-right">
                                         <v-text-field type="number" v-model="props.item.quantity" :disabled="type != null"
-                                            min="1" label="Quantity" @keyup="getSubTotal(props.index)" @change="getSubTotal(props.index)" :single-line="true" height=20></v-text-field>
+                                            min="1" :rules="numberRulesmin1" label="Quantity" @keyup="getSubTotal(props.index)" @change="getSubTotal(props.index)" :single-line="true" height=20></v-text-field>
                                     </td>
                                     <td class="text-xs-right">
                                         <v-text-field type="number" v-model="props.item.subTotal" label="Sub Total"
@@ -178,7 +178,7 @@
                                 </v-flex>
                                 <v-flex xs10 sm6>
                                     <v-text-field type="number" :disabled="type != null" v-model.number="billDetail.discount" min="0" @keyup="getBillTotal"
-                                        @change="getBillTotal" label="Discount" :single-line="biggerScreen" height=20></v-text-field>
+                                        @change="getBillTotal" label="Discount" :rules="numberRules" :single-line="biggerScreen" height=20></v-text-field>
                                 </v-flex>
                                 <v-flex xs2 sm1>
                                     <v-select :items="[{text:'Rs',value:'1'},{text:'%', value:'2'}]" item-text="text"
@@ -195,7 +195,7 @@
                                     <label class="font-15 font-weight-regular">Charges: </label>
                                 </v-flex>
                                 <v-flex xs12 sm7>
-                                    <v-text-field type="number" :disabled="type != null" min="0" v-model.number="billDetail.charges" @keyup="getBillTotal"
+                                    <v-text-field type="number" :disabled="type != null" min="0" :rules="numberRules" v-model.number="billDetail.charges" @keyup="getBillTotal"
                                         @change="getBillTotal" label="Charges" :single-line="biggerScreen" height=20></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -221,7 +221,7 @@
                                     <label class="font-15 font-weight-regular">Total Payable Amount: </label>
                                 </v-flex>
                                 <v-flex xs12 sm7>
-                                    <v-text-field type="number" v-model="billDetail.totalPayableAmount" label="Total Payable Amount"
+                                    <v-text-field type="number" :rules="numberRules" v-model="billDetail.totalPayableAmount" label="Total Payable Amount"
                                         :single-line="biggerScreen" height=20 disabled></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -238,7 +238,7 @@
                         <v-flex xs3>
                             <v-layout align-center justify-space-between>
                                 <label class="title">Payment Details:</label>
-                                <v-btn v-if="biggerScreen == true && type == null" round dark>
+                                <v-btn v-if="biggerScreen == true && type == null" @click="createPaymentRow()" round dark>
                                     Add Payment
                                 </v-btn>
                             </v-layout>
@@ -265,7 +265,8 @@
                                         </v-dialog>
                                     </td>
                                     <td style="min-width:100px" class="text-xs-right">
-                                        <v-select :items="['Cash','Cheque','Wallet','Card','other']" :disabled="type != null" @change="paymentAdd(props.index)"
+                                        <v-select :items="[{text:'Cash',value:'Cash'},{text:'Balance (Rs. '+closingbal+')',value:'Balance',disabled:closingbal == 0 ? true : false},{text:'Cheque',value:'Cheque'},{text:'Wallet',value:'Wallet'},{text:'Card',value:'Card'},{text:'other',value:'other'}]"
+                                            item-text="text" item-value="value" item-disabled="disabled" :disabled="type != null" @change="paymentAdd(props.index)"
                                             v-model="props.item.paymentMethod" height=20></v-select>
                                     </td>
                                     <td style="min-width:200px;" class="text-xs-right">
@@ -274,7 +275,7 @@
                                     </td>
                                     <td class="text-xs-right">
                                         <v-text-field type="number" v-model="props.item.paidAmount"  label="Recieved Amount"
-                                            min="0" @keyup="getReceviable()" @change="getReceviable()" :disabled="props.item.id != null || type != null"
+                                            min="0" @keyup="getReceviable()" @change="getReceviable()" :rules="numberRules" :disabled="props.item.id != null || type != null || props.item.paymentMethod == 'Balance'"
                                             :single-line="true" height=20></v-text-field>
                                     </td>
                                     <td class="text-xs-right">
@@ -352,7 +353,7 @@
                                     <label class="font-15 font-weight-regular">Total Payable Amount: </label>
                                 </v-flex>
                                 <v-flex xs12 sm7>
-                                    <v-text-field type="number" v-model.number="billDetail.receivable" label="Total Payable Amount"
+                                    <v-text-field type="number" :rules="numberRules" v-model.number="billDetail.receivable" label="Total Payable Amount"
                                         :single-line="biggerScreen" height=20 disabled></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -360,7 +361,7 @@
                     </v-layout>
                     <v-layout justify-end>
                         <v-btn v-if="id == null" type="submit" :loading="btnLoading" dark round color="info">Add Bill</v-btn>
-                        <v-btn v-else-if="id != null && type == null" type="submit" dark round color="info">Update Bill</v-btn>
+                        <v-btn v-else-if="id != null && type == null" type="submit" :loading="btnLoading" dark round color="info">Update Bill</v-btn>
                     </v-layout>
                 </v-container>
                 </v-card-title>
@@ -397,7 +398,7 @@
                                 height=20 disabled></v-text-field>
                         </v-flex>
                         <v-flex xs12>
-                            <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].mrp" label="MRP" min="0"
+                            <v-text-field type="number" :rules="numberRules" v-model="itemModalDetails[itemModalIndex].mrp" label="MRP" min="0"
                                 step="any" height=20 @keyup="getSubTotalModal(itemModalIndex)" @change="getSubTotalModal(itemModalIndex)"></v-text-field>
                         </v-flex>
                         <v-flex xs12 v-if="configuration.taxes == 1">
@@ -407,7 +408,7 @@
                         <v-flex xs12>
                             <v-text-field type="number" min="1" :disabled="itemModalDetails[itemModalIndex].id != null"
                                 v-model.number="itemModalDetails[itemModalIndex].quantity" @change="getSubTotalModal(itemModalIndex)"
-                                @keyup="getSubTotalModal(itemModalIndex)" label="Quantity" height=20></v-text-field>
+                                @keyup="getSubTotalModal(itemModalIndex)" :rules="numberRulesmin1" label="Quantity" height=20></v-text-field>
                         </v-flex>
                         <v-flex xs12>
                             <v-text-field type="number" v-model="itemModalDetails[itemModalIndex].subTotal" label="Sub Total"
@@ -424,7 +425,7 @@
                 </v-container>
             </v-card>
         </v-dialog>
-        <v-dialog v-if="payment.length-1 > 0" v-model="modalPrePayment" fullscreen hide-overlay transition="dialog-bottom-transition">
+        <v-dialog v-if="modalPrePayment" v-model="modalPrePayment" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar dark color="primary">
                     <v-btn icon dark @click="modalPrePayment = false;paymentModalIndex = (payment.length - 1)">
@@ -457,15 +458,16 @@
                             </v-dialog>
                         </v-flex>
                         <v-flex xs12>
-                            <v-select :items="['Cash','Cheque','Wallet','Card','other']" label="Payment Method" v-model="payment[paymentModalIndex].paymentMethod"
-                                height=20></v-select>
+                            <v-select :items="[{text:'Cash',value:'Cash'},{text:'Balance (Rs. '+closingbal+')',value:'Balance',disabled:closingbal == 0 ? true : false},{text:'Cheque',value:'Cheque'},{text:'Wallet',value:'Wallet'},{text:'Card',value:'Card'},{text:'other',value:'other'}]"
+                                label="Payment Method" item-text="text" item-value="value" item-disabled="disabled"
+                                v-model="payment[paymentModalIndex].paymentMethod" height=20></v-select>
                         </v-flex>
                         <v-flex xs12>
                             <v-text-field height=20 v-model="payment[paymentModalIndex].notes" label="Notes"></v-text-field>
                         </v-flex>
                         <v-flex xs12>
                             <v-text-field type="number" v-model="payment[paymentModalIndex].paidAmount" label="Recieved Amount"
-                                min="0" @keyup="getReceviable()" @change="getReceviable()" :disabled="payment[paymentModalIndex].id != null"
+                                min="0" @keyup="getReceviable()" @change="getReceviable()" :rules="numberRules" :disabled="payment[paymentModalIndex].id != null || payment[paymentModalIndex].paymentMethod == 'Balance'"
                                 height=20></v-text-field>
                         </v-flex>
                         <v-flex xs12>
@@ -507,6 +509,12 @@
             valid: false,
             requiredRules: [
                 v => !!v || 'This Field is required'
+            ],
+            numberRules: [
+                v => (v >= 0) || 'Value should be greater than 0'
+            ],
+            numberRulesmin1: [
+                v => (v >= 1) || 'Value should be greater than 1'
             ],
             descriptionLimit: 60,
             modalbilldate: false,
@@ -581,16 +589,8 @@
                 note: "",
                 receivable: 0
             },
-            payment: [
-                {
-                    id: null,
-                    dueDate: new Date().toISOString().substr(0, 10),
-                    paymentMethod: "",
-                    paidAmount: 0,
-                    notes: "",
-                    series: 0
-                }
-            ],
+            payment: [],
+            closingbal:0,
             itemModalDetails: [],
             itemDetails: []
         }),
@@ -612,6 +612,7 @@
             }
             else {
                 this.generate();
+                this.createPaymentRow();
             }
         },
         mounted() {
@@ -660,10 +661,10 @@
                 this.supplierACV.isLoading = true
 
                 // Lazily load input items
-                this.$axios.get('/' + this.$route.params.username + '/api/Suppliers/SupplierNames?access_token=' + this.$store.state.token + '&names=' + val)
+                this.$axios.get('/' + this.$route.params.username + '/api/Suppliers?access_token=' + this.$store.state.token+"&filter[where][isenabled]=1" )
                     .then(res => {
-                        let { values } = res.data
-                        this.supplierACV.entries = values
+                        //let { values } = res.data
+                        this.supplierACV.entries = res.data
                     })
                     .catch(err => {
                         console.log(err)
@@ -677,10 +678,10 @@
                 this.itemsACV.isLoading = true
 
                 // Lazily load input items
-                this.$axios.get('/' + this.$route.params.username + '/api/Items/itemNames?access_token=' + this.$store.state.token + '&names=' + val)
+                this.$axios.get('/' + this.$route.params.username + '/api/Items?access_token=' + this.$store.state.token+"&filter[where][isenabled]=1")
                     .then(res => {
-                        const { values } = res.data
-                        this.itemsACV.entries = values
+                        //const { values } = res.data
+                        this.itemsACV.entries = res.data
                     })
                     .catch(err => {
                         console.log(err)
@@ -694,10 +695,10 @@
                 this.itemsModalACV.isLoading = true
 
                 // Lazily load input items
-                this.$axios.get('/' + this.$route.params.username + '/api/Items/itemNames?access_token=' + this.$store.state.token + '&names=' + val)
+                this.$axios.get('/' + this.$route.params.username + '/api/Items?access_token=' + this.$store.state.token+"&filter[where][isenabled]=1")
                     .then(res => {
-                        const { values } = res.data
-                        this.itemsModalACV.entries = values
+                        //const { values } = res.data
+                        this.itemsModalACV.entries = res.data
                     })
                     .catch(err => {
                         console.log(err)
@@ -710,6 +711,11 @@
                 if (this.idToBeSent.supplierId == 0) {
                     this.modalSupplier = 1
                 }
+                this.$axios.get("/"+this.$route.params.username+"/api/Suppliers/"+this.idToBeSent.supplierId+"?access_token="+this.$store.state.token)
+                .then(res=>{
+                    this.closingbal = res.data.closingbal
+                    this.payment[0].closingbal = res.data.closingbal
+                })
             },
             resetItemModal(index) {
                 this.itemModalDetails[index].id = null
@@ -744,6 +750,7 @@
                 await this.$axios.get("/" + this.$route.params.username + "/api/Purchases/" + this.id + "/supplier?access_token=" + this.$store.state.token)
                     .then((res) => {
                         this.billDetail.supplierName = res.data.name
+                        this.closingbal = res.data.closingbal
                     })
                 await this.$axios.get("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id)
                     .then((res) => {
@@ -850,7 +857,7 @@
                                 this.loader2 = false
                             })
                     })
-                this.$axios.get("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token + "&filter[where][purchaseId]=" + this.id + "&filter[purchase]=series")
+                this.$axios.get("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token + "&filter[where][purchaseId]=" + this.id + "&filter[order]=series")
                     .then((res) => {
                         this.payment = []
                         for (let i = 0; i < res.data.length; i++) {
@@ -865,7 +872,8 @@
                                 paymentMethod: res.data[i].paymentmethod,
                                 paidAmount: res.data[i].paidamount,
                                 notes: res.data[i].notes,
-                                series: res.data[i].series
+                                series: res.data[i].series,
+                                closingbal:this.closingbal
                             })
                             this.getReceviable()
                         }
@@ -952,9 +960,18 @@
                         break;
                     }
                 }
-                if (v == 0) {
+                if(this.payment[index].paymentMethod == 'Balance' && this.payment[index].closingbal >= this.billDetail.receivable)
+                {
+                    this.payment[index].paidAmount = this.billDetail.receivable
+                    this.getReceviable()
                     this.createPaymentRow()
-
+                }
+                else if (v == 0) {
+                    if(this.payment[index].paymentMethod == 'Balance' && this.payment[index].closingbal < this.billDetail.receivable)
+                    {
+                        this.payment[index].paidAmount = this.payment[index].closingbal
+                    }
+                    this.createPaymentRow()
                     this.getReceviable()
                 }
             },
@@ -1000,7 +1017,8 @@
                     paymentMethod: "",
                     paidAmount: 0,
                     notes: "",
-                    series: 0
+                    series: 0,
+                    closingbal:this.closingbal
                 })
             },
             removeItemRow(index) {
@@ -1025,7 +1043,13 @@
             },
             removePaymentRow(index) {
 
-                if (this.payment[index].id != null) this.deletePaymentId.push(this.payment[index].id)
+                if (this.payment[index].id != null){
+                    this.deletePaymentId.push(this.payment[index].id)
+                    if(this.payment[index].paymentMethod == 'Balance')
+                    {
+                        this.closingbal += this.payment[index].paidAmount
+                    }
+                }
                 this.payment.splice(index, 1)
                 this.getReceviable()
                 this.paymentModalIndex = 0
@@ -1037,11 +1061,17 @@
                             .then(response => {
                                 let tamount = parseFloat(response.data.totalamount)
                                 let paid = parseFloat(response.data.paid)
+                                let closebal = parseFloat(response.data.closingbal)
                                 tamount += this.billDetail.totalPayableAmount
                                 paid += (this.billDetail.totalPayableAmount - this.billDetail.receivable)
+                                for(let i=0;i<this.payment.length;i++)
+                                {
+                                    if(this.payment[i].paymentMethod == 'Balance') closebal -= this.payment[i].paidAmount
+                                }
                                 this.$axios.post("/" + this.$route.params.username + "/api/Suppliers/update?access_token=" + this.$store.state.token + "&where[id]=" + this.idToBeSent.supplierId, {
                                     totalamount: tamount,
-                                    paid: paid
+                                    paid: paid,
+                                    closingbal : closebal
                                 })
                                     .then(res => {
                                         resolve("done")
@@ -1054,16 +1084,24 @@
                                 let recpre = 0
                                 this.$axios.get("/" + this.$route.params.username + "/api/purchasepayments?access_token=" + this.$store.state.token + "&filter[where][purchaseId]=" + this.id)
                                     .then(res => {
+                                        let closebal = 0
                                         for (let i = 0; i < res.data.length; i++) {
                                             recpre += parseFloat(res.data[i].paidamount)
+                                            if(res.data[i].paymentmethod == 'Balance') closebal += parseFloat(res.data[i].paidamount)
                                         }
                                         let tamount = parseFloat(response.data.supplier.totalamount) - parseFloat(response.data.totalamount)
                                         let paid = parseFloat(response.data.supplier.paid) - parseFloat(recpre)
+                                        let closebal1 = parseFloat(response.data.supplier.closingbal) + parseFloat(closebal)
                                         tamount += this.billDetail.totalPayableAmount
                                         paid += (this.billDetail.totalPayableAmount - this.billDetail.receivable)
+                                        for(let i=0;i<this.payment.length;i++)
+                                        {
+                                            if(this.payment[i].paymentMethod == 'Balance') closebal1 -= this.payment[i].paidAmount
+                                        }
                                         this.$axios.post("/" + this.$route.params.username + "/api/Suppliers/update?access_token=" + this.$store.state.token + "&where[id]=" + this.idToBeSent.supplierId, {
                                             totalamount: tamount,
-                                            paid: paid
+                                            paid: paid,
+                                            closingbal : closebal1
                                         })
                                             .then(res1 => {
                                                 resolve("done")
@@ -1141,114 +1179,23 @@
             },
             async addBill() {
                 if (this.$refs.form.validate()) {
-                    this.btnLoading=true;
-                    this.formsubmited = 1
-                    if (this.id == null) {
-                        let disamount = this.billDetail.discount
-                        if (this.billDetail.discountType == '2') disamount += '%'
-                        let paidamount = parseFloat(this.billDetail.totalPayableAmount) - parseFloat(this.billDetail.receivable)
-                        await this.$axios.post("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token,
-                            {
-                                itemtotal: this.billDetail.itemTotal,
-                                discount: disamount,
-                                charges: this.billDetail.charges,
-                                taxamount: this.billDetail.taxAmount,
-                                roundoff: this.billDetail.roundoff,
-                                billno: this.billPreNo.billNo,
-                                totalamount: this.billDetail.totalPayableAmount,
-                                paidamount: paidamount,
-                                pendingamount: this.billDetail.receivable,
-                                gstin: "123",
-                                billdate: this.billDetail.billDate,
-                                duedate: this.billDetail.dueDate,
-                                createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
-                                modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
-                                supplierId: this.idToBeSent.supplierId,
-                                createdById: this.$store.state.userId,
-                                modifiedById: this.$store.state.userId
-                            }
-                        ).then(res => {
-                            this.supplierAmount()
-                            let purchaseItem = []
-                            let j = 0;
-                            this.$axios.post("/" + this.$route.params.username + "/api/Purchases/usedstockcal?access_token=" + this.$store.state.token,
-                                {
-                                    itemId: this.itemDetails,
-                                    itemquantity: null,
-                                    type: "add"
-                                });
-                            for (let i = 0; i < this.itemDetails.length; i++) {
-                                if (this.itemDetails[i].itemId != "") {
-                                    purchaseItem[j] = new Object();
-                                    purchaseItem[j].purchaseId = res.data.id
-                                    purchaseItem[j].itemId = this.itemDetails[i].itemId
-                                    purchaseItem[j].quantity = this.itemDetails[i].quantity
-                                    purchaseItem[j].itemprice = this.itemDetails[i].mrp
-                                    purchaseItem[j].taxprice = this.itemDetails[i].taxAmount
-                                    purchaseItem[j].series = this.itemDetails[i].series
-                                    j++
-                                }
-                            }
-                            this.$axios.post("/" + this.$route.params.username + "/api/Purchaseitems?access_token=" + this.$store.state.token, purchaseItem)
-                                .then(res1 => {
-                                    let purchaseStock = []
-                                    let k = 0
-                                    for (let i = 0; i < this.itemDetails.length; i++) {
-                                        if (this.itemDetails[i].itemId != "") {
-                                            purchaseStock[k] = new Object();
-                                            purchaseStock[k].itemId = this.itemDetails[i].itemId
-                                            purchaseStock[k].purchaseId = res.data.id
-                                            purchaseStock[k].price = this.itemDetails[i].mrp
-                                            purchaseStock[k].date = this.billDetail.billDate
-                                            purchaseStock[k].quantity = this.itemDetails[i].quantity
-                                            purchaseStock[k].createdon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
-                                            purchaseStock[k].modifiedon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
-                                            purchaseStock[k].createdById = this.$store.state.userId
-                                            purchaseStock[k].modifiedById = this.$store.state.userId
-                                            k++
-                                        }
-                                    }
-                                    this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs?access_token=" + this.$store.state.token, purchaseStock)
-                                        .then(res5 => {
-                                            let payment
-                                            if (this.payment.length <= 0) {
-                                                this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + res.data.id + "/view");
-                                            }
-                                            else {
-                                                payment = []
-                                                let j = 0
-                                                for (let i = 0; i < this.payment.length; i++) {
-                                                    if (this.payment[i].paymentMethod != "" && this.payment[i].paidAmount > 0) {
-                                                        payment[j] = new Object()
-                                                        payment[j].paymentmethod = this.payment[i].paymentMethod
-                                                        payment[j].paidamount = this.payment[i].paidAmount
-                                                        payment[j].notes = this.payment[i].notes
-                                                        payment[j].series = this.payment[i].series
-                                                        payment[j].paymentdate = new Date()
-                                                        payment[j].createdon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
-                                                        payment[j].modifiedon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
-                                                        payment[j].createdById = this.$store.state.userId
-                                                        payment[j].modifiedById = this.$store.state.userId
-                                                        payment[j].purchaseId = res.data.id
-                                                        j++
-                                                    }
-                                                }
-                                            }
-
-                                            this.$axios.post("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token, payment)
-                                                .then(res2 => {
-                                                    this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + res.data.id + "/view")
-                                                });
-                                        })
-                                });
-                        });
+                    let flag = 0
+                    for (let i = 0; i < this.itemDetails.length; i++) {
+                        flag = 0
+                        if (this.itemDetails[i].itemId != "") {
+                            flag = 1
+                            break;
+                        }
                     }
-                    else {
-                        this.supplierAmount()
-                            .then((resolve) => {
-                                let disamount = this.billDetail.discount
-                                if (this.billDetail.discountType == '2') disamount += '%'
-                                this.$axios.post("/" + this.$route.params.username + "/api/Purchases/update?where[id]=" + this.id + "&access_token=" + this.$store.state.token, {
+                    if(flag == 1) {
+                        this.btnLoading=true;
+                        this.formsubmited = 1
+                        if (this.id == null) {
+                            let disamount = this.billDetail.discount
+                            if (this.billDetail.discountType == '2') disamount += '%'
+                            let paidamount = parseFloat(this.billDetail.totalPayableAmount) - parseFloat(this.billDetail.receivable)
+                            await this.$axios.post("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token,
+                                {
                                     itemtotal: this.billDetail.itemTotal,
                                     discount: disamount,
                                     charges: this.billDetail.charges,
@@ -1256,149 +1203,253 @@
                                     roundoff: this.billDetail.roundoff,
                                     billno: this.billPreNo.billNo,
                                     totalamount: this.billDetail.totalPayableAmount,
-                                    paidamount: parseFloat(this.billDetail.totalPayableAmount) - parseFloat(this.billDetail.receivable),
+                                    paidamount: paidamount,
                                     pendingamount: this.billDetail.receivable,
                                     gstin: "123",
                                     billdate: this.billDetail.billDate,
                                     duedate: this.billDetail.dueDate,
+                                    createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                     modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    supplierId: this.idToBeSent.supplierId,
+                                    createdById: this.$store.state.userId,
                                     modifiedById: this.$store.state.userId
-                                })
-                                    .then(res => {
-                                        let purchaseItem = []
-                                        let j = 0
-                                        let promise4 = new Promise((resolve, reject) => {
-                                            if (this.deleteItemQuantity.length > 0) {
-                                                this.$axios.post("/" + this.$route.params.username + "/api/Purchases/usedstockcal?access_token=" + this.$store.state.token,
-                                                    {
-                                                        itemId: this.deleteItemId,
-                                                        itemquantity: this.deleteItemQuantity,
-                                                        type: 'sub'
-                                                    })
-                                                    .then(res => {
-                                                        resolve()
-                                                    })
+                                }
+                            ).then(res => {
+                                this.supplierAmount()
+                                let purchaseItem = []
+                                let j = 0;
+                                this.$axios.post("/" + this.$route.params.username + "/api/Purchases/usedstockcal?access_token=" + this.$store.state.token,
+                                    {
+                                        itemId: this.itemDetails,
+                                        itemquantity: null,
+                                        type: "add"
+                                    });
+                                for (let i = 0; i < this.itemDetails.length; i++) {
+                                    if (this.itemDetails[i].itemId != "") {
+                                        purchaseItem[j] = new Object();
+                                        purchaseItem[j].purchaseId = res.data.id
+                                        purchaseItem[j].itemId = this.itemDetails[i].itemId
+                                        purchaseItem[j].quantity = this.itemDetails[i].quantity
+                                        purchaseItem[j].itemprice = this.itemDetails[i].mrp
+                                        purchaseItem[j].taxprice = this.itemDetails[i].taxAmount
+                                        purchaseItem[j].series = this.itemDetails[i].series
+                                        j++
+                                    }
+                                }
+                                this.$axios.post("/" + this.$route.params.username + "/api/Purchaseitems?access_token=" + this.$store.state.token, purchaseItem)
+                                    .then(res1 => {
+                                        let purchaseStock = []
+                                        let k = 0
+                                        for (let i = 0; i < this.itemDetails.length; i++) {
+                                            if (this.itemDetails[i].itemId != "") {
+                                                purchaseStock[k] = new Object();
+                                                purchaseStock[k].itemId = this.itemDetails[i].itemId
+                                                purchaseStock[k].purchaseId = res.data.id
+                                                purchaseStock[k].price = this.itemDetails[i].mrp
+                                                purchaseStock[k].date = this.billDetail.billDate
+                                                purchaseStock[k].quantity = this.itemDetails[i].quantity
+                                                purchaseStock[k].createdon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
+                                                purchaseStock[k].modifiedon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
+                                                purchaseStock[k].createdById = this.$store.state.userId
+                                                purchaseStock[k].modifiedById = this.$store.state.userId
+                                                k++
                                             }
-                                            else resolve("done")
-                                        })
-                                        promise4.then((resolve) => {
-                                            this.$axios.post("/" + this.$route.params.username + "/api/Purchases/usedstockcal?access_token=" + this.$store.state.token,
-                                                {
-                                                    itemId: this.itemDetails,
-                                                    itemquantity: null,
-                                                    type: "add"
-                                                })
-                                                .then(res => {
-                                                    for (let i = 0; i < this.itemDetails.length; i++) {
-                                                        if (this.itemDetails[i].itemId != "") {
-                                                            if (this.itemDetails[i].id == null) {
-                                                                purchaseItem[j] = new Object();
-                                                                purchaseItem[j].purchaseId = this.id
-                                                                purchaseItem[j].itemId = this.itemDetails[i].itemId
-                                                                purchaseItem[j].quantity = this.itemDetails[i].quantity
-                                                                purchaseItem[j].itemprice = this.itemDetails[i].mrp
-                                                                purchaseItem[j].taxprice = this.itemDetails[i].taxAmount
-                                                                purchaseItem[j].series = this.itemDetails[i].series
-                                                                j++
-                                                            }
+                                        }
+                                        this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs?access_token=" + this.$store.state.token, purchaseStock)
+                                            .then(res5 => {
+                                                let payment
+                                                if (this.payment.length <= 0) {
+                                                    this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + res.data.id + "/view");
+                                                }
+                                                else {
+                                                    payment = []
+                                                    let j = 0
+                                                    for (let i = 0; i < this.payment.length; i++) {
+                                                        if (this.payment[i].paymentMethod != "" && this.payment[i].paidAmount > 0) {
+                                                            payment[j] = new Object()
+                                                            payment[j].paymentmethod = this.payment[i].paymentMethod
+                                                            payment[j].paidamount = this.payment[i].paidAmount
+                                                            payment[j].notes = this.payment[i].notes
+                                                            payment[j].series = this.payment[i].series
+                                                            payment[j].paymentdate = new Date()
+                                                            payment[j].createdon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
+                                                            payment[j].modifiedon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
+                                                            payment[j].createdById = this.$store.state.userId
+                                                            payment[j].modifiedById = this.$store.state.userId
+                                                            payment[j].purchaseId = res.data.id
+                                                            j++
                                                         }
                                                     }
+                                                }
+
+                                                this.$axios.post("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token, payment)
+                                                    .then(res2 => {
+                                                        this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + res.data.id + "/view")
+                                                    });
+                                            })
+                                    });
+                            });
+                        }
+                        else {
+                            this.supplierAmount()
+                                .then((resolve) => {
+                                    let disamount = this.billDetail.discount
+                                    if (this.billDetail.discountType == '2') disamount += '%'
+                                    this.$axios.post("/" + this.$route.params.username + "/api/Purchases/update?where[id]=" + this.id + "&access_token=" + this.$store.state.token, {
+                                        itemtotal: this.billDetail.itemTotal,
+                                        discount: disamount,
+                                        charges: this.billDetail.charges,
+                                        taxamount: this.billDetail.taxAmount,
+                                        roundoff: this.billDetail.roundoff,
+                                        billno: this.billPreNo.billNo,
+                                        totalamount: this.billDetail.totalPayableAmount,
+                                        paidamount: parseFloat(this.billDetail.totalPayableAmount) - parseFloat(this.billDetail.receivable),
+                                        pendingamount: this.billDetail.receivable,
+                                        gstin: "123",
+                                        billdate: this.billDetail.billDate,
+                                        duedate: this.billDetail.dueDate,
+                                        modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                        modifiedById: this.$store.state.userId
+                                    })
+                                        .then(res => {
+                                            let purchaseItem = []
+                                            let j = 0
+                                            let promise4 = new Promise((resolve, reject) => {
+                                                if (this.deleteItemQuantity.length > 0) {
                                                     this.$axios.post("/" + this.$route.params.username + "/api/Purchases/usedstockcal?access_token=" + this.$store.state.token,
                                                         {
-                                                            itemId: this.itemDetails,
-                                                            itemquantity: null,
-                                                            type: "update"
+                                                            itemId: this.deleteItemId,
+                                                            itemquantity: this.deleteItemQuantity,
+                                                            type: 'sub'
                                                         })
                                                         .then(res => {
-                                                            for (let i = 0; i < this.deleteItemId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Purchaseitems/" + this.deleteItemId[i] + "?access_token=" + this.$store.state.token)
-                                                            this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs/stockinsert?access_token=" + this.$store.state.token,
-                                                                {
-                                                                    stockId: this.deleteStockId,
-                                                                    userId: this.$store.state.userId
-                                                                })
-                                                                .then(res => {
-                                                                    this.$axios.post("/" + this.$route.params.username + "/api/Purchaseitems?access_token=" + this.$store.state.token, purchaseItem)
-                                                                        .then(res => {
-                                                                            let purchaseStock = []
-                                                                            let k = 0
-                                                                            for (let i = 0; i < this.itemDetails.length; i++) {
-                                                                                if (this.itemDetails[i].itemId != "") {
-                                                                                    if (this.itemDetails[i].stockId == null) {
-                                                                                        purchaseStock[k] = new Object();
-                                                                                        purchaseStock[k].itemId = this.itemDetails[i].itemId
-                                                                                        purchaseStock[k].purchaseId = this.id
-                                                                                        purchaseStock[k].price = this.itemDetails[i].mrp
-                                                                                        purchaseStock[k].date = this.billDetail.billDate
-                                                                                        purchaseStock[k].quantity = this.itemDetails[i].quantity
-                                                                                        purchaseStock[k].createdon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
-                                                                                        purchaseStock[k].modifiedon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
-                                                                                        purchaseStock[k].createdById = this.$store.state.userId
-                                                                                        purchaseStock[k].modifiedById = this.$store.state.userId
-                                                                                        k++
-                                                                                    }
-                                                                                    else {
-                                                                                        this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs/update?where[id]=" + this.itemDetails[i].stockId + "&access_token=" + this.$store.state.token, {
-                                                                                            quantity: this.itemDetails[i].quantity,
-                                                                                            price: this.itemDetails[i].mrp,
-                                                                                            modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
-                                                                                            modifiedById: this.$store.state.userId
-                                                                                        })
+                                                            resolve()
+                                                        })
+                                                }
+                                                else resolve("done")
+                                            })
+                                            promise4.then((resolve) => {
+                                                this.$axios.post("/" + this.$route.params.username + "/api/Purchases/usedstockcal?access_token=" + this.$store.state.token,
+                                                    {
+                                                        itemId: this.itemDetails,
+                                                        itemquantity: null,
+                                                        type: "add"
+                                                    })
+                                                    .then(res => {
+                                                        for (let i = 0; i < this.itemDetails.length; i++) {
+                                                            if (this.itemDetails[i].itemId != "") {
+                                                                if (this.itemDetails[i].id == null) {
+                                                                    purchaseItem[j] = new Object();
+                                                                    purchaseItem[j].purchaseId = this.id
+                                                                    purchaseItem[j].itemId = this.itemDetails[i].itemId
+                                                                    purchaseItem[j].quantity = this.itemDetails[i].quantity
+                                                                    purchaseItem[j].itemprice = this.itemDetails[i].mrp
+                                                                    purchaseItem[j].taxprice = this.itemDetails[i].taxAmount
+                                                                    purchaseItem[j].series = this.itemDetails[i].series
+                                                                    j++
+                                                                }
+                                                            }
+                                                        }
+                                                        this.$axios.post("/" + this.$route.params.username + "/api/Purchases/usedstockcal?access_token=" + this.$store.state.token,
+                                                            {
+                                                                itemId: this.itemDetails,
+                                                                itemquantity: null,
+                                                                type: "update"
+                                                            })
+                                                            .then(res => {
+                                                                for (let i = 0; i < this.deleteItemId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Purchaseitems/" + this.deleteItemId[i] + "?access_token=" + this.$store.state.token)
+                                                                this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs/stockinsert?access_token=" + this.$store.state.token,
+                                                                    {
+                                                                        stockId: this.deleteStockId,
+                                                                        userId: this.$store.state.userId
+                                                                    })
+                                                                    .then(res => {
+                                                                        this.$axios.post("/" + this.$route.params.username + "/api/Purchaseitems?access_token=" + this.$store.state.token, purchaseItem)
+                                                                            .then(res => {
+                                                                                let purchaseStock = []
+                                                                                let k = 0
+                                                                                for (let i = 0; i < this.itemDetails.length; i++) {
+                                                                                    if (this.itemDetails[i].itemId != "") {
+                                                                                        if (this.itemDetails[i].stockId == null) {
+                                                                                            purchaseStock[k] = new Object();
+                                                                                            purchaseStock[k].itemId = this.itemDetails[i].itemId
+                                                                                            purchaseStock[k].purchaseId = this.id
+                                                                                            purchaseStock[k].price = this.itemDetails[i].mrp
+                                                                                            purchaseStock[k].date = this.billDetail.billDate
+                                                                                            purchaseStock[k].quantity = this.itemDetails[i].quantity
+                                                                                            purchaseStock[k].createdon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
+                                                                                            purchaseStock[k].modifiedon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
+                                                                                            purchaseStock[k].createdById = this.$store.state.userId
+                                                                                            purchaseStock[k].modifiedById = this.$store.state.userId
+                                                                                            k++
+                                                                                        }
+                                                                                        else {
+                                                                                            this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs/update?where[id]=" + this.itemDetails[i].stockId + "&access_token=" + this.$store.state.token, {
+                                                                                                quantity: this.itemDetails[i].quantity,
+                                                                                                price: this.itemDetails[i].mrp,
+                                                                                                modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                                                                                modifiedById: this.$store.state.userId
+                                                                                            })
+                                                                                        }
                                                                                     }
                                                                                 }
-                                                                            }
-                                                                            this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs?access_token=" + this.$store.state.token, purchaseStock)
-                                                                                .then(res5 => {
-                                                                                    let payment
-                                                                                    if (this.payment.length <= 0) {
-                                                                                        for (let i = 0; i < this.deletePaymentId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Purchasepayments/" + this.deletePaymentId[i] + "?access_token=" + this.$store.state.token)
-                                                                                        this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + this.id + "/view")
-                                                                                    }
-                                                                                    else {
-                                                                                        payment = []
-                                                                                        let j = 0
-                                                                                        for (let i = 0; i < this.payment.length; i++) {
-                                                                                            if (this.payment[i].id == null) {
-                                                                                                if (this.payment[i].paymentMethod != "" && this.payment[i].paidAmount > 0) {
-                                                                                                    payment[j] = new Object()
-                                                                                                    payment[j].paymentmethod = this.payment[i].paymentMethod
-                                                                                                    payment[j].paidamount = this.payment[i].paidAmount
-                                                                                                    payment[j].notes = this.payment[i].notes
-                                                                                                    payment[j].series = this.payment[i].series
-                                                                                                    payment[j].paymentdate = this.payment[i].dueDate
-                                                                                                    payment[j].createdon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
-                                                                                                    payment[j].modifiedon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
-                                                                                                    payment[j].createdById = this.$store.state.userId
-                                                                                                    payment[j].modifiedById = this.$store.state.userId
-                                                                                                    payment[j].purchaseId = this.id
-                                                                                                    j++
+                                                                                this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs?access_token=" + this.$store.state.token, purchaseStock)
+                                                                                    .then(res5 => {
+                                                                                        let payment
+                                                                                        if (this.payment.length <= 0) {
+                                                                                            for (let i = 0; i < this.deletePaymentId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Purchasepayments/" + this.deletePaymentId[i] + "?access_token=" + this.$store.state.token)
+                                                                                            this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + this.id + "/view")
+                                                                                        }
+                                                                                        else {
+                                                                                            payment = []
+                                                                                            let j = 0
+                                                                                            for (let i = 0; i < this.payment.length; i++) {
+                                                                                                if (this.payment[i].id == null) {
+                                                                                                    if (this.payment[i].paymentMethod != "" && this.payment[i].paidAmount > 0) {
+                                                                                                        payment[j] = new Object()
+                                                                                                        payment[j].paymentmethod = this.payment[i].paymentMethod
+                                                                                                        payment[j].paidamount = this.payment[i].paidAmount
+                                                                                                        payment[j].notes = this.payment[i].notes
+                                                                                                        payment[j].series = this.payment[i].series
+                                                                                                        payment[j].paymentdate = this.payment[i].dueDate
+                                                                                                        payment[j].createdon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
+                                                                                                        payment[j].modifiedon = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
+                                                                                                        payment[j].createdById = this.$store.state.userId
+                                                                                                        payment[j].modifiedById = this.$store.state.userId
+                                                                                                        payment[j].purchaseId = this.id
+                                                                                                        j++
+                                                                                                    }
+                                                                                                }
+                                                                                                else {
+                                                                                                    this.$axios.post("/" + this.$route.params.username + "/api/Purchasepayments/update?where[id]=" + this.payment[i].id + "&access_token=" + this.$store.state.token, {
+                                                                                                        paymentmethod: this.payment[i].paymentMethod,
+                                                                                                        notes: this.payment[i].notes,
+                                                                                                        series: this.payment[i].series,
+                                                                                                        paymentdate: this.payment[i].dueDate,
+                                                                                                        modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                                                                                        modifiedById: this.$store.state.userId
+                                                                                                    })
                                                                                                 }
                                                                                             }
-                                                                                            else {
-                                                                                                this.$axios.post("/" + this.$route.params.username + "/api/Purchasepayments/update?where[id]=" + this.payment[i].id + "&access_token=" + this.$store.state.token, {
-                                                                                                    paymentmethod: this.payment[i].paymentMethod,
-                                                                                                    notes: this.payment[i].notes,
-                                                                                                    series: this.payment[i].series,
-                                                                                                    paymentdate: this.payment[i].dueDate,
-                                                                                                    modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
-                                                                                                    modifiedById: this.$store.state.userId
-                                                                                                })
-                                                                                            }
-                                                                                        }
 
-                                                                                        for (let i = 0; i < this.deletePaymentId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Purchasepayments/" + this.deletePaymentId[i] + "?access_token=" + this.$store.state.token)
-                                                                                        this.$axios.post("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token, payment)
-                                                                                            .then(res => {
-                                                                                                this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + this.id + "/view")
-                                                                                            })
-                                                                                    }
-                                                                                })
-                                                                        })
-                                                                })
-                                                        })
-                                                })
+                                                                                            for (let i = 0; i < this.deletePaymentId.length; i++) this.$axios.delete("/" + this.$route.params.username + "/api/Purchasepayments/" + this.deletePaymentId[i] + "?access_token=" + this.$store.state.token)
+                                                                                            this.$axios.post("/" + this.$route.params.username + "/api/Purchasepayments?access_token=" + this.$store.state.token, payment)
+                                                                                                .then(res => {
+                                                                                                    this.$router.push("/" + this.$route.params.username + "/Dashboard/purchase/order/" + this.id + "/view")
+                                                                                                })
+                                                                                        }
+                                                                                    })
+                                                                            })
+                                                                    })
+                                                            })
+                                                    })
+                                            })
                                         })
-                                    })
-                            })
+                                })
+                        }
+                    }
+                    else {
+                        this.$store.commit("snackbar/setSnack", "Items not Selected!");
                     }
                 }
             }

@@ -2,14 +2,12 @@
     <v-form @submit.prevent="addTransport" ref="form1" lazy-validation onkeypress="return event.keyCode != 13">
         <v-layout align-center justify-start row wrap class="mb-3">
                 <v-flex xs12 sm12>
-                    <label class="font-16 font-weight-regular " >Transport Name*</label>
-                    <v-text-field label="" type=text  :rules="requiredRules" v-model="transportname" height=25 class="pa-0 mt-1"></v-text-field>
+                    <v-text-field label="Transport Name" type=text  :rules="requiredRules" v-model="transportname" ></v-text-field>
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap class="mb-1">
                 <v-flex xs12 sm12>
-                    <label class="font-16 font-weight-regular">Vehicle No.*</label>
-                    <v-text-field label="" type=text  :rules="requiredRules" v-model="vehicleno" height=25 class="pa-0 mt-1"></v-text-field>
+                    <v-text-field label="Vehicle No." type=text  :rules="requiredRules" v-model="vehicleno" ></v-text-field>
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap>

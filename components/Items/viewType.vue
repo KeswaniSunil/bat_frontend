@@ -3,19 +3,11 @@
         <v-flex sm12>
         <v-card class="border-radius-5">
                 <v-card-text>
-                    <v-layout  align-center justify-start row wrap>
-                            <v-flex xs7 sm10></v-flex>
-                            <v-flex xs5 sm2>
-                                <v-layout  align-center justify-start row wrap>
-                                    <v-flex sm4></v-flex>
-                                    <v-flex sm8>
-                                        <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
-                                                <v-icon dark small class="mr-2"> flash_on</v-icon>Add Type
-                                        </v-btn>
-                                    </v-flex>    
-                                </v-layout>
-                            </v-flex>
-                        </v-layout>    
+                    <v-layout  align-end justify-end row wrap>
+                        <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+                            <v-icon dark small class="mr-2"> flash_on</v-icon>Add Type
+                        </v-btn>
+                    </v-layout>    
                     <v-layout row wrap class="mb-2">
                         <v-flex sm1 xs3>
                             <v-btn v-if="selectType.length > 0" color="error" round class="pa-0" @click="deleteType">

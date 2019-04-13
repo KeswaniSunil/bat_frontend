@@ -91,7 +91,7 @@
                         <label class="font-15 font-weight-regular">Opening Balance: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=number :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.balance"></v-text-field>
+                        <v-text-field label="" type=number :disabled="propCheck != 0" :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.balance"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -100,7 +100,7 @@
                     <v-flex xs12 sm12>
                         <v-layout align-start justify-end row wrap>
                         <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark
-                            @click="">
+                            >
                             Add
                             
                         </v-btn>
@@ -154,7 +154,7 @@
                     state: "",
                     gstn: "",
                     stateCode: null,
-                    balance:null
+                    balance:0
                 },
                 requiredRules: [
                     v => !!v || 'This Field is required'
@@ -186,6 +186,7 @@
                                 statecode: this.customerDetails.stateCode,
                                 isenabled: 1,
                                 balance:this.customerDetails.balance,
+                                closingbal:this.customerDetails.balance,
                                 createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 createdById: this.$store.state.userId,
@@ -195,8 +196,22 @@
                             })
                             .then(res => {
                             if (res) {
-                                this.btnLoading = false
-                                this.$emit('input', 2);
+                                this.$axios.post("/" + this.$route.params.username + "/api/Customerlogs?access_token=" + this.$store.state.token, {
+                                    balance:this.customerDetails.balance,
+                                    notes:"Opening Balance",
+                                    date:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    customerId:res.data.id,
+                                    isenabled:1,
+                                    createdon:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    modifiedon:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    createdById:this.$store.state.userId
+                                })
+                                .then(res1=>{
+                                    if(res1){
+                                        this.btnLoading = false
+                                        this.$emit('input', 2);
+                                    }
+                                });                              
                                 }
                             });
                         }
@@ -214,6 +229,7 @@
                                 pincode: this.customerDetails.pinCode,
                                 statecode: this.customerDetails.stateCode,
                                 balance:this.customerDetails.balance,
+                                closingbal:this.customerDetails.balance,
                                 isenabled: 1,
                                 createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
@@ -222,8 +238,22 @@
                             })
                             .then(res => {
                             if (res) {
-                                this.btnLoading = false
-                                this.$emit('input', 2);
+                                this.$axios.post("/" + this.$route.params.username + "/api/Supplierlogs?access_token=" + this.$store.state.token, {
+                                    balance:this.customerDetails.balance,
+                                    notes:"Opening Balance",
+                                    date:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    supplierId:res.data.id,
+                                    isenabled:1,
+                                    createdon:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    modifiedon:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    createdById:this.$store.state.userId
+                                })
+                                .then(res1=>{
+                                    if(res1){
+                                        this.btnLoading = false
+                                        this.$emit('input', 2);
+                                    }
+                                });                              
                                 }
                             });
                         }
@@ -244,7 +274,6 @@
                                 state: this.customerDetails.state,
                                 pincode: this.customerDetails.pinCode,
                                 statecode: this.customerDetails.stateCode,
-                                balance:this.customerDetails.balance,
                                 isenabled: 1,
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedById: this.$store.state.userId,
@@ -273,7 +302,6 @@
                                 state: this.customerDetails.state,
                                 pincode: this.customerDetails.pinCode,
                                 statecode: this.customerDetails.stateCode,
-                                balance:this.customerDetails.balance,
                                 isenabled: 1,
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedById: this.$store.state.userId
@@ -324,6 +352,8 @@
                         this.customerDetails.state = this.editCustomerDtl.state;
                         this.customerDetails.gstn = this.editCustomerDtl.gstin;
                         this.customerDetails.stateCode = this.editCustomerDtl.statecode;
+                                                this.customerDetails.balance=this.editCustomerDtl.balance
+
                     });
                 }
             }

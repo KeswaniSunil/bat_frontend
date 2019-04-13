@@ -3,22 +3,20 @@
         
             <v-layout align-center justify-start row wrap class="mb-3">
                 <v-flex xs12 sm12>
-                    <label class="font-16 font-weight-regular">SubType Name</label>
-                    <v-text-field label="" type=text :single-line="biggerScreen" :rules="requiredRules" v-model="subTypeName"
-                        class="pa-0 mt-1" height=25></v-text-field>
+                    <v-text-field label="SubType Name" type=text :rules="requiredRules" v-model="subTypeName"
+                        class="pa-0 mt-1" ></v-text-field>
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap class="mb-1">
                 <v-flex xs12 sm12>
-                    <label class="font-16 font-weight-regular">Type</label>
                     <v-autocomplete v-if="id == null || editMode.type==1" v-model="typeId" :items="typeListitems" :rules="requiredRules"
                         auto-select-first clearable append-icon="search" :loading="typeList.isLoading"
                         :search-input.sync="typeList.search" hide-no-data hide-selected item-text="name" item-value="id"
-                        label="" placeholder="" return-string class="pa-0 mt-1" height=22 :single-line="biggerScreen">
+                        label="Type" placeholder="" return-string class="pa-0 mt-1"  >
                     </v-autocomplete>
                     <v-layout v-else align-center justify-start row wrap>
                         <v-flex sm11>
-                            <v-text-field v-model="typeName" height=25 class="pa-0 mt-1"  disabled ></v-text-field>
+                            <v-text-field v-model="typeName" class="pa-0 mt-1"  disabled ></v-text-field>
                         </v-flex>
                         <v-flex sm1>
                             <v-icon @click="editMode.type=1" color="red">edit</v-icon>
@@ -30,11 +28,11 @@
                 <v-flex xs12 sm12>
                 <v-layout align-start justify-end>
                     <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark
-                        @click="">
+                        >
                         Add
                         <v-icon dark right class="ml-1">check_circle</v-icon>
                     </v-btn>
-                    <v-btn v-else class="" :loading="btnLoading" type="submit" color="info" round dark @click="">
+                    <v-btn v-else class="" :loading="btnLoading" type="submit" color="info" round dark >
                         Save
                         <v-icon dark right class="ml-1">check_circle</v-icon>
 
@@ -74,10 +72,10 @@
                 this.typeList.isLoading = true
 
                 // Lazily load input items
-                this.$axios.get('/' + this.$route.params.username + '/api/Types/typeNames?access_token=' + this.$store.state.token + '&names=' + val)
+                this.$axios.get('/' + this.$route.params.username + '/api/Types?access_token=' + this.$store.state.token+"&filter[where][isenabled]=1")
                     .then(res => {
-                        let { values } = res.data
-                        this.typeList.entries = values
+                        //let { values } = res.data
+                        this.typeList.entries = res.data
 
                     })
                     .catch(err => {

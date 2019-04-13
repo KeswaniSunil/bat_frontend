@@ -33,7 +33,7 @@
                     </v-flex>
                     <v-flex xs12 sm9>
                         <v-layout v-if="propCheck==0 || editMode.type==1" align-center row wrap>
-                            <v-flex sm11>
+                            <v-flex :class="[enableType == 0 ? 'sm10': 'sm11']">
                                 <v-autocomplete :disabled="enableType == 0" v-model="addItemDtl.typeId" :items="typeListitems"
                                     :rules="requiredRules" append-icon="search" :loading="typeList.isLoading"
                                     :search-input.sync="typeList.search" hide-no-data hide-selected item-text="name"
@@ -42,7 +42,7 @@
 
                             </v-flex>
                             <v-flex sm1>
-                                <v-icon color="red" v-if="enableType == 0" @click="enableType=1,addItemDtl.typeId=''">edit</v-icon>
+                                <v-icon color="red" v-if="enableType == 0" @click="addItemDtl.typeId='',enableType=1">edit</v-icon>
                             </v-flex>
                         </v-layout>
                         <v-layout v-else align-center row wrap>
@@ -195,10 +195,10 @@
                 this.typeList.isLoading = true
 
                 // Lazily load input items
-                this.$axios.get('/' + this.$route.params.username + '/api/Types/typeNames?access_token=' + this.$store.state.token + '&names=' + val)
+                this.$axios.get('/' + this.$route.params.username + '/api/Types?access_token=' + this.$store.state.token +"&filter[where][isenabled]=1")
                     .then(res => {
-                        let { values } = res.data
-                        this.typeList.entries = values
+                        //let { values } = res.data
+                        this.typeList.entries = res.data
 
                     })
                     .catch(err => {
@@ -213,10 +213,10 @@
                     this.subTypeList.isLoading = true
 
                     // Lazily load input items
-                    this.$axios.get('/' + this.$route.params.username + '/api/Subtypes/subTypeNames?access_token=' + this.$store.state.token + '&typeId=' + this.addItemDtl.typeId + '&names=' + val)
+                    this.$axios.get('/' + this.$route.params.username + '/api/Subtypes?access_token=' + this.$store.state.token + '&filter[where][typeId]=' + this.addItemDtl.typeId+"&filter[where][isenabled]=1")
                         .then(res => {
-                            let { values } = res.data
-                            this.subTypeList.entries = values
+                            //let { values } = res.data
+                            this.subTypeList.entries = res.data
                         })
                         .catch(err => {
                             //console.log(err)
@@ -231,10 +231,10 @@
                 this.unitList.isLoading = true
 
                 // Lazily load input items
-                this.$axios.get('/' + this.$route.params.username + '/api/Units/unitNames?access_token=' + this.$store.state.token + '&names=' + val)
+                this.$axios.get('/' + this.$route.params.username + '/api/Units?access_token=' + this.$store.state.token+"&filter[where][isenabled]=1")
                     .then(res => {
-                        let { values } = res.data
-                        this.unitList.entries = values
+                        //let { values } = res.data
+                        this.unitList.entries = res.data
 
                     })
                     .catch(err => {
@@ -264,9 +264,9 @@
             },
             unitListitems() {
                 return this.unitList.entries.map(entry => {
-                    const name = entry.name.length > this.descriptionLimit
-                        ? entry.name.slice(0, this.descriptionLimit) + '...'
-                        : entry.name
+                    const name = entry.title.length > this.descriptionLimit
+                        ? entry.title.slice(0, this.descriptionLimit) + '...'
+                        : entry.title
                     const id = entry.id
                     return Object.assign({}, entry, { id, name })
                 })

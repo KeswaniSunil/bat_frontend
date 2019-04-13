@@ -153,13 +153,13 @@
             },
             viewOrder(startDate,endDate,id){
                 if(this.mode == 'purchase') {
-                    this.$router.push("/"+this.$route.params.username+"/dashboard/purchase?tab=tab-2&startDate="+startDate+"&endDate="+endDate)
+                    this.$router.push("/"+this.$route.params.username+"/Dashboard/purchase?startDate="+startDate+"&endDate="+endDate+"#tab-3")
                 }
                 else if(this.mode == 'sale'){
-                    this.$router.push("/"+this.$route.params.username+"/dashboard/sales?tab=tab-2&startDate="+startDate+"&endDate="+endDate)
+                    this.$router.push("/"+this.$route.params.username+"/Dashboard/sales?startDate="+startDate+"&endDate="+endDate+"#tab-3")
                 }
                 else if(this.mode == 'billbook'){
-                    this.$router.push("/"+this.$route.params.username+"/dashboard/sales?tab=tab-2&startDate="+startDate+"&endDate="+endDate+"&id="+id)
+                    this.$router.push("/"+this.$route.params.username+"/Dashboard/sales?startDate="+startDate+"&endDate="+endDate+"&id="+id+"#tab-3")
                 }
             }
         }

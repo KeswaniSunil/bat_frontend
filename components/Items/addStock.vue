@@ -1,48 +1,41 @@
 <template>
     <v-form @submit.prevent="addStock" ref="form1" lazy-validation onkeypress="return event.keyCode != 13">
-                <v-layout align-center justify-start row wrap class="mb-2">
+                <v-layout align-center justify-start row wrap >
                         <v-flex xs12 sm12>
-                            <label class="font-16 font-weight-regular">Item Name </label>
-                                <v-autocomplete  v-model="addStockDtl.itemId" :items="itemListitems"
-                                                :rules="requiredRules" class="ma-0 pa-0" auto-select-first clearable append-icon="search"
-                                                :loading="itemList.isLoading" :search-input.sync="itemList.search"
-                                                hide-no-data hide-selected item-text="name" item-value="id" label=""
-                                                placeholder="" return-string height=25 >
-                                </v-autocomplete>
+                            <v-autocomplete  v-model="addStockDtl.itemId" :items="itemListitems"
+                                :rules="requiredRules" class="ma-0 pa-0" auto-select-first clearable append-icon="search"
+                                :loading="itemList.isLoading" :search-input.sync="itemList.search"
+                                hide-no-data hide-selected item-text="name" item-value="id" label="Item Name"
+                                placeholder="" return-string  >
+                            </v-autocomplete>
                         </v-flex>    
                     </v-layout>
-                    <v-layout align-center justify-start row wrap class="mb-2">
+                    <v-layout align-center justify-start row wrap >
                         <v-flex xs12 sm12>
-                            <label class="font-16 font-weight-regular">Quantity </label>
                                 <v-text-field
-                                    class="pa-0 ma-0"
-                                    label=""
-                                    height=25
+                                    label="Quantity"
                                     :rules="requiredRules"
                                     v-model="addStockDtl.quantity"
                                     type=number
                                 ></v-text-field>
                         </v-flex>    
                     </v-layout>
-                    <v-layout align-center justify-start row wrap class="mb-2">
+                    <v-layout align-center justify-start row wrap >
                         <v-flex xs12 sm12>
-                            <label class="font-16 font-weight-regular">Price </label>
                                 <v-text-field
-                                    class="pa-0 ma-0"
-                                    label=""
-                                    height=25
+                                    label="Price"
                                     type=number
+                                    :rules="requiredRules"
                                     v-model="addStockDtl.price"
                                 ></v-text-field>
                         </v-flex>    
                     </v-layout>
-                    <v-layout align-center justify-start row wrap class="mb-2">
+                    <v-layout align-center justify-start row wrap >
                         <v-flex xs12 sm12>
-                            <label class="font-16 font-weight-regular">Date </label>
                                 <v-dialog ref="enddate" v-model="Datemodal" :return-value.sync="addStockDtl.date" persistent
                                 lazy full-width width="290px">
                                 <template v-slot:activator="{ on }">
-                                    <v-text-field v-model="addStockDtl.date" label="" class="ma-0 pa-0" prepend-icon="event" readonly
+                                    <v-text-field v-model="addStockDtl.date" label="Date"  prepend-icon="event" readonly
                                         v-on="on"></v-text-field>
                                 </template>
                                 <v-date-picker v-model="addStockDtl.date" scrollable>
@@ -55,11 +48,9 @@
                     </v-layout>
                     <v-layout align-center justify-start row wrap class="">
                         <v-flex xs12 sm12>
-                            <label class="font-16 font-weight-regular">Notes </label>
                                 <v-text-field
-                                    class="pa-0 ma-0"
-                                    label=""
-                                    height=25
+                                    label="Notes"
+                                    v-model="addStockDtl.note"
                                     type=text
                                 ></v-text-field>
                         </v-flex>    
@@ -123,10 +114,10 @@ export default {
                 this.itemList.isLoading = true
 
                 // Lazily load input items
-                this.$axios.get('/' + this.$route.params.username + '/api/Items/itemNames?access_token='+this.$store.state.token+'&names=' + val)
+                this.$axios.get('/' + this.$route.params.username + '/api/Items?access_token='+this.$store.state.token +"&filter[where][isenabled]=1")
                     .then(res => {
-                        let { values } = res.data
-                        this.itemList.entries = values
+                        //let { values } = res.data
+                        this.itemList.entries = res.data
                         
                     })
                     .catch(err => {

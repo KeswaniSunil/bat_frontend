@@ -37,7 +37,7 @@
       <v-menu offset-y bottom left transition="slide-x-transition" light>
         <template v-slot:activator="{ on }">
           <div light flat round v-on="on" class="pa-0 ma-0 text-capitalize" style="cursor:pointer">
-            <v-btn flat icon  large>
+            <v-btn flat icon large>
               <v-avatar size="36px">
                 <img src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-circle-512.png" alt="Avatar" />
               </v-avatar>
@@ -52,7 +52,7 @@
             Profile
             </v-list-tile-title>
           </v-list-tile>
-          <v-list-tile @click="showModal= true,getConfig()">
+          <v-list-tile @click="showModal= true">
             <v-icon style="padding-right: 10px;">settings</v-icon>
             <v-list-tile-title>Company Configs</v-list-tile-title>
           </v-list-tile>
@@ -143,6 +143,9 @@
     created() {
       this.getConfig()
     },
+    beforeMount(){
+      window.addEventListener('keyup', this.keymonitor)
+    },
     data() {
       return {
         loader1:true,
@@ -154,15 +157,7 @@
         fixed: false,
         btnLoading: false,
         modalChngPass:false,
-        items: [
-          { icon: 'store', title: 'Sales', to: '/' + this.$route.params.username + '/Dashboard/sales' },
-          { icon: 'shopping_cart', title: 'Purchases', to: '/' + this.$route.params.username + '/Dashboard/purchase' },
-          { icon: 'queue', title: 'Items', to: '/' + this.$route.params.username + '/Dashboard/items' },
-          { icon: 'storage', title: 'Stock Logs', to: '/' + this.$route.params.username + '/Dashboard/stock' },
-          { icon: 'subway', title: 'Transport', to: '/' + this.$route.params.username + '/Dashboard/transport' },
-          { icon: 'dashboard', title: 'Taxes', to: '/' + this.$route.params.username + '/Dashboard/taxes' },
-          { icon: 'note_add', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/billbook' },
-        ],
+        items: [],
         miniVariant: false,
         right: true,
         rightDrawer: false,
@@ -184,6 +179,13 @@
             window.location = "/" + this.$route.params.username + "/login"
           })
       },
+      keymonitor(event){
+        //console.log(event);
+        if(event.code == 'KeyB' && event.ctrlKey)
+        {
+          this.$router.push('/' + this.$route.params.username + '/Dashboard/sales#tab-1')
+        }
+      },
       chngConfig() {
         this.btnLoading = true;
         //let a=0;
@@ -194,8 +196,10 @@
             .then(res => {
               if (res) {
                 if (i == this.allconfig.length - 1) {
-                  window.location = ""
-
+                  this.$store.commit("snackbar/setSnack", "Configuration Changed!");
+                  this.getConfig()
+                  this.btnLoading = false
+                  this.showModal = false
                 }
               }
             });
@@ -204,38 +208,38 @@
       async getConfig() {
         await this.$axios.get("/" + this.$route.params.username + "/api/Configurations?access_token=" + this.$store.state.token)
           .then(res => {
+            this.items = [
+              { icon: 'store', title: 'Sales', to: '/' + this.$route.params.username + '/Dashboard/sales' },
+              { icon: 'shopping_cart', title: 'Purchases', to: '/' + this.$route.params.username + '/Dashboard/purchase' },
+              { icon: 'queue', title: 'Items', to: '/' + this.$route.params.username + '/Dashboard/items' },
+              { icon: 'storage', title: 'Stock Logs', to: '/' + this.$route.params.username + '/Dashboard/stock' },
+              { icon: 'note_add', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/billbook' },
+              { icon: 'message', title: 'Sms Management', to: '/' + this.$route.params.username + '/Dashboard/sms' },
+            ]
             this.allconfig = res.data;
-            let a = 0, b = 0, c = 0;
-            let promise1 = new Promise((resolve, reject) => {
-              for (let i = 0; i < this.allconfig.length; i++) {
-                if (this.allconfig[i].alias == 'manage_transport') {
-                  if (this.allconfig[i].value == 0) {
-                    this.items.splice(4, 1)
-                    c = 1;
+            let tax = 0
+            for(let i=0;i<this.allconfig.length;i++)
+            {
+              if(this.allconfig[i].alias == 'manage_transport')
+              {
+                if(this.allconfig[i].value == 1) {
+                  this.items.push({ icon: 'subway', title: 'Transport', to: '/' + this.$route.params.username + '/Dashboard/transport' })
+                }
+              }
+              else if(this.allconfig[i].alias == 'calculate_taxes_sales' || this.allconfig[i].alias == 'calculate_taxes_purchase')
+              {
+                if(this.allconfig[i].value == 1) {
+                  if(tax == 0) {
+                    this.items.push({ icon: 'dashboard', title: 'Taxes', to: '/' + this.$route.params.username + '/Dashboard/taxes' })
+                    tax = 1
                   }
                 }
-                else if (this.allconfig[i].alias == 'calculate_taxes_sales') {
-                  if (this.allconfig[i].value == 0) a = 1;
-                }
-                else if (this.allconfig[i].alias == 'calculate_taxes_purchase') {
-                  if (this.allconfig[i].value == 0) b = 1;
-                }
               }
-              resolve();
-            });
-            promise1.then((resolve) => {
-              if (c == 1) {
-                if (a == 1 && b == 1) {
-                  this.items.splice(4, 1)
-                }
-              }
-              else {
-                if (a == 1 && b == 1) {
-                  this.items.splice(5, 1)
-                }
-              }
-              this.loader1 = false
-            });
+            }
+            this.loader1 = false
+          })
+          .catch(e=>{
+            window.location="/"+this.$route.params.username+"/login"
           })
       }
     }

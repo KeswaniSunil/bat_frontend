@@ -63,7 +63,7 @@
                         </v-flex>
                     </v-layout>
                     <v-card class="elevation-5 mt-2" style="border-radius:5px;">
-                        <v-card-title v-if="mode=='sale'"  class="pa-2 primary white--text">
+                        <v-card-title v-if="mode=='sale' || mode == 'customer'"  class="pa-2 primary white--text">
                             List of All Sale's Orders:-
                         </v-card-title>
                         <v-card-title v-else class="pa-2 primary white--text">
@@ -122,10 +122,10 @@
                                         }}</router-link>
                                 </td>
                                 <td v-if="mode == 'purchase'">
-                                    <router-link class="text-capitalize" :to="'/'+$route.params.username+'/Dashboard/purchase/supplier/'+props.item.supplier.id+'/viewAllDetails'">{{props.item.supplier.name}}</router-link>
+                                    <router-link class="text-capitalize" :to="'/'+$route.params.username+'/Dashboard/purchase/supplier/'+props.item.supplier.id+'/view'">{{props.item.supplier.name}}</router-link>
                                 </td>
                                 <td v-else-if="mode == 'sale'">
-                                    <router-link class="text-capitalize" :to="'/'+$route.params.username+'/Dashboard/sales/customer/'+props.item.customer.id+'/viewAllDetails'">{{props.item.customer.name}}</router-link>
+                                    <router-link class="text-capitalize" :to="'/'+$route.params.username+'/Dashboard/sales/customer/'+props.item.customer.id+'/view'">{{props.item.customer.name}}</router-link>
                                 </td>
                                 <td>{{ props.item.totalamount }}</td>
                                 <td v-if="mode == 'purchase'">
@@ -134,7 +134,7 @@
                                     </v-btn>
                                 </td>
                                 <td v-else-if="mode == 'sale'">
-                                    <v-btn :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/edit'" icon>
+                                    <v-btn :to="'/'+$route.params.username+'/Dashboard/sales/order/'+props.item.id+'/edit'" icon>
                                         <v-icon class="grey--text text--darken-2">edit</v-icon>
                                     </v-btn>
                                 </td>
@@ -170,23 +170,23 @@
                                     {{ new Date(props.item.billdate).getDate()+"/"+(new Date(props.item.billdate).getMonth()+1)+"/"+new Date(props.item.billdate).getFullYear() }}
                                 </td>
                                 <td v-if="mode == 'supplier'">
-                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/dashboard/purchase/order/'+props.item.id+'/view'">{{
+                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/Dashboard/purchase/order/'+props.item.id+'/view'">{{
                                         props.item.billno }}</router-link>
                                 </td>
                                 <td v-else-if="mode == 'customer'">
-                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/view'">{{props.item.billbook.prefix+""+props.item.billno}}</router-link>
+                                    <router-link class="text-uppercase" :to="'/'+$route.params.username+'/Dashboard/sales/order/'+props.item.id+'/view'">{{props.item.billbook.prefix+""+props.item.billno}}</router-link>
                                 </td>
                                 <td>{{props.item.itemtotal}}</td>
                                 <td>{{props.item.charges}}</td>
                                 <td v-if="taxstatus == 1">{{props.item.taxamount}}</td>
                                 <td>{{ props.item.totalamount }}</td>
                                 <td v-if="mode == 'supplier'">
-                                    <v-btn :to="'/'+$route.params.username+'/dashboard/purchase/order/'+props.item.id+'/edit'" icon>
+                                    <v-btn :to="'/'+$route.params.username+'/Dashboard/purchase/order/'+props.item.id+'/edit'" icon>
                                         <v-icon>edit</v-icon>
                                     </v-btn>
                                 </td>
                                 <td v-else-if="mode == 'customer'">
-                                    <v-btn :to="'/'+$route.params.username+'/dashboard/sales/order/'+props.item.id+'/edit'" icon>
+                                    <v-btn :to="'/'+$route.params.username+'/Dashboard/sales/order/'+props.item.id+'/edit'" icon>
                                         <v-icon class="grey--text text--darken-2">edit</v-icon>
                                     </v-btn>
                                 </td>
@@ -498,32 +498,43 @@
                 }
             },
             async deleteCustomer() {
-                if (this.mode == "purchase") {
+                let $this = this;
+                let deleteOrder = (function(){
+                    let deleteo = [];
+                    for(let i= 0;i<$this.selectOrder.length;i++)
+                    {
+                        deleteo.push($this.selectOrder[i].id)
+                    }
+                    return deleteo
+                })();
+                if (this.mode == "purchase" || this.mode == "supplier") {
                     if (confirm("Do you really want to delete?")) {
                         this.$axios.post("/" + this.$route.params.username + "/api/Purchases/deletepurchase?access_token=" + this.$store.state.token, {
-                            purchaseId: this.selectOrder,
+                            purchaseId: deleteOrder,
                             userId: this.$store.state.userId
                         })
                             .then(res => {
                                 if (res.data.status == "done") {
                                     //alert("Successfully Deleted")
                                     //window.location="";
-                                    this.generate()
+                                    this.$store.commit("snackbar/setSnack", "Order Successfully Deleted");
+                                    this.getOrders()
                                 }
                             })
                     }
                 }
-                else if (this.mode == "sale") {
+                else if (this.mode == "sale" || this.mode == "customer") {
                     if (confirm("Do you really want to delete?")) {
                         this.$axios.post("/" + this.$route.params.username + "/api/Orders/deleteorder?access_token=" + this.$store.state.token, {
-                            orderId: this.selectOrder,
+                            orderId: deleteOrder,
                             userId: this.$store.state.userId
                         })
                             .then(res => {
                                 if (res.data.status == "done") {
                                     //alert("Successfully Deleted")
                                     //window.location="";
-                                    this.generate()
+                                    this.$store.commit("snackbar/setSnack", "Order Successfully Deleted");
+                                    this.getOrders()
                                 }
                             })
                     }
