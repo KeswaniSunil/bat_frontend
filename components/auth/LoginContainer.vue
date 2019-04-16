@@ -59,6 +59,7 @@
           flat
           required
           class="input-box"
+          @keypress.enter="login"
         ></v-text-field>
       </v-card-text>
     </v-flex>
@@ -66,6 +67,7 @@
       <v-btn
         round
         :disabled="!valid"
+        :loading="loading"
         @click="login"
         class="px-6 transform-capitalize login-btn-active"
         color="#000"

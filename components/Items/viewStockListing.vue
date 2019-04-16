@@ -43,7 +43,7 @@
                             </v-layout>
                         </v-flex>
                     </v-layout>
-                    <v-card class="elevation-5" style="border-radius:5px;">
+                    <v-card class="elevation-3" style="border-radius:5px;">
                         <v-card-title class="pa-2 primary white--text">
                             List of All Items:-
                         </v-card-title>
@@ -163,7 +163,7 @@
                 { text: 'Date', value: 'date' },
                 { text: 'Name', value: 'name' },
                 { text: 'Quantity', value: 'quantity' },
-                { text: 'Price', value: 'price' },
+                { text: 'Price(Rs.)', value: 'price' },
                 { text: 'Notes', value: 'notes' }],
                 header2: [{
                     text: '#',
@@ -175,7 +175,7 @@
                 { text: 'Date', value: 'date' },
                 { text: 'Customer Name', value: 'customername' },
                 { text: 'Quantity', value: 'quantity' },
-                { text: 'Price', value: 'price' }],
+                { text: 'Price(Rs.)', value: 'price' }],
                 newIndex: 0,
                 totalStock_p: [],
                 totalStock: [],

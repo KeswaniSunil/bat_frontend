@@ -3,32 +3,33 @@
         <v-flex sm12>
             <v-card class="border-radius-5">
                 <v-card-text>
-                    <v-layout align-end justify-end row wrap>
+                    <v-layout align-center justify-space-between class="mb-2" :class="[$store.state.biggerScreen ? 'row' : 'column']">
+                        <label class="page-heading primary--text ml-2">BillBook Listing:</label>
                         <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
                             <v-icon dark small class="mr-2"> flash_on</v-icon>Add Bill Book
                         </v-btn>
                    </v-layout>
-                    <v-layout column class="pb-2">
-                        <v-flex sm12>
-                            <v-layout align-center row wrap>
-                                <v-flex xs3 sm1>
-                                    <v-btn v-if="selectType.length > 0" color="error" round class="pa-0" @click="deleteType">
-                                        <v-icon dark small class="mr-1">delete</v-icon> Delete
-                                    </v-btn>
-                                </v-flex>
-                                <v-flex xs9 sm8></v-flex>
-                                <v-flex xs12 sm3>
-                                    <v-text-field v-model="search" append-icon="search" label="Search" single-line
-                                        hide-details></v-text-field>
-                                </v-flex>
-                            </v-layout>
-                        </v-flex>
-                    </v-layout>
-                    <v-card class="elevation-5" style="border-radius:5px;">
+                    <v-card class="elevation-3" style="border-radius:5px;">
                         <v-card-title class="pa-2 primary white--text">
                             List of All BillBooks:-
                         </v-card-title>
-                        <v-card-text>
+                        <v-card-text class="pt-1">
+                             <v-layout column class="pb-2">
+                                <v-flex sm12>
+                                    <v-layout align-end row wrap>
+                                        <v-flex xs3 sm1>
+                                            <v-btn v-if="selectType.length > 0" color="error" round class="pa-0" @click="deleteType">
+                                                <v-icon dark small class="mr-1">delete</v-icon> Delete
+                                            </v-btn>
+                                        </v-flex>
+                                        <v-flex xs9 sm8></v-flex>
+                                        <v-flex xs12 sm3>
+                                            <v-text-field v-model="search" append-icon="search" label="Search" single-line
+                                                hide-details></v-text-field>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-flex>
+                            </v-layout>
                             <v-data-table v-model="selectType" :headers="header" :items="typeDtl" :pagination.sync="pagination"
                                 :total-items="totalType" :loading="loading" select-all item-key="id" class="elevation-0">
                                 <template v-slot:headers="props">

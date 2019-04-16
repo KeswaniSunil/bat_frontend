@@ -1,166 +1,166 @@
 <template>
-            <v-card flat>
-                <v-card-text class="body-background mt-3">
-                    <v-layout>
-                        <v-flex sm12>
-                            <v-card class="border-radius-5">
-                                <v-card-text>
-                                    <v-layout align-start justify-end row wrap class="mb-3">
-                                                    <v-btn color="info" round class="pa-2" @click="showModal = true">
-                                                        <v-icon dark small class="mr-2"> flash_on</v-icon>Add Stock
-                                                    </v-btn>
-                                                    <v-btn color="info" round class="pa-2" :to="'/'+this.$route.params.username+'/Dashboard/stock/subtypeWise'"
-                                                        nuxt>
-                                                        <v-icon dark small class="mr-2"> flash_on</v-icon>SubType Wise
-                                                    </v-btn>
-                                                
-                                    </v-layout>
-                                    <v-layout class="pt-3" align-center justify-start row wrap>
-                                        <v-flex xs12 sm4>
-                                            <v-dialog ref="startdate" v-model="startDatemodal" :return-value.sync="startDate1"
-                                                persistent lazy full-width width="290px">
-                                                <template v-slot:activator="{ on }">
-                                                    <v-text-field v-model="startDate1" label="Start Date" prepend-icon="event"
-                                                        readonly v-on="on"></v-text-field>
-                                                </template>
-                                                <v-date-picker v-model="startDate1" scrollable :max="endDate1">
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn flat color="primary" @click="startDatemodal = false">Cancel</v-btn>
-                                                    <v-btn flat color="primary" @click="$refs.startdate.save(startDate1)">OK</v-btn>
-                                                </v-date-picker>
-                                            </v-dialog>
-                                        </v-flex>
-                                        <v-flex sm1></v-flex>
-                                        <v-flex xs12 sm4>
-                                            <v-dialog ref="enddate" v-model="endDatemodal" :return-value.sync="endDate1"
-                                                persistent lazy full-width width="290px">
-                                                <template v-slot:activator="{ on }">
-                                                    <v-text-field v-model="endDate1" label="End Date" prepend-icon="event"
-                                                        readonly v-on="on"></v-text-field>
-                                                </template>
-                                                <v-date-picker v-model="endDate1" scrollable>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn flat color="primary" @click="endDatemodal = false">Cancel</v-btn>
-                                                    <v-btn flat color="primary" @click="$refs.enddate.save(endDate1)">OK</v-btn>
-                                                </v-date-picker>
-                                            </v-dialog>
-                                        </v-flex>
-                                        <v-flex xs12 sm3>
-                                            <v-layout row wrap>
-                                                <v-flex xs7 sm3>
-                                                </v-flex>
-                                                <v-flex xs5 sm9>
-                                                    <v-btn class="" dark round @click="getStock()">Get Stock</v-btn>
-                                                </v-flex>
-                                            </v-layout>
-                                        </v-flex>
-                                    </v-layout>
-                                    <v-layout column class="pb-2">
-                                        <v-flex sm12>
-                                            <v-layout align-center row wrap>
-                                                <v-flex xs12 sm4>
-                                                    <v-layout row wrap>
-                                                        <v-flex sm12>
-                                                            <v-layout justify-space-between>
-                                                                <v-checkbox v-model="purchase" @change="getStock()"
-                                                                    label="Purchase"></v-checkbox>
-                                                                <v-checkbox v-model="sales" @change="getStock()" label="Sales"></v-checkbox>
-                                                            </v-layout>
-                                                        </v-flex>
-                                                    </v-layout>
-                                                </v-flex>
-                                                <v-flex xs12 sm8></v-flex>
-
-                                            </v-layout>
-                                        </v-flex>
-                                        <v-flex sm12>
-
-                                        </v-flex>
-                                    </v-layout>
-                                    <v-card class="elevation-5" style="border-radius:5px;">
-                                        <v-card-title class="pa-2 primary white--text">
-                                            StockLogs of All Items:-
-                                        </v-card-title>
-                                        <v-card-text>
-                                            <v-layout row wrap>
-                                                <v-flex xs12 sm9 class="mb-3">
-                                                    <v-layout align-start justify-start row wrap>
-
-                                                        <v-btn color="primary" round class="pa-0 mr-1" :loading="loadingPDF"
-                                                            @click="_export('pdf')">
-                                                            <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Pdf
-                                                        </v-btn>
-                                                        <v-btn color="primary" round class="pa-0 " :loading="loadingExcel"
-                                                            @click="_export('excel')">
-                                                            <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Excel
-                                                        </v-btn>
-
-                                                    </v-layout>
-                                                </v-flex>
-                                                <v-flex xs12 sm3 class="mb-3">
-                                                    <v-text-field v-model="search" append-icon="search" label="Search"
-                                                        class="pa-0 ma-0" single-line hide-details></v-text-field>
-                                                </v-flex>
-
-                                            </v-layout>
-                                            <v-data-table :headers="header" :items="stockDtl" :pagination.sync="pagination"
-                                                :total-items="totalStock" :loading="loading" select-all item-key="id"
-                                                class="elevation-0">
-                                                <template v-slot:headers="props">
-                                                    <tr>
-                                                        <th v-for="header in props.headers" :key="header.text" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
-                                                            @click="changeSort(header.value)" style="text-align:left;">
-
-                                                            {{ header.text }}<v-icon small>arrow_upward</v-icon>
-                                                        </th>
-                                                    </tr>
-                                                </template>
-                                                <template v-slot:items="props">
-                                                    <tr :class="[(billNo_order[props.index] != null) ? colorred : colorgreen]">
-
-                                                        <td width="6%">{{props.item.index+1}}</td>
-                                                        <td>{{ props.item.item.name }}</td>
-                                                        <td>{{ props.item.price }}</td>
-                                                        <td>{{ props.item.quantity }}</td>
-                                                        <td v-if="billNo_purchase[props.index] != null">{{
-                                                            billNo_purchase[props.index] }}</td>
-                                                        <td v-else-if="billNo_order[props.index] != null">{{
-                                                            billNo_order[props.index] }}</td>
-                                                        <td v-else>-</td>
-                                                        <td>{{ changeToIST(props.item.date) }}</td>
-                                                        <th>{{props.item.notes}}</th>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card-text>
-                                    </v-card>
-                                    <v-dialog width="500" v-model="showModal">
-                                        <v-card>
-                                            <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
-                                                <span style="font-size:18px;">Add Stock</span>
-                                            </v-card-title>
-                                            <v-card-text class="pa-0">
-                                                <v-container grid-list-xs>
-                                                    <addStock v-if="showModal==true" v-model="closeModal1"></addStock>
-                                                </v-container>
-                                            </v-card-text>
-
-                                            <v-divider></v-divider>
-
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn color="primary" flat @click="showModal = false">
-                                                    Close
-                                                </v-btn>
-                                            </v-card-actions>
-                                        </v-card>
+    <v-card flat>
+        <v-card-text class="body-background mt-3 padding-xs">
+            <v-layout>
+                <v-flex sm12>
+                    <v-card class="border-radius-5">
+                        <v-card-text>
+                            <v-layout align-center justify-space-between :class="[$store.state.biggerScreen ? 'row' : 'column']" class="mb-3">
+                                <label class="page-heading primary--text ml-2">Stock Listing:</label>
+                                <div>
+                                    <v-btn color="info" round class="pa-2" @click="showModal = true">
+                                        <v-icon dark small class="mr-2"> flash_on</v-icon>Add Stock
+                                    </v-btn>
+                                    <v-btn color="info" round class="pa-2" :to="'/'+this.$route.params.username+'/Dashboard/stock/subtypeWise'"
+                                        nuxt>
+                                        <v-icon dark small class="mr-2"> flash_on</v-icon>SubType Wise
+                                    </v-btn>
+                                </div>
+                            </v-layout>
+                            <v-layout class="pt-3" align-center justify-start row wrap>
+                                <v-flex xs12 sm4>
+                                    <v-dialog ref="startdate" v-model="startDatemodal" :return-value.sync="startDate1"
+                                        persistent lazy full-width width="290px">
+                                        <template v-slot:activator="{ on }">
+                                            <v-text-field v-model="startDate1" label="Start Date" prepend-icon="event"
+                                                readonly v-on="on"></v-text-field>
+                                        </template>
+                                        <v-date-picker v-model="startDate1" scrollable :max="endDate1">
+                                            <v-spacer></v-spacer>
+                                            <v-btn flat color="primary" @click="startDatemodal = false">Cancel</v-btn>
+                                            <v-btn flat color="primary" @click="$refs.startdate.save(startDate1)">OK</v-btn>
+                                        </v-date-picker>
                                     </v-dialog>
+                                </v-flex>
+                                <v-flex sm1></v-flex>
+                                <v-flex xs12 sm4>
+                                    <v-dialog ref="enddate" v-model="endDatemodal" :return-value.sync="endDate1"
+                                        persistent lazy full-width width="290px">
+                                        <template v-slot:activator="{ on }">
+                                            <v-text-field v-model="endDate1" label="End Date" prepend-icon="event"
+                                                readonly v-on="on"></v-text-field>
+                                        </template>
+                                        <v-date-picker v-model="endDate1" scrollable>
+                                            <v-spacer></v-spacer>
+                                            <v-btn flat color="primary" @click="endDatemodal = false">Cancel</v-btn>
+                                            <v-btn flat color="primary" @click="$refs.enddate.save(endDate1)">OK</v-btn>
+                                        </v-date-picker>
+                                    </v-dialog>
+                                </v-flex>
+                                <v-flex xs12 sm3>
+                                    <v-layout row wrap>
+                                        <v-flex xs7 sm3>
+                                        </v-flex>
+                                        <v-flex xs5 sm9>
+                                            <v-btn class="" dark round @click="getStock()">Get Stock</v-btn>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-flex>
+                            </v-layout>
+                            <v-layout column class="pb-2">
+                                <v-flex sm12>
+                                    <v-layout align-center row wrap>
+                                        <v-flex xs12 sm4>
+                                            <v-layout row wrap>
+                                                <v-flex sm12>
+                                                    <v-layout justify-space-between>
+                                                        <v-checkbox v-model="purchase" @change="getStock()" label="Purchase"></v-checkbox>
+                                                        <v-checkbox v-model="sales" @change="getStock()" label="Sales"></v-checkbox>
+                                                    </v-layout>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-flex>
+                                        <v-flex xs12 sm8></v-flex>
+
+                                    </v-layout>
+                                </v-flex>
+                                <v-flex sm12>
+
+                                </v-flex>
+                            </v-layout>
+                            <v-card class="elevation-5" style="border-radius:5px;">
+                                <v-card-title class="pa-2 primary white--text">
+                                    StockLogs of All Items:-
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-layout row wrap>
+                                        <v-flex xs12 sm9 class="mb-3">
+                                            <v-layout align-start justify-start row wrap>
+
+                                                <v-btn color="primary" round class="pa-0 mr-1" :loading="loadingPDF"
+                                                    @click="_export('pdf')">
+                                                    <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Pdf
+                                                </v-btn>
+                                                <v-btn color="primary" round class="pa-0 " :loading="loadingExcel"
+                                                    @click="_export('excel')">
+                                                    <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Excel
+                                                </v-btn>
+
+                                            </v-layout>
+                                        </v-flex>
+                                        <v-flex xs12 sm3 class="mb-3">
+                                            <v-text-field v-model="search" append-icon="search" label="Search" class="pa-0 ma-0"
+                                                single-line hide-details></v-text-field>
+                                        </v-flex>
+
+                                    </v-layout>
+                                    <v-data-table :headers="header" :items="stockDtl" :pagination.sync="pagination"
+                                        :total-items="totalStock" :loading="loading" select-all item-key="id" class="elevation-0">
+                                        <template v-slot:headers="props">
+                                            <tr>
+                                                <th v-for="header in props.headers" :key="header.text" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                                    @click="changeSort(header.value)" style="text-align:left;">
+
+                                                    {{ header.text }}<v-icon small>arrow_upward</v-icon>
+                                                </th>
+                                            </tr>
+                                        </template>
+                                        <template v-slot:items="props">
+                                            <tr :class="[(billNo_order[props.index] != null) ? colorred : colorgreen]">
+
+                                                <td width="6%">{{props.item.index+1}}</td>
+                                                <td>{{ props.item.item.name }}</td>
+                                                <td>{{ props.item.price }}</td>
+                                                <td>{{ props.item.quantity }}</td>
+                                                <td v-if="billNo_purchase[props.index] != null">{{
+                                                    billNo_purchase[props.index] }}</td>
+                                                <td v-else-if="billNo_order[props.index] != null">{{
+                                                    billNo_order[props.index] }}</td>
+                                                <td v-else>-</td>
+                                                <td>{{ changeToIST(props.item.date) }}</td>
+                                                <th>{{props.item.notes}}</th>
+                                            </tr>
+                                        </template>
+                                    </v-data-table>
                                 </v-card-text>
                             </v-card>
-                        </v-flex>
-                    </v-layout>
-                </v-card-text>
-            </v-card>
+                            <v-dialog width="500" v-model="showModal">
+                                <v-card>
+                                    <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
+                                        <span style="font-size:18px;">Add Stock</span>
+                                    </v-card-title>
+                                    <v-card-text class="pa-0">
+                                        <v-container grid-list-xs>
+                                            <addStock v-if="showModal==true" v-model="closeModal1"></addStock>
+                                        </v-container>
+                                    </v-card-text>
+
+                                    <v-divider></v-divider>
+
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn color="primary" flat @click="showModal = false">
+                                            Close
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                        </v-card-text>
+                    </v-card>
+                </v-flex>
+            </v-layout>
+        </v-card-text>
+    </v-card>
 </template>
 <script>
 
@@ -225,7 +225,7 @@
                     value: 'itemname'
                 },
                 { text: 'Item Name', value: 'itemname' },
-                { text: 'Price', value: 'price' },
+                { text: 'Price(Rs.)', value: 'price' },
                 { text: 'Quantity', value: 'quantity' },
                 { text: 'Bill No', value: 'billno' },
                 { text: 'Date', value: 'date' },

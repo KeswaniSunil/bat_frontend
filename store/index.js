@@ -4,7 +4,8 @@ export const state = () => ({
   isAuth: false,
   token: null,
   userId: 0,
-  username: null
+  username: null,
+  biggerScreen: true
 })
 
 export const mutations = {
@@ -19,6 +20,9 @@ export const mutations = {
   },
   setUsername: function (state, username) {
     state.username = username
+  },
+  setBiggerScreen: function (state, biggerScreen) {
+    state.biggerScreen = biggerScreen
   }
 }
 

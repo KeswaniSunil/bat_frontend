@@ -44,12 +44,12 @@
 
     <!-- <div class="login-page"> -->
     <v-flex xs12 sm6 md6 lg6>
-      <v-layout justify-center align-start>
+      <v-layout justify-center align-center>
         <img src="/login_img.png" class="left-img">
       </v-layout>
     </v-flex>
     <v-flex xs12 sm6 md6 lg6>
-      <v-layout justify-end>
+      <v-layout justify-center>
         <div class="form-box">
           <h2 class="heading">
             Sign in to
@@ -73,7 +73,6 @@ export default {
     LoginContainer
   },
   data: () => ({}),
-  async asyncData({ app }) {},
   methods: {
     handleLoginSuccess() {
       const path = "Dashboard";

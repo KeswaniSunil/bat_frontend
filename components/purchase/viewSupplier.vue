@@ -3,7 +3,7 @@
     <v-flex xs12 sm12>
       <v-card class="border-radius-5">
         <v-card-text>
-          <v-layout align-start justify-space-between row wrap>
+          <v-layout align-center justify-space-between :class="[$store.state.biggerScreen ? 'row' : 'column']" >
             <div>
               <v-btn color="secondary" round class="pa-2" @click="modalSettlement = true">
                 <v-icon dark small class="mr-1"> person_add</v-icon>Amount Settlement

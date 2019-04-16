@@ -62,7 +62,7 @@
                             </v-layout>
                         </v-flex>
                     </v-layout>
-                    <v-card class="elevation-5 mt-2" style="border-radius:5px;">
+                    <v-card class="elevation-3 mt-2" style="border-radius:5px;">
                         <v-card-title v-if="mode=='sale' || mode == 'customer'"  class="pa-2 primary white--text">
                             List of All Sale's Orders:-
                         </v-card-title>
@@ -242,7 +242,7 @@
                 { text: 'Date', value: 'billdate' },
                 { text: 'Bill No', value: 'billno' },
                 { text: 'Name', value: 'name' },
-                { text: 'Amount', value: 'totalamount' },
+                { text: 'Amount(Rs.)', value: 'totalamount' },
                 { text: 'Edit', value: 'name' }],
                 header2: [{
                     text: '#',

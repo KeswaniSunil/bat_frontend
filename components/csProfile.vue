@@ -1,50 +1,55 @@
 <template>
     <v-card flat>
         <v-card-text class="grey lighten-2 ">
+            <loadercontent v-if="loading1" />
             <v-card style="border-radius:5px 5px 0 0;" class="tab-display-none">
                 <v-card-text class=" pb-0">
-                    <v-layout align-center justify-start row wrap>
-                        <v-flex xs12 sm6 class="mb-1">
+                    <v-layout align-start justify-space-between :class="[$store.state.biggerScreen ? 'row' : 'column']" >
+                        <div class="mb-1">
                             <label class="font-24 pb-0 mb-1 text-capitalize"><b>{{customerDtl.name}}</b></label>
-                            <v-subheader style="height:20px;">GST:- {{customerDtl.gstin}}</v-subheader>
-                        </v-flex>
-                        <v-flex xs12 sm6 class="mb-1">
-                            <v-layout row wrap>
-                                <v-flex sm6 class="mb-1"></v-flex>
-                                <v-flex xs12 sm6 text-xs-right class="mb-1">
-                                    <label class="font-15 font-weight-regular"><b>Total Transactions: </b></label>
-                                    <span style="text-align:right;">{{totalTrans}}</span>
-                                </v-flex>
-                                <v-flex sm6 class="mb-1"></v-flex>
-                                <v-flex xs12 sm6 text-xs-right class="mb-1">
-                                    <label class="font-15 font-weight-regular"><b>Total Amount: </b></label>
-                                    {{customerDtl.totalamount}}
-                                </v-flex>
-                                <v-flex sm6 class="mb-1"></v-flex>
-                                <v-flex v-if="mode == 'customer'" xs12 sm6 text-xs-right class="mb-1">
-                                    <label class="font-15 font-weight-regular"><b>Amount Received: </b></label>
-                                    {{customerDtl.received}}
-                                </v-flex>
-                                <v-flex v-else-if="mode == 'supplier'" xs12 sm6 text-xs-right class="mb-1">
-                                    <label class="font-15 font-weight-regular"><b>Amount Paid: </b></label>
-                                    {{customerDtl.paid}}
-                                </v-flex>
-                                <v-flex sm6 class="mb-1"></v-flex>
-                                <v-flex v-if="mode == 'customer'" xs12 sm6 text-xs-right class="mb-1">
-                                    <label class="font-15 font-weight-regular"><b>Amount Receivable: </b></label>
-                                    {{customerDtl.totalamount-customerDtl.received}}
-                                </v-flex>
-                                <v-flex v-else-if="mode == 'supplier'" xs12 sm6 text-xs-right class="mb-1">
-                                    <label class="font-15 font-weight-regular"><b>Amount Payable: </b></label>
-                                    {{customerDtl.totalamount-customerDtl.paid}}
-                                </v-flex>
-                                <v-flex sm6></v-flex>
-                                <v-flex xs12 sm6 text-xs-right>
-                                    <label class="font-15 font-weight-regular"><b>Balance Remaining: </b></label>
-                                    {{customerDtl.closingbal}}
-                                </v-flex>
-                            </v-layout>
-                        </v-flex>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>GST:</td>
+                                        <td class="font-weight-bold">{{customerDtl.gstin}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Balance Remaining:</td>
+                                        <td class="font-weight-bold">{{customerDtl.closingbal}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mb-1">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Total Transactions:</td>
+                                        <td class="font-weight-bold">{{totalTrans}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Amount:</td>
+                                        <td class="font-weight-bold">{{customerDtl.totalamount}}</td>
+                                    </tr>
+                                    <tr v-if="mode == 'customer'">
+                                        <td>Amount Received:</td>
+                                        <td class="font-weight-bold">{{customerDtl.received}}</td>
+                                    </tr>
+                                    <tr v-else-if="mode == 'supplier'">
+                                        <td>Amount Paid:</td>
+                                        <td class="font-weight-bold">{{customerDtl.paid}}</td>
+                                    </tr>
+                                    <tr v-if="mode == 'customer'">
+                                        <td>Amount Receivable:</td>
+                                        <td class="font-weight-bold">{{customerDtl.totalamount-customerDtl.received}}</td>
+                                    </tr>
+                                    <tr v-else-if="mode == 'supplier'">
+                                        <td>Amount Payable:</td>
+                                        <td class="font-weight-bold">{{customerDtl.totalamount-customerDtl.paid}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </v-layout>
                 </v-card-text>
             </v-card>
@@ -60,23 +65,19 @@
 
                         <v-tabs-items v-model="tab" touchless>
                             <v-tab-item v-for="(n,index) in items" :key="index" :value="`tab-${index+1}`">
-                                <v-card v-if="index==0" class="mt-3 border-radius-5">
+                                <v-card v-if="index==2" class="mt-3 border-radius-5">
                                     <v-card-text>
                                         <v-layout align-start justify-end row wrap>
                                             <v-btn color="info" round class="mb-3" @click="showModal=true">
                                                 <v-icon dark small class="mr-1">settings</v-icon> Settings
                                             </v-btn>
                                         </v-layout>
-                                        <v-card v-if="index==0" class="grey lighten-4 border-radius-5">
-                                            <v-card-text>
-                                                <csAddComponent v-model="closeModal1" :mode="mode" :id="id"></csAddComponent>
-                                            </v-card-text>
-                                        </v-card>
+                                        <csAddComponent v-model="closeModal1" :mode="mode" :id="id"></csAddComponent>
                                     </v-card-text>
                                 </v-card>
-                                <orderListing v-else-if="index==1" class="mt-3" :mode="mode" :startDate="startDate"
+                                <orderListing v-else-if="index==0" class="mt-3" :mode="mode" :startDate="startDate"
                                     :endDate="endDate" :csid="id" />
-                                <BalanceLogs v-else-if="index == 2" class="mt-3" :mode="mode" :id="id" />
+                                <BalanceLogs v-else-if="index == 1" class="mt-3" :mode="mode" :id="id" />
 
                             </v-tab-item>
                         </v-tabs-items>
@@ -130,7 +131,7 @@
     import csAddComponent from "~/components/csAddComponent";
     import orderListing from '@/components/orderListingComponent';
     import BalanceLogs from '@/components/csBalanceLogs';
-
+    import loadercontent from "@/components/loadercontent";
 
     export default {
         props: {
@@ -162,16 +163,17 @@
             //editCustomer,
             csAddComponent,
             orderListing,
-            BalanceLogs
+            BalanceLogs,
+            loadercontent
         },
         data() {
             return {
                 tab: null,
                 customerDtl: [],
                 items: [
-                    { name:'About' },
                     { name: 'All Orders' },
-                    { name: 'Transactions'}
+                    { name: 'Transactions'},
+                    { name:'About' }
                 ],
                 closeModal1: 1,
                 startDate: null,
@@ -184,8 +186,8 @@
                 noofdays: 0,
                 requiredRules: [
                     v => !!v || 'This Field is required and value should be more than 0'
-                ]
-
+                ],
+                loading1:true
 
             }
         },
@@ -244,6 +246,7 @@
                                         this.reminder = true;
                                         this.noofdays = this.customerDtl.noofdays
                                     }
+                                    this.loading1 = false
                                 });
                         });
                 }
@@ -254,6 +257,7 @@
                                 .then(res1 => {
                                     this.customerDtl = res.data;
                                     this.totalTrans = res1.data.count;
+                                    this.loading1 = false
                                 });
                         });
                 }

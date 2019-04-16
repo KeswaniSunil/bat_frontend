@@ -11,7 +11,7 @@
                 <v-tabs-items v-model="tab" touchless>
                     <v-tab-item v-for="(n,index) in items" :key="index" :value="`tab-${index+1}`">
                         <v-card flat>
-                            <v-card-text class="body-background">
+                            <v-card-text class="body-background padding-xs">
                                 <smsGroup v-if="index == 1" class="mt-3" />
                                 <smsLogs v-else-if="index == 0" class="mt-3" />
                                 <smsTemplate v-else-if="index == 2" class="mt-3" />

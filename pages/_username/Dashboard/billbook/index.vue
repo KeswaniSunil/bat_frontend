@@ -2,7 +2,7 @@
   <v-layout row wrap>
     <v-flex xs12 text-xs-center>
         <v-card flat>
-            <v-card-text class="body-background">
+            <v-card-text class="body-background padding-xs">
                 <viewBillbook class="mt-3" />
             </v-card-text>
         </v-card>

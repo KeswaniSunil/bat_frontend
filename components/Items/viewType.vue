@@ -3,7 +3,8 @@
         <v-flex sm12>
         <v-card class="border-radius-5">
                 <v-card-text>
-                    <v-layout  align-end justify-end row wrap>
+                    <v-layout align-center justify-space-between :class="[$store.state.biggerScreen ? 'row' : 'column']">
+                        <label class="page-heading primary--text ml-2">Type Listing:</label>
                         <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
                             <v-icon dark small class="mr-2"> flash_on</v-icon>Add Type
                         </v-btn>
@@ -16,7 +17,7 @@
                         </v-flex>
                         <v-flex sm11 xs9></v-flex>
                     </v-layout>    
-                    <v-card class="elevation-5" style="border-radius:5px;">
+                    <v-card class="elevation-3" style="border-radius:5px;">
                         <v-card-title  class="pa-2 primary white--text">
                             List of All Types:-
                         </v-card-title>

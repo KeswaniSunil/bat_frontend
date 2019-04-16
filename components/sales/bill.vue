@@ -3,24 +3,24 @@
         <v-flex xs12 sm12>
             <v-form @submit.prevent="addBill" ref="form" lazy-validation onkeypress="return event.keyCode != 13"
                 v-model="valid">
-                <v-card class="border-radius-5 mx-3">
+                <v-card class="border-radius-5">
                     <v-card-text primary-title>
                         <v-container grid-list-xs>
                             <loadercontent v-if="loader1" /> 
                             <v-layout align-center justify-start row wrap>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Customer Name: </label>
                                         </v-flex>
                                         <v-flex sm1>
                                         </v-flex>
                                         <v-flex xs12 sm8>
                                             <v-autocomplete v-if="id == null" v-model="idToBeSent.customerId" :items="customerACVitems"
-                                                @input="newCustomer()" :rules="requiredRules" append-icon="search"
+                                                @input="newCustomer()" @click:append="addACV('customer')" :rules="requiredRules" append-icon="add"
                                                 :loading="customerACV.isLoading" :search-input.sync="customerACV.search"
                                                 hide-no-data hide-selected item-text="name" item-value="id" label="Customer Name"
-                                                placeholder="Customer Name" return-string height=20 :single-line="biggerScreen"></v-autocomplete>
+                                                placeholder="Customer Name" return-string height=20 :single-line="$store.state.biggerScreen"></v-autocomplete>
                                             <v-text-field v-else v-model="billDetail.customerName" height=20 disabled></v-text-field>
                                         </v-flex>
                                     </v-layout>
@@ -28,7 +28,7 @@
                                 <v-flex sm1></v-flex>
                                 <v-flex xs12 sm5>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Bill Date: </label>
                                         </v-flex>
                                         <v-flex sm1>
@@ -39,7 +39,7 @@
                                                 persistent lazy full-width width="290px">
                                                 <template v-slot:activator="{ on }">
                                                     <v-text-field v-model="billDetail.billDate" :rules="requiredRules"
-                                                        :single-line="biggerScreen" readonly v-on="on" height=20></v-text-field>
+                                                        :single-line="$store.state.biggerScreen" readonly v-on="on" height=20></v-text-field>
                                                 </template>
                                                 <v-date-picker v-model="billDetail.billDate" scrollable>
                                                     <v-spacer></v-spacer>
@@ -52,7 +52,7 @@
                                 </v-flex>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Bill Book: </label>
                                         </v-flex>
                                         <v-flex sm1>
@@ -60,14 +60,14 @@
                                         <v-flex xs12 sm8>
                                             <v-select :items="billBookDtl" label="Select Bill Book" :rules="requiredRules"
                                                 v-model="idToBeSent.billBookId" @change="getBillNo" item-text="title"
-                                                item-value="id" :single-line="biggerScreen" height=20></v-select>
+                                                item-value="id" :single-line="$store.state.biggerScreen" height=20></v-select>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
                                 <v-flex sm1></v-flex>
                                 <v-flex xs12 sm5>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Bill No: </label>
                                         </v-flex>
                                         <v-flex sm1>
@@ -75,7 +75,7 @@
                                         </v-flex>
                                         <v-flex xs12 sm8>
                                             <v-text-field label="Bill No" v-model="billPreNo.billNo" :rules="requiredRules"
-                                                :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                                :single-line="$store.state.biggerScreen" height=20 disabled></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -83,24 +83,24 @@
                             <v-layout v-if="configuration.transport == 1" align-center justify-start row wrap>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Transport Name: </label>
                                         </v-flex>
                                         <v-flex sm1>
                                         </v-flex>
                                         <v-flex xs12 sm8>
                                             <v-autocomplete v-model="transport.Id" clearable @input="getvehicleno" :items="transportACVitems"
-                                                append-icon="search" :loading="transportACV.isLoading"
+                                                append-icon="add" @click:append="addACV('transport')" :loading="transportACV.isLoading"
                                                 :search-input.sync="transportACV.search" hide-no-data hide-selected
                                                 item-text="name" item-value="id" label="Transport Name" placeholder="Transport Name"
-                                                return-string height=20 :single-line="biggerScreen"></v-autocomplete>
+                                                return-string height=20 :single-line="$store.state.biggerScreen"></v-autocomplete>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
                                 <v-flex sm1></v-flex>
                                 <v-flex xs12 sm5>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Vehicle No.: </label>
                                         </v-flex>
                                         <v-flex sm1>
@@ -108,27 +108,27 @@
                                         </v-flex>
                                         <v-flex xs12 sm8>
                                             <v-text-field v-model="transport.vehicleNo" label="Vehicle No."
-                                                :single-line="biggerScreen" readonly disabled height=20></v-text-field>
+                                                :single-line="$store.state.biggerScreen" readonly disabled height=20></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Place of Supply: </label>
                                         </v-flex>
                                         <v-flex sm1>
                                         </v-flex>
                                         <v-flex xs12 sm8>
                                             <v-text-field v-model="transport.placeOfSupply" label="Place of Supply"
-                                                :single-line="biggerScreen" height=20></v-text-field>
+                                                :single-line="$store.state.biggerScreen" height=20></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
                                 <v-flex sm1></v-flex>
                                 <v-flex xs12 sm5>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Date of Supply: </label>
                                         </v-flex>
                                         <v-flex sm1>
@@ -138,7 +138,7 @@
                                             <v-dialog ref="dialogpos" v-model="modalpos" :return-value.sync="transport.dateOfSupply"
                                                 persistent lazy full-width width="290px">
                                                 <template v-slot:activator="{ on }">
-                                                    <v-text-field v-model="transport.dateOfSupply" :single-line="biggerScreen"
+                                                    <v-text-field v-model="transport.dateOfSupply" :single-line="$store.state.biggerScreen"
                                                         readonly v-on="on" height=20></v-text-field>
                                                 </template>
                                                 <v-date-picker v-model="transport.dateOfSupply" scrollable>
@@ -154,7 +154,7 @@
                         </v-container>
                     </v-card-text>
                 </v-card>
-                <v-card class="ma-3 border-radius-5">
+                <v-card class="my-3 border-radius-5">
                     <v-card-title>
                         <v-container style="max-width:100%" class="pa-0" grid-list-xs>
                             <loadercontent v-if="loader2" />
@@ -162,13 +162,13 @@
                                 <v-flex xs3>
                                     <v-layout align-center justify-space-between>
                                         <label class="title">Items Details:</label>
-                                        <v-btn v-if="biggerScreen == true" round dark @click="createItemRow()">
+                                        <v-btn v-if="$store.state.biggerScreen == true" round dark @click="createItemRow()">
                                             Add Item
                                         </v-btn>
                                     </v-layout>
                                 </v-flex>
                                 <!-- Laptop View Item -->
-                                <v-flex v-if="biggerScreen == true" xs12 mt-3>
+                                <v-flex v-if="$store.state.biggerScreen == true" xs12 mt-3>
                                     <v-data-table :headers="itemheaders" :items="itemDetails" hide-actions class="elevation-0">
                                         <template v-slot:items="props">
                                             <td>
@@ -176,7 +176,7 @@
                                             </td>
                                             <td style="min-width:300px">
                                                 <v-autocomplete v-model="props.item.itemId" @input="itemGenerate(props.index)"
-                                                    append-icon="search" v-if="props.item.check == 1" :items="itemsACVitems"
+                                                    append-icon="add" @click:append="addACV('item')" v-if="props.item.check == 1" :items="itemsACVitems"
                                                     :loading="itemsACV.isLoading" :search-input.sync="itemsACV.search"
                                                     hide-no-data hide-selected item-text="name" item-value="id" label="Item Name"
                                                     placeholder="Item Name" return-string height=20 :single-line="true"></v-autocomplete>
@@ -259,18 +259,18 @@
                             <v-layout px-2 mt-3 justify-end>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" class="text-lg-left" xs12 sm5>
+                                        <v-flex v-if="$store.state.biggerScreen" class="text-lg-left" xs12 sm5>
                                             <label class="font-15 font-weight-regular">Discount: </label>
                                         </v-flex>
                                         <v-flex xs10 sm6>
                                             <v-text-field type="number" v-model.number="billDetail.discount" :rules="numberRules" min="0"
                                                 @keyup="getBillTotal" @change="getBillTotal" label="Discount"
-                                                :single-line="biggerScreen" height=20></v-text-field>
+                                                :single-line="$store.state.biggerScreen" height=20></v-text-field>
                                         </v-flex>
                                         <v-flex xs2 sm1>
                                             <v-select :items="[{text:'Rs',value:'1'},{text:'%', value:'2'}]" item-text="text"
                                                 item-value="value" :rules="requiredRules" v-model="billDetail.discountType"
-                                                @change="getBillTotal" :single-line="biggerScreen" height=20></v-select>
+                                                @change="getBillTotal" :single-line="$store.state.biggerScreen" height=20></v-select>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -278,13 +278,13 @@
                             <v-layout px-2 justify-end>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm5 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Charges: </label>
                                         </v-flex>
                                         <v-flex xs12 sm7>
                                             <v-text-field type="number" min="0" v-model.number="billDetail.charges"
                                                 @keyup="getBillTotal" :rules="numberRules" @change="getBillTotal" label="Charges"
-                                                :single-line="biggerScreen" height=20></v-text-field>
+                                                :single-line="$store.state.biggerScreen" height=20></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -292,12 +292,12 @@
                             <v-layout px-2 justify-end>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm5 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Round off: </label>
                                         </v-flex>
                                         <v-flex xs12 sm7>
                                             <v-text-field type="number" step="any" v-model="billDetail.roundoff" label="Round off"
-                                                :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                                :single-line="$store.state.biggerScreen" height=20 disabled></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -305,12 +305,12 @@
                             <v-layout px-2 justify-end>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm5 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Total Payable Amount: </label>
                                         </v-flex>
                                         <v-flex xs12 sm7>
                                             <v-text-field type="number" :rules="numberRules" v-model="billDetail.totalPayableAmount" label="Total Payable Amount"
-                                                :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                                :single-line="$store.state.biggerScreen" height=20 disabled></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -318,7 +318,7 @@
                         </v-container>
                     </v-card-title>
                 </v-card>
-                <v-card class="ma-3 border-radius-5">
+                <v-card class="my-3 border-radius-5">
                     <v-card-title>
                         <v-container style="max-width:100%" class="pa-0" grid-list-xs>
                             <loadercontent v-if="loader3" />
@@ -326,13 +326,13 @@
                                 <v-flex xs3>
                                     <v-layout align-center justify-space-between>
                                         <label class="title">Payment Details:</label>
-                                        <v-btn @click="createPaymentRow()" v-if="biggerScreen == true" round dark>
+                                        <v-btn @click="createPaymentRow()" v-if="$store.state.biggerScreen == true" round dark>
                                             Add Payment
                                         </v-btn>
                                     </v-layout>
                                 </v-flex>
                                 <!-- Laptop View-->
-                                <v-flex v-if="biggerScreen == true" xs12 mt-3>
+                                <v-flex v-if="$store.state.biggerScreen == true" xs12 mt-3>
                                     <v-data-table :headers="paymentheaders" :items="payment" hide-actions class="elevation-0">
                                         <template v-slot:items="props">
                                             <td>
@@ -343,7 +343,7 @@
                                                     :return-value.sync="props.item.dueDate" persistent lazy full-width
                                                     width="290px">
                                                     <template v-slot:activator="{ on }">
-                                                        <v-text-field v-model="props.item.dueDate" :single-line="biggerScreen"
+                                                        <v-text-field v-model="props.item.dueDate" :single-line="$store.state.biggerScreen"
                                                             readonly v-on="on" height=20></v-text-field>
                                                     </template>
                                                     <v-date-picker v-model="props.item.dueDate" scrollable>
@@ -418,7 +418,7 @@
                             <v-layout px-2 mt-3 justify-end>
                                 <v-flex v-if="billDetail.receivable > 0" xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm5 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">SMS Remainder: </label>
                                         </v-flex>
                                         <v-tooltip top>
@@ -430,7 +430,7 @@
                                                 </v-flex>
                                                 <v-flex xs7 sm5  v-on="on">
                                                     <v-text-field v-if="remainder != false" type="number"  v-model.number="noofdays" label="No of Days"
-                                                        :single-line="biggerScreen" disabled height=20 min="1"></v-text-field>
+                                                        :single-line="$store.state.biggerScreen" disabled height=20 min="1"></v-text-field>
                                                 </v-flex>
                                             </template>
                                             <span>Change in Customer Edit</span>
@@ -441,14 +441,14 @@
                             <v-layout v-if="billDetail.receivable > 0" px-2 justify-end>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm5 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Due Date: </label>
                                         </v-flex>
                                         <v-flex xs12 sm7>
                                             <v-dialog ref="dialogduedate" v-model="modalduedate" :return-value.sync="billDetail.dueDate"
                                                 persistent lazy full-width width="290px">
                                                 <template v-slot:activator="{ on }">
-                                                    <v-text-field v-model="billDetail.dueDate" :single-line="biggerScreen"
+                                                    <v-text-field v-model="billDetail.dueDate" :single-line="$store.state.biggerScreen"
                                                         readonly v-on="on" height=20></v-text-field>
                                                 </template>
                                                 <v-date-picker v-model="billDetail.dueDate" scrollable>
@@ -464,12 +464,12 @@
                             <v-layout px-2 justify-end>
                                 <v-flex xs12 sm6>
                                     <v-layout align-center justify-end row wrap>
-                                        <v-flex v-if="biggerScreen" xs12 sm5 class="text-lg-left">
+                                        <v-flex v-if="$store.state.biggerScreen" xs12 sm5 class="text-lg-left">
                                             <label class="font-15 font-weight-regular">Total Payable Amount: </label>
                                         </v-flex>
                                         <v-flex xs12 sm7>
                                             <v-text-field type="number" min=0 :rules="numberRules" v-model="billDetail.receivable" label="Total Payable Amount"
-                                                :single-line="biggerScreen" height=20 disabled></v-text-field>
+                                                :single-line="$store.state.biggerScreen" height=20 disabled></v-text-field>
                                         </v-flex>
                                     </v-layout>
                                 </v-flex>
@@ -484,6 +484,72 @@
             </v-form>
         </v-flex>
         <!-- Modals -->
+        <!-- Customer -->
+        <v-dialog v-if="modalCustomer" width="800" v-model="modalCustomer" persistent>
+            <v-card>
+                <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
+                    <span style="font-size:18px;">Add Customer</span>
+                </v-card-title>
+                <v-card-text class="pa-0">
+                    <v-container grid-list-xs>
+                        <csAddComponent v-model="closeModal1" mode="customer"></csAddComponent>
+                    </v-container>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" flat @click="modalCustomer = false">
+                    Close
+                  </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <!-- Transport -->
+        <v-dialog v-if="modalTransport" width="400" v-model="modalTransport" persistent>
+            <v-card>
+                <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
+                    <span style="font-size:18px;">Add Transport</span>
+                </v-card-title>
+                <v-card-text class="pa-0">
+                    <v-container grid-list-xs>
+                        <addEditTransport v-model="closeModal1"></addEditTransport>
+                    </v-container>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" flat @click="modalTransport = false">
+                    Close
+                  </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <!-- Item -->
+        <v-dialog v-if="modalItem" width="800" v-model="modalItem" persistent>
+            <v-card>
+                <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
+                    <span style="font-size:18px;">Add Item</span>
+                </v-card-title>
+                <v-card-text class="pa-0">
+                    <v-container grid-list-xs>
+                        <addEditItem v-model="closeModal1"></addEditItem>
+                    </v-container>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" flat @click="modalItem = false">
+                    Close
+                  </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
         <v-dialog v-if="itemDetails.length > 0" v-model="modalPreItem" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar dark color="primary">
@@ -502,7 +568,7 @@
                     <v-layout wrap>
                         <v-flex xs12>
                             <v-autocomplete v-if="itemModalDetails[itemModalIndex].check == 1" v-model="itemModalDetails[itemModalIndex].itemId"
-                                @input="itemModalGenerate(itemModalIndex)" append-icon="search" :items="itemsModalACVitems"
+                                @input="itemModalGenerate(itemModalIndex)" append-icon="add" @click:append="addACV('item')" :items="itemsModalACVitems"
                                 :loading="itemsModalACV.isLoading" :search-input.sync="itemsModalACV.search"
                                 hide-no-data hide-selected item-text="name" item-value="id" label="Item Name"
                                 placeholder="Item Name" return-string height=20></v-autocomplete>
@@ -602,6 +668,9 @@
 </template>
 <script>
     import loadercontent from "@/components/loadercontent";
+    import csAddComponent from "@/components/csAddComponent";
+    import addEditTransport from '@/components/transport/addEditTransport.vue';
+    import addEditItem from '@/components/Items/addEditItems'
     export default {
         props: {
             id: {
@@ -610,14 +679,16 @@
             }
         },
         components:{
-            loadercontent
+            loadercontent,
+            csAddComponent,
+            addEditTransport,
+            addEditItem
         },
         data: () => ({
             btnLoading:false,
             loader1:true,
             loader2:true,
             loader3:true,
-            biggerScreen: true,
             valid: false,
             requiredRules: [
                 v => !!v || 'This Field is required'
@@ -675,9 +746,10 @@
             ],
             url: process.env.URL,
             formsubmited: 0,
-            modalCustomer: 0,
-            modalItem: 0,
-            modalTransport: 0,
+            closeModal1:0,
+            modalCustomer: false,
+            modalItem: false,
+            modalTransport: false,
             modalPreItem: false,
             modalPrePayment: false,
             configuration: {},
@@ -755,15 +827,12 @@
                 this.createPaymentRow();
             }
         },
-        mounted() {
-            this.$nextTick(() => {
-                if (window.innerWidth <= 600) this.biggerScreen = false
-                else this.biggerScreen = true
-                window.addEventListener('resize', () => {
-                    if (window.innerWidth <= 600) this.biggerScreen = false
-                    else this.biggerScreen = true
-                })
-            })
+        updated(){
+            if(this.closeModal1 == 2){
+                this.modalCustomer = false
+                this.modalTransport = false
+                this.modalItem = false
+            }
         },
         computed: {
             customerACVitems() {
@@ -879,10 +948,18 @@
                     this.getBillNo()
                 }
             },
-            newCustomer() {
-                if (this.idToBeSent.customerId == 0) {
-                    this.modalCustomer = 1
+            addACV(v){
+                if(v == 'customer'){
+                    this.modalCustomer = true
                 }
+                else if(v == 'transport'){
+                    this.modalTransport = true
+                }
+                else if(v == 'item'){
+                    this.modalItem = true
+                }
+            },
+            newCustomer() {
                 this.$axios.get("/"+this.$route.params.username+"/api/Customers/"+this.idToBeSent.customerId+"?access_token="+this.$store.state.token)
                 .then(res=>{
                     this.closingbal = res.data.closingbal

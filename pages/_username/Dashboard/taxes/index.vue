@@ -1,6 +1,6 @@
 <template>
     <v-card flat>
-        <v-card-text class="body-background">
+        <v-card-text class="body-background padding-xs">
             <viewTax class="mt-3"/>
         </v-card-text>
     </v-card>

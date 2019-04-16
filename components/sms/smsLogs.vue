@@ -2,7 +2,8 @@
     <div>
         <v-card class="border-radius-5">
             <v-card-text class="pt-0">
-                <v-layout justify-end class="pt-3">
+                <v-layout align-center justify-space-between :class="[$store.state.biggerScreen ? 'row' : 'column']" class="pt-3">
+                    <label class="page-heading primary--text">SMS Logs:</label>
                     <v-btn class="info" round @click="modalsms = true">Send SMS</v-btn>
                 </v-layout>
                 <v-layout class="pt-3" align-center justify-start row wrap>
@@ -38,7 +39,7 @@
                         <v-btn class="" dark round @click="getOrders()">Get Records</v-btn>
                     </v-flex>
                 </v-layout>
-                <v-card class="elevation-5" style="border-radius:5px;">
+                <v-card class="elevation-3" style="border-radius:5px;">
                     <v-card-title class="pa-2 primary white--text">
                         List of All Sms Logs:-
                     </v-card-title>

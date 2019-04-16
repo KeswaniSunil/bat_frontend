@@ -8,7 +8,7 @@
           <v-list-tile style="height:80px;">
             <v-list-tile-content class="height-100">
               <v-list-tile-title class="text-xs-center title font-weight-bold height-100">
-                <v-avatar size="100px">
+                <v-avatar size="100px" @click="$router.push('/'+$route.params.username+'/Dashboard')" style="cursor:pointer;">
                   <img src="https://justatic.com/v/20190228102703/shared/images/icons/placeholders/profile.png" alt="Avatar" />
                 </v-avatar>
               </v-list-tile-title>
@@ -146,6 +146,16 @@
     beforeMount(){
       window.addEventListener('keyup', this.keymonitor)
     },
+    mounted() {
+      this.$nextTick(() => {
+          if (window.innerWidth <= 600) this.$store.commit("setBiggerScreen",false)
+          else this.$store.commit("setBiggerScreen",true)
+          window.addEventListener('resize', () => {
+            if (window.innerWidth <= 600) this.$store.commit("setBiggerScreen",false)
+            else this.$store.commit("setBiggerScreen",true)
+          })
+      })
+    },
     data() {
       return {
         loader1:true,
@@ -212,10 +222,7 @@
               { icon: 'store', title: 'Sales', to: '/' + this.$route.params.username + '/Dashboard/sales' },
               { icon: 'shopping_cart', title: 'Purchases', to: '/' + this.$route.params.username + '/Dashboard/purchase' },
               { icon: 'queue', title: 'Items', to: '/' + this.$route.params.username + '/Dashboard/items' },
-              { icon: 'storage', title: 'Stock Logs', to: '/' + this.$route.params.username + '/Dashboard/stock' },
-              { icon: 'note_add', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/billbook' },
-              { icon: 'message', title: 'Sms Management', to: '/' + this.$route.params.username + '/Dashboard/sms' },
-            ]
+              { icon: 'storage', title: 'Stock Logs', to: '/' + this.$route.params.username + '/Dashboard/stock' }            ]
             this.allconfig = res.data;
             let tax = 0
             for(let i=0;i<this.allconfig.length;i++)
@@ -235,11 +242,26 @@
                   }
                 }
               }
+              else if(this.allconfig[i].alias == 'manage_billbook')
+              {
+                if(this.allconfig[i].value == 1) {
+                                this.items.push({ icon: 'note_add', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/billbook' })
+
+                }
+              }
+              else if(this.allconfig[i].alias == 'manage_sms')
+              {
+                if(this.allconfig[i].value == 1) {
+                  this.items.push(
+              { icon: 'message', title: 'Sms Management', to: '/' + this.$route.params.username + '/Dashboard/sms' },
+                  )
+                }
+              }
             }
             this.loader1 = false
           })
           .catch(e=>{
-            window.location="/"+this.$route.params.username+"/login"
+            this.logout()
           })
       }
     }

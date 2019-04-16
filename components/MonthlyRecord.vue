@@ -1,7 +1,7 @@
 <template>
     <div>
-        <v-card class="ma-3 border-radius-5">
-            <v-card-text>
+        <v-card :class="[ui == 'dashboard' ? '' : 'ma-3']" class=" border-radius-5">
+            <v-card-text >
                 <v-layout row wrap v-if="mode == 'billbook'">
                     <v-flex xs12 sm6>
                         <v-layout align-center justify-end row wrap>
@@ -18,12 +18,19 @@
                         </v-layout>
                     </v-flex>
                 </v-layout>
+                <v-layout justify-start align-center v-if="ui == 'dashboard'">
+                    <v-flex>
+                        <label class="page-heading ml-2" v-text="mode == 'sale' ? 'Sales': 'Purchases'"></label>
+                        <label>Monthly Records</label>
+                    </v-flex>
+                </v-layout>
                 <v-layout v-if="billBookId != '' || mode == 'sale' || mode == 'purchase'" justify-start row wrap>
-                    <v-flex v-for="(mn,index) in monthName" :key="index" @click="viewOrder(mn[3],mn[4],billBookId)" xs5 sm3 md2 ma-2>
+                    <v-flex v-for="(mn,index) in monthName" :key="index" @click="viewOrder(mn[3],mn[4],billBookId)" xs5 sm3 md2 :class="[ui == 'dashboard' && index == monthName.length  ? 'ma-0' : 'ma-2']">
                         <v-hover v-if="index%2==0" style="transition:0.8s">
                             <v-card slot-scope="{ hover }"
                                 :class="`elevation-${hover ? 10 : 3}`"
-                                class="border-radius-5 black">
+                                class="border-radius-5 black"
+                                style="cursor:pointer">
                                 <v-img src="/img/login-bg/gallery-15-thumb.jpg" gradient="to top right,rgba(88,97,105,0.8),rgba(45,53,60,0.8)">
                                     <v-container fill-height fluid pa-2>
                                         <v-layout fill-height align-center justify-center row wrap>
@@ -31,7 +38,8 @@
                                                 <span class="white--text font-20">{{mn[0]+" "+mn[1]}}</span>
                                             </v-flex>
                                             <v-flex xs12 flexbox text-xs-center>
-                                                <span class="grey--text font-weight-bold font-14" >Total Order:- {{mn[2]}}</span>
+                                                <div class="grey--text text--lighten-1 font-weight-bold font-14" >{{mn[2]}}</div>
+                                                <div class="grey--text text--lighten-1 font-weight-bold font-14" >Total Order</div>
                                             </v-flex>
                                         </v-layout>
                                     </v-container>
@@ -41,7 +49,8 @@
                         <v-hover v-else style="transition:0.8s">
                             <v-card slot-scope="{ hover }"
                                 :class="`elevation-${hover ? 10 : 3}`"
-                                class="border-radius-5 black">
+                                class="border-radius-5 black"
+                                style="cursor:pointer">
                                 <v-img src="/img/login-bg/gallery-15-thumb.jpg" gradient="to top right,rgba(25,120,201,.8), rgba(25,32,72,.8)">
                                     <v-container fill-height fluid pa-2>
                                         <v-layout fill-height align-center justify-center row wrap>
@@ -49,13 +58,24 @@
                                                 <span class="white--text font-20">{{mn[0]+" "+mn[1]}}</span>
                                             </v-flex>
                                             <v-flex xs12 flexbox text-xs-center>
-                                                <span class="grey--text font-weight-bold font-14" >Total Order:- {{mn[2]}}</span>
+                                                <div class="grey--text text--lighten-1 font-weight-bold font-14" >{{mn[2]}}</div>
+                                                <div class="grey--text text--lighten-1 font-weight-bold font-14" >Total Order</div>
                                             </v-flex>
                                         </v-layout>
                                     </v-container>
                                 </v-img>
                             </v-card>
                         </v-hover>
+                    </v-flex>
+                    <v-flex v-if="ui == 'dashboard'">
+                        <v-layout align-center justify-end fill-height>
+                            <v-btn v-if="$store.state.biggerScreen" icon :to="mode == 'sale' ? '/'+$route.params.username+'/Dashboard/sales/order/allSales' : '/'+$route.params.username+'/Dashboard/purchase/order/allPurchase'">
+                                <v-icon>navigate_next</v-icon>
+                            </v-btn>
+                            <v-btn v-else round flat :to="mode == 'sale' ? '/'+$route.params.username+'/Dashboard/sales/order/allSales' : '/'+$route.params.username+'/Dashboard/purchase/order/allPurchase'">
+                                 View More
+                            </v-btn>
+                        </v-layout>
                     </v-flex>
                 </v-layout>
             </v-card-text>
@@ -68,6 +88,10 @@
             mode:{
                 type: String,
                 required: true
+            },
+            ui:{
+                type: String,
+                required: false
             }
         },
         created(){
@@ -149,6 +173,28 @@
                             }        
                         }
                         this.monthName.reverse()
+                        if(this.ui == 'dashboard'){
+                            if(window.innerWidth >= 960) {
+                                this.monthName =this.monthName.splice(0,5)
+                            }
+                            else if(window.innerWidth >= 600) {
+                                this.monthName =this.monthName.splice(0,3)
+                            }
+                            else {
+                                this.monthName =this.monthName.splice(0,2)
+                            }
+                            window.addEventListener('resize', () => {
+                                if(window.innerWidth >= 960) {
+                                    this.monthName =this.monthName.splice(0,5)
+                                }
+                                else if(window.innerWidth >= 600) {
+                                    this.monthName =this.monthName.splice(0,3)
+                                }
+                                else {
+                                    this.monthName =this.monthName.splice(0,2)
+                                }
+                            })
+                        }
                     });
             },
             viewOrder(startDate,endDate,id){

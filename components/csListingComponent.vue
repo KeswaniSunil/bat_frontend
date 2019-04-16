@@ -12,7 +12,7 @@
         </v-layout>
       </v-flex>
     </v-layout>
-    <v-card class="elevation-5" style="border-radius:5px;">
+    <v-card class="elevation-3" style="border-radius:5px;">
       <v-card-title v-if="mode=='customer'" class="pa-2 primary white--text">
         List of All Customers:-
       </v-card-title>
@@ -115,9 +115,9 @@
         },
         { text: 'Name', value: 'name', sortable: false },
         { text: 'Mobile', value: 'mobile' },
-        { text: 'Total Amount', value: 'totalamount' },
-        { text: 'Total Recieved', value: 'received' },
-        { text: 'Total Recievables', value: 'pending' },
+        { text: 'Total Amount(Rs.)', value: 'totalamount' },
+        { text: 'Total Recieved(Rs.)', value: 'received' },
+        { text: 'Total Recievables(Rs.)', value: 'pending' },
         { text: 'Edit', value: 'name' }],
         loading: true,
         pagination: {},
@@ -163,9 +163,9 @@
     },
     mounted() {
       if (this.mode == 'supplier') {
-        this.header[4].text = "Total Paid"
+        this.header[4].text = "Total Paid(Rs.)"
         this.header[4].value = "paid"
-        this.header[5].text = "Payable Amount"
+        this.header[5].text = "Payable Amount(Rs.)"
       }
       this.getDataFromApi()
         .then(data => {

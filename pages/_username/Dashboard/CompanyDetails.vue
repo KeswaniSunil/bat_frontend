@@ -20,12 +20,9 @@
                             <v-flex xs12 sm4>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">Customer Name </label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
                                         type=text
-                                        label=""
-                                        height=22
+                                        label="Customer Name"
                                         v-model="companyDtl.name"
                                         ></v-text-field>
                                     </v-flex>
@@ -35,13 +32,10 @@
                             <v-flex xs12 sm4>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">Mobile No.</label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
                                         v-model="companyDtl.mobile"
                                         type=number
-                                        label=""
-                                        height=22
+                                        label="Mobile No."
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex sm1></v-flex>
@@ -50,43 +44,33 @@
                             <v-flex xs12 sm4>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">Bill Upper Text </label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
                                         v-model="companyDtl.billuppertext"
-                                        label=""
+                                        label="Bill Upper Text"
                                         type=text
-                                        height=22
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex sm1></v-flex>
                                 </v-layout>    
                             </v-flex>
                         </v-layout> 
-                        <v-layout row wrap class="mb-1">
+                        <v-layout row wrap >
                             <v-flex xs12 sm7>
-                                <label class="font-16 font-weight-regular">Address</label>
                                 <v-textarea
-                                    outline
                                     rows="3"
-                                    class="pa-0 ma-0"
-                                    full-width
-                                    hint="Street Address"
+                                    label="Address"
                                     v-model="companyDtl.address"
                                 ></v-textarea>
                             </v-flex>
                             <v-flex sm5></v-flex>
                         </v-layout>           
-                        <v-layout row wrap class="mb-5">
+                        <v-layout row wrap >
                             <v-flex xs12 sm3>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">State  </label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
-                                        label=""
+                                        label="State"
                                         type=text
-                                        height=22
                                         v-model="companyDtl.state"
                                         ></v-text-field>
                                     </v-flex>
@@ -96,12 +80,9 @@
                             <v-flex xs12 sm3>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">City  </label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
-                                        label=""
+                                        label="City"
                                         type=text
-                                        height=22
                                         v-model="companyDtl.city"
                                         ></v-text-field>
                                     </v-flex>
@@ -111,12 +92,9 @@
                             <v-flex xs12 sm3>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">State Code  </label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
-                                        label=""
+                                        label="State Code"
                                         type=number
-                                        height=22
                                         v-model="companyDtl.statecode"
                                         ></v-text-field>
                                     </v-flex>
@@ -126,12 +104,9 @@
                             <v-flex xs12 sm3>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">GSTN </label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
                                         type=text
-                                        label=""
-                                        height=22
+                                        label="GSTN"
                                         v-model="companyDtl.gstin"
                                         ></v-text-field>
                                     </v-flex>
@@ -149,12 +124,9 @@
                             <v-flex xs12 sm3>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">Bank Account No.  </label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
-                                        label=""
+                                        label="Bank Account No."
                                         type=text
-                                        height=22
                                         v-model="bankDtl.accountno"
                                         ></v-text-field>
                                     </v-flex>
@@ -164,11 +136,8 @@
                             <v-flex xs12 sm3>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">Bank Account Name</label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
-                                        label=""
-                                        height=22
+                                        label="Bank Account Name"
                                         type=text
                                         v-model="bankDtl.accountname"
                                         ></v-text-field>
@@ -179,11 +148,8 @@
                             <v-flex xs12 sm3>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">Bank Name  </label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
-                                        label=""
-                                        height=22
+                                        label="Bank Name"
                                         type=text
                                         v-model="bankDtl.name"
                                         ></v-text-field>
@@ -194,11 +160,8 @@
                             <v-flex xs12 sm3>
                                 <v-layout row wrap>
                                     <v-flex xs12 sm11>
-                                        <label class="font-16 font-weight-regular">Bank IFSC</label>
                                         <v-text-field
-                                        class="pa-0 ma-0"
-                                        label=""
-                                        height=22
+                                        label="Bank IFSC"
                                         v-model="bankDtl.ifsc"
                                         type=text
                                         ></v-text-field>
@@ -215,13 +178,9 @@
                         <v-layout row wrap class="mb-2"></v-layout>
                         <v-layout row wrap class="mb-1">
                             <v-flex xs12 sm7>
-                                <label class="font-16 font-weight-regular">Terms and Conditions</label>
                                 <v-textarea
-                                    outline
                                     rows="3"
-                                    full-width
-                                    class="pa-0 mt-0"
-                                    hint="Company T&C"
+                                    label="Terms and Conditions"
                                     v-model="companyDtl.tnc"
                                 ></v-textarea>
                             </v-flex> 

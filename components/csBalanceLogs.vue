@@ -368,7 +368,6 @@ export default {
                                     items,
                                     total
                                 })
-                                console.log(items)
                             });
                     }
                     else{

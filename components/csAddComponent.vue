@@ -3,95 +3,95 @@
         <v-layout align-center justify-start row wrap>
             <v-flex xs12 sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-xs-left">
                         <label v-if="mode == 'customer'" class="font-15 font-weight-regular">Customer Name: </label>
                         <label v-if="mode == 'supplier'" class="font-15 font-weight-regular">Supplier Name: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field  class="pa-0 ma-0" type=text :rules="requiredRules"
-                                    :single-line="biggerScreen" v-model="customerDetails.firstName"></v-text-field>
+                        <v-text-field   type=text :rules="requiredRules" height=20 :label="mode == 'customer' ? 'Customer Name' : 'Supplier Name'"
+                            :single-line="$store.state.biggerScreen" v-model="customerDetails.firstName"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">Gstn: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.gstn"></v-text-field>
+                        <v-text-field label="Gstn" type=text height=20 :single-line="$store.state.biggerScreen"  v-model="customerDetails.gstn"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">Mobile No: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=number :single-line="biggerScreen" :rules="requiredRules" class="pa-0 ma-0"
+                        <v-text-field label="Mobile No." type=number height=20 :single-line="$store.state.biggerScreen" :rules="requiredRules" 
                             v-model="customerDetails.mobile"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">Email: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.email"></v-text-field>
+                        <v-text-field label="Email" type=text height=20 :single-line="$store.state.biggerScreen"  v-model="customerDetails.email"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">Street: </label>
                     </v-flex>
                     <v-flex xs12 sm10>
-                        <v-textarea solo full-width rows="3" :single-line="biggerScreen" class="pa-0 ma-0" hint="Enter Street Address"
+                        <v-textarea  rows="3":single-line="$store.state.biggerScreen" label="Street"  
                             v-model="customerDetails.street"></v-textarea>
                     </v-flex>
                 </v-layout>
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">Area: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.area"></v-text-field>
+                        <v-text-field label="Area" type=text height=20 :single-line="$store.state.biggerScreen"  v-model="customerDetails.area"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">Pincode: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.pinCode"></v-text-field>
+                        <v-text-field label="Pincode" height=20 type=text :single-line="$store.state.biggerScreen"  v-model="customerDetails.pinCode"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">City: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.city"></v-text-field>
+                        <v-text-field label="City" type=text height=20 :single-line="$store.state.biggerScreen"  v-model="customerDetails.city"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">State: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.state"></v-text-field>
+                        <v-text-field label="State" type=text height=20 :single-line="$store.state.biggerScreen"  v-model="customerDetails.state"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
             <v-flex sm12>
                 <v-layout align-center row wrap>
-                    <v-flex v-if="biggerScreen" xs12 sm2 class="text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-xs-left">
                         <label class="font-15 font-weight-regular">State Code: </label>
                     </v-flex>
                     <v-flex xs12 sm3>
-                        <v-text-field label="" type=text :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.stateCode"></v-text-field>
+                        <v-text-field label="State Code" height=20 type=text :single-line="$store.state.biggerScreen"  v-model="customerDetails.stateCode"></v-text-field>
                     </v-flex>
-                    <v-flex v-if="biggerScreen" xs12 sm3 class="text-lg-center text-xs-left">
+                    <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">Opening Balance: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="" type=number :disabled="propCheck != 0" :single-line="biggerScreen" class="pa-0 ma-0" v-model="customerDetails.balance"></v-text-field>
+                        <v-text-field label="Opening Balance" height=20 type=number :disabled="propCheck != 0" :single-line="$store.state.biggerScreen"  v-model="customerDetails.balance"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -159,7 +159,6 @@
                 requiredRules: [
                     v => !!v || 'This Field is required'
                 ],
-                biggerScreen: true,
                 btnLoading: false,
                 editCustomerDtl: [],
                 propCheck: 0
