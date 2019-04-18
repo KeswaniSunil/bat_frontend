@@ -1,28 +1,31 @@
 <template>
-    <div >
+    <div>
         <div :class="[Orderitems.length > 5 ? pagebreak:'']" v-for="(cd, index) in noofbill" :key="index">
             <div>
                 <table width="100%" cellspacing="0" style="border:2px solid black;">
                     <tbody>
-                        <tr style="border-bottom:2px solid black" class="align-top">
-                            <td colspan="2" style="border:none;"><span style="font-size:30px;"> <b>{{
-                                        companyDetails.name }}</b></span> </td>
-                            <td style="border:none;"><b>Address: </b>{{companyDetails.address}},
+                        <tr class="align-top">
+                            <td colspan="2" style="border-right:1px solid black;" class="pl-2">
+                                <span style="font-size:30px;"> <b>{{ companyDetails.name }}</b></span>
+                            </td>
+                            <td style="border-left:1px solid black;" class="pl-2">
+                                <b>Address: </b>{{companyDetails.address}},
                                 {{companyDetails.city}}, {{companyDetails.state}} {{companyDetails.pinCode}}<br />
-                                <b>Contact: </b>{{companyDetails.mobile}}</td>
-                            <br><br><br><br>
+                                <b>Contact: </b>{{companyDetails.mobile}}
+                                <br /><br /><br /><br />
+                            </td>
                         </tr>
-                        <tr style="border-bottom:2px solid black">
-                            <td style="border-right:2px solid black;" colspan="4">
-                                <span style="margin-left:47%;">
+                        <tr>
+                            <td style="border-top:2px solid black;border-bottom:2px solid black;" colspan="4">
+                                <span style="margin-left:51%;">
                                     <b>{{companyDetails.billuppertext }}</b>
                                 </span>
-                                <span style="float:right;">
+                                <span style="float:right;" class="pr-2">
                                     <b>Original</b>
                                 </span>
                             </td>
                         </tr>
-                        <tr style="border:none;">
+                        <tr>
                             <td width="55%" style="border-right:2px solid black;">
                                 <table width="100%">
                                     <tbody>
@@ -40,48 +43,51 @@
                                         </tr>
                                         <tr>
                                             <td align="center" style="border:none;"></td>
-                                            <td colspan="4" style="border:none;"><b>{{customer.city}}<span style="margin-left:25%">Mob
-                                                        : {{customer.mobile}}</span></b></td>
+                                            <td colspan="4" style="border:none;">
+                                                <b>{{customer.city}}</b>
+                                                <span style="margin-left:25%">
+                                                    <b>Mob : {{customer.mobile}}</b>
+                                                </span>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td align="center" style="border:none;"></td>
-                                            <td colspan="4" style="border:none;"><span style="margin-left:35%">&nbsp;<b>Place
-                                                        of Supply :</b> {{customer.statecode}}-{{customer.state}}</span></td>
+                                            <td colspan="4" style="border:none;">
+                                                <span style="margin-left:35%">
+                                                    <b>Placeof Supply :</b> {{customer.statecode}}-{{customer.state}}
+                                                </span>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
-
                             </td>
-                            <td colspan="3" style="width:45%;border-right:2px solid black;">
-                                <table width="100%">
+                            <td colspan="3" style="width:45%;" class="color-tr">
+                                <table width="100%" class="account_table">
                                     <tbody>
-                                        <tr class="color-tr">
-                                            <td width="20%" style="border:none;margin-right:5px;"><b> Invoice No. </b>
-                                            </td>
-                                            <td width="2%" style="border:none;">:</td>
-                                            <td width="38%" style="border:none;"><b>{{billbook.prefix}}-{{order.billno}}</b></td>
-                                            <td width="38%" style="border:none;"></td>
+                                        <tr>
+                                            <th width="20%">Invoice No.
+                                            </th>
+                                            <th width="4%">:</th>
+                                            <th width="38%">{{billbook.prefix}}-{{order.billno}}</th>
+                                            <th width="38%"></th>
                                         </tr>
-                                        <tr style="border-bottom:2px solid black;background-color:#aab79f">
-                                            <td width="10%" style="border:none;"><b> Date </b> </td>
-                                            <td width="4%" style="border:none;">:</td>
-                                            <td width="41%" style="border:none;"><b>{{new
-                                                    Date(order.billdate).getDate()+"-"+(new
-                                                    Date(order.billdate).getMonth()+1)+"-"+new
-                                                    Date(order.billdate).getFullYear()}}</b></td>
-                                            <td width="40%" style="border:none;"></td>
+                                        <tr>
+                                            <th> Date </th>
+                                            <th>:</th>
+                                            <th>{{new
+                                                Date(order.billdate).getDate()+"-"+(new
+                                                Date(order.billdate).getMonth()+1)+"-"+new
+                                                Date(order.billdate).getFullYear()}}</th>
+                                            <th></th>
                                         </tr>
-                                        <tr style="border:none;">
-                                            <td align="center" style="border:none;"></td>
-                                            <td colspan="4" style="border:none;">&nbsp;</td>
+                                        <tr>
+                                            <td colspan="4">&nbsp;</td>
                                         </tr>
-                                        <tr style="border:none;">
-                                            <td align="center" style="border:none;"></td>
-                                            <td colspan="4" style="border:none;">&nbsp;</td>
+                                        <tr>
+                                            <td colspan="4">&nbsp;</td>
                                         </tr>
-                                        <tr style="border:none;">
-                                            <td align="center" style="border:none;"></td>
-                                            <td colspan="4" style="border:none;">&nbsp;</td>
+                                        <tr>
+                                            <td colspan="4">&nbsp;</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -107,39 +113,40 @@
                             <td width="15%" align="center" style="border:1px solid black;">{{value.quantity}}</td>
                             <td width="15%" colspan="1" align="center" style="border:1px solid black;">{{value.itemprice}}</td>
                             <td width="15%" colspan="2" align="right" style="border-left:1px solid black;border-right:2px solid black;border-bottom:1px solid black;border-top:1px solid black;">{{(parseFloat(value.quantity)
-                                * parseFloat(value.itemprice) )}} &nbsp;</td><br><br>
+                                * parseFloat(value.itemprice) )}} &nbsp;</td><br /><br />
                         </tr>
                         <tr style="background-color:#aab79f;border:2px solid black;">
-                            <td colspan="4" width="60%" class="b-r-0 b-t-0 b-b-0">
+                            <td colspan="4" width="60%" class="px-1" style="border-right:1px solid black;border-left:1px solid black;">
                                 <b>GSTIN NO.:- {{customer.gstin}}</b>
                             </td>
-                            <td colspan="5" style="border-left:1px solid black" width="40%" class="b-r-0 b-t-0 b-b-0">
-                                <b>Sub Total <span style="float:right;">{{order.itemtotal - order.taxamount }} &nbsp;</span></b>
+                            <td colspan="5" class="px-1" style="border-left:1px solid black;border-right:2px solid black;"
+                                width="40%">
+                                <b>Sub Total </b><span style="float:right;"><b>{{order.itemtotal - order.taxamount }} &nbsp;</b></span>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="4" width="60%" style="border:2px solid black;">
+                            <td colspan="4" width="60%" style="border:1px solid black;">
                                 <table class="" width="100%">
                                     <tbody>
-                                        <tr class="b-t-0 b-l-0 b-r-0" style="border-bottom:2px solid black;">
-                                            <td align="center"><b>Note:<br><br><br></b></td>
+                                        <tr style="border-bottom:2px solid black;">
+                                            <td align="center"><b>Note:<br /><br /><br /></b></td>
                                         </tr>
-                                        <tr class="b-t-0 b-l-0 b-r-0" style="border-bottom:2px solid black;">
-                                            <td><b>Total GST : {{order.taxamount}}<br><br></b></td>
+                                        <tr style="border-bottom:2px solid black;">
+                                            <td><b>Total GST : {{order.taxamount}}<br /><br /></b></td>
                                         </tr>
-                                        <tr class="b-t-0 b-l-0 b-r-0">
-                                            <td><b>Bill Amount : {{amountowords}} Only<br><br></b></td>
+                                        <tr>
+                                            <td><b>Bill Amount : {{amountowords}} Only<br /><br /></b></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </td>
                             <td colspan="5" width="40%" style="border:2px solid black;">
                                 <table width="100%" height="100%" class="">
-                                    <tbody class="b-t-0 b-l-0 b-r-0">
-                                        <tr class="b-t-0 b-l-0 b-r-0" style="border-bottom:2px solid black;margin-bottom:20px;">
-                                            <td><b> <br><br>Taxable Amount: {{order.itemtotal - order.taxamount }}<br><br><br><br></b></td>
+                                    <tbody>
+                                        <tr style="border-bottom:2px solid black;margin-bottom:20px;">
+                                            <td> <br /><br /><b>Taxable Amount: {{order.itemtotal - order.taxamount }}</b><br /><br /><br /><br /></td>
                                         </tr>
-                                        <tr class="b-t-0 b-l-0 b-r-0">
+                                        <tr>
                                             <td height="100%" style="background-color:#aab79f;"><b>Grand Total:-
                                                     {{order.totalamount}}</b></td>
                                         </tr>
@@ -148,20 +155,19 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="border-right:2px solid black;" colspan="9">
+                            <td style="border:2px solid black;" class="pl-1" colspan="9">
                                 <b>Terms and Conditions:-
                                     <span ref="tnc"></span>
                                 </b>
                             </td>
                         </tr>
                     </tbody>
-
-                </table><br><br><br>
+                </table><br /><br /><br />
             </div>
         </div>
     </div>
 </template>
-<style>
+<style scoped>
     td {
         border-color: white;
     }
@@ -172,6 +178,10 @@
 
     .color-tr {
         background-color: #aab79f;
+    }
+
+    .account_table {
+        border-collapse: collapse;
     }
 </style>
 
@@ -228,7 +238,7 @@
                 print: 0
             }
         },
-        created() {
+        beforeMount() {
             if (this.id != null) {
                 this.$axios.get("/" + this.$route.params.username + "/api/Orders?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id + "&filter[where][isenabled]=1")
                     .then(res => {
@@ -251,7 +261,7 @@
                 this.$emit('input', '');
                 //this.$forceUpdate();
             }
-            if(this.print == 2){
+            if (this.print == 2) {
                 this.$emit('input', '');
             }
             this.print++

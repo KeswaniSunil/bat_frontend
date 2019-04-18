@@ -210,6 +210,7 @@
                   this.getConfig()
                   this.btnLoading = false
                   this.showModal = false
+                  this.$router.push("/"+this.$route.params.username+"/Dashboard")
                 }
               }
             });
@@ -245,16 +246,13 @@
               else if(this.allconfig[i].alias == 'manage_billbook')
               {
                 if(this.allconfig[i].value == 1) {
-                                this.items.push({ icon: 'note_add', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/billbook' })
-
+                  this.items.push({ icon: 'note_add', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/billbook' })
                 }
               }
               else if(this.allconfig[i].alias == 'manage_sms')
               {
                 if(this.allconfig[i].value == 1) {
-                  this.items.push(
-              { icon: 'message', title: 'Sms Management', to: '/' + this.$route.params.username + '/Dashboard/sms' },
-                  )
+                  this.items.push({ icon: 'message', title: 'Sms Management', to: '/' + this.$route.params.username + '/Dashboard/sms' })
                 }
               }
             }

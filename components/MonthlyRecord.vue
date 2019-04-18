@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-card :class="[ui == 'dashboard' ? '' : 'ma-3']" class=" border-radius-5">
-            <v-card-text >
+            <v-card-text :class="[ui == 'dashboard' && $store.state.biggerScreen === false ? 'pb-0' : '']">
                 <v-layout row wrap v-if="mode == 'billbook'">
                     <v-flex xs12 sm6>
                         <v-layout align-center justify-end row wrap>
@@ -39,7 +39,7 @@
                                             </v-flex>
                                             <v-flex xs12 flexbox text-xs-center>
                                                 <div class="grey--text text--lighten-1 font-weight-bold font-14" >{{mn[2]}}</div>
-                                                <div class="grey--text text--lighten-1 font-weight-bold font-14" >Total Order</div>
+                                                <div class="grey--text text--lighten-1 font-weight-bold font-14" >Total Orders</div>
                                             </v-flex>
                                         </v-layout>
                                     </v-container>
@@ -59,7 +59,7 @@
                                             </v-flex>
                                             <v-flex xs12 flexbox text-xs-center>
                                                 <div class="grey--text text--lighten-1 font-weight-bold font-14" >{{mn[2]}}</div>
-                                                <div class="grey--text text--lighten-1 font-weight-bold font-14" >Total Order</div>
+                                                <div class="grey--text text--lighten-1 font-weight-bold font-14" >Total Orders</div>
                                             </v-flex>
                                         </v-layout>
                                     </v-container>
@@ -72,13 +72,17 @@
                             <v-btn v-if="$store.state.biggerScreen" icon :to="mode == 'sale' ? '/'+$route.params.username+'/Dashboard/sales/order/allSales' : '/'+$route.params.username+'/Dashboard/purchase/order/allPurchase'">
                                 <v-icon>navigate_next</v-icon>
                             </v-btn>
-                            <v-btn v-else round flat :to="mode == 'sale' ? '/'+$route.params.username+'/Dashboard/sales/order/allSales' : '/'+$route.params.username+'/Dashboard/purchase/order/allPurchase'">
-                                 View More
-                            </v-btn>
                         </v-layout>
                     </v-flex>
                 </v-layout>
             </v-card-text>
+            <v-card-actions v-if="ui == 'dashboard' && $store.state.biggerScreen == false">
+                <v-layout align-start justify-end>
+                    <v-btn round flat :to="mode == 'sale' ? '/'+$route.params.username+'/Dashboard/sales/order/allSales' : '/'+$route.params.username+'/Dashboard/purchase/order/allPurchase'">
+                        View More
+                    </v-btn>
+                </v-layout>
+            </v-card-actions>
         </v-card>
     </div>
 </template>
@@ -94,7 +98,7 @@
                 required: false
             }
         },
-        created(){
+        beforeMount(){
             if(this.mode == 'billbook')
             {
                 this.generate()

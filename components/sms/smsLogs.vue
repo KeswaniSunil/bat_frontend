@@ -4,7 +4,7 @@
             <v-card-text class="pt-0">
                 <v-layout align-center justify-space-between :class="[$store.state.biggerScreen ? 'row' : 'column']" class="pt-3">
                     <label class="page-heading primary--text">SMS Logs:</label>
-                    <v-btn class="info" round @click="modalsms = true">Send SMS</v-btn>
+                    <v-btn class="info" :disabled="!sendsms" round @click="modalsms = true">Send SMS</v-btn>
                 </v-layout>
                 <v-layout class="pt-3" align-center justify-start row wrap>
                     <v-flex xs12 sm4>
@@ -114,6 +114,12 @@
 <script>
     import sendsms from "@/components/sms/sendsms";
     export default {
+        props:{
+            sendsms:{
+                type:Boolean,
+                required:true
+            }
+        },
         components:{
             sendsms
         },

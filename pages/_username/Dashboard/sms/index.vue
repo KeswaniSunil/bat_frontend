@@ -12,8 +12,11 @@
                     <v-tab-item v-for="(n,index) in items" :key="index" :value="`tab-${index+1}`">
                         <v-card flat>
                             <v-card-text class="body-background padding-xs">
+                                <v-alert :value="!sms" >
+                                    Please fill SMS Details from Company Profile page first to send SMS.
+                                </v-alert>
                                 <smsGroup v-if="index == 1" class="mt-3" />
-                                <smsLogs v-else-if="index == 0" class="mt-3" />
+                                <smsLogs v-else-if="index == 0" class="mt-3" :sendsms="sms" />
                                 <smsTemplate v-else-if="index == 2" class="mt-3" />
 
                             </v-card-text>
@@ -35,11 +38,15 @@
             smsLogs,
             smsTemplate
         },
+        created(){
+            this.getConfiguration()
+        },
         mounted(){
             if(this.$route.hash.search("tab") > -1)
             {
                 this.tab = this.$route.hash.substr(1)
             }
+            this.getDetails()
         },
         beforeUpdate(){
             if(this.$route.query.startDate != null && this.$route.query.endDate != null)
@@ -57,7 +64,34 @@
                     { name:'SMS' },
                     { name: 'SMS Group' },
                     { name: 'Templates'}
-                ]
+                ],
+                sms:false
+            }
+        },
+        methods:{
+            getDetails(){
+                this.$axios.get("/" + this.$route.params.username + "/api/Details?access_token=" + this.$store.state.token)
+                .then(res => {
+                    if(res.data[0].sms){
+                        if(res.data[0].route != "" && res.data[0].route != null &&res.data[0].apikey != "" && res.data[0].apikey != null){
+                            this.sms = true
+                        }
+                        else{
+                            this.sms = false
+                        }
+                    }
+                    else this.sms=false
+                })
+            },
+            getConfiguration(){
+                this.$axios.get("/"+this.$route.params.username+"/api/Configurations?access_token="+this.$store.state.token+"&filter[where][alias]=manage_sms")
+                .then(res=>{
+                    if(res.data.length > 0) {
+                        if(res.data[0].value == 0){
+                            return this.$nuxt.error({ statusCode: 404, message: "Page Not Found" })
+                        }
+                    }
+                })
             }
         }
     }
