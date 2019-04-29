@@ -39,7 +39,7 @@
                                                 persistent lazy full-width width="290px">
                                                 <template v-slot:activator="{ on }">
                                                     <v-text-field v-model="billDetail.billDate" :rules="requiredRules"
-                                                        :single-line="$store.state.biggerScreen" readonly v-on="on" height=20></v-text-field>
+                                                        :single-line="$store.state.biggerScreen" label="Bill Date" readonly v-on="on" height=20></v-text-field>
                                                 </template>
                                                 <v-date-picker v-model="billDetail.billDate" scrollable>
                                                     <v-spacer></v-spacer>
@@ -832,6 +832,7 @@
                 this.modalCustomer = false
                 this.modalTransport = false
                 this.modalItem = false
+                this.closeModal1=0
             }
         },
         computed: {
@@ -1018,43 +1019,15 @@
             async getDetails() {
                 this.getConfiguration()
                     .then((reslove) => {
-                        this.$axios.get("/" + this.$route.params.username + "/api/BillBooks?access_token=" + this.$store.state.token + "&filter[where][isenabled]=1")
+
+                        //    Getting all Bill Book Details 
+                        this.$axios
+                            .get("/" + this.$route.params.username + "/api/BillBooks?access_token=" + this.$store.state.token + "&filter[where][isenabled]=1")
                             .then(res2 => {
                                 this.billBookDtl = res2.data;
                             });
-                        this.$axios.get("/" + this.$route.params.username + "/api/Orders?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id + "&filter[include]=transport")
-                            .then((res) => {
-                                this.idToBeSent.customerId = res.data[0].customerId
-                                this.transport.Id = res.data[0].transportId
-                                this.transport.check = 0
-                                if (res.data[0].transportId != null) {
-                                    this.transport.name = res.data[0].transport.name
-                                    this.transport.vehicleNo = res.data[0].transport.vehicleno
-                                    this.transport.dateOfSupply = new Date(res.data[0].dateofsupply).toISOString().substr(0,10);
-                                }
-                                this.transport.placeOfSupply = res.data[0].placeofsupply
-                                this.transportACV.search = "n"
-                                this.billDetail.billDate = new Date(res.data[0].billdate).toISOString().substr(0,10);
-                                this.billDetail.dueDate = new Date(res.data[0].duedate).toISOString().substr(0,10);
-                                let dis = res.data[0].discount
-                                if (dis.search('%') > -1) {
-                                    this.billDetail.discountType = '2'
-                                    this.billDetail.discount = parseFloat(dis.substr(0, dis.search('%')))
-                                }
-                                else this.billDetail.discount = parseFloat(dis)
-                                this.billDetail.charges = res.data[0].charges
-                                this.billDetail.totalPayableAmount = res.data[0].totalamount
-                                this.$axios.get("/" + this.$route.params.username + "/api/Orders/" + this.id + "/billbook?access_token=" + this.$store.state.token)
-                                    .then((res1) => {
-                                        this.billBookprev.billBookId = res.data[0].billbookId
-                                        this.billBookprev.number = res.data[0].billno
-                                        this.billBookprev.prefix = res1.data.prefix
-                                        this.idToBeSent.billBookId = res.data[0].billbookId
-                                        this.billPreNo.prefix = res1.data.prefix
-                                        this.billPreNo.number = res.data[0].billno
-                                        this.billPreNo.billNo = res1.data.prefix + "" + res.data[0].billno
-                                    })
-                            })
+
+                        // Getting items details 
                         this.itemDetails = []
                         this.itemModalDetails = []
                         this.$axios.get("/" + this.$route.params.username + "/api/Orderitems?access_token=" + this.$store.state.token + "&filter[where][orderId]=" + this.id + "&filter[order]=series&filter[include][item]=unit&filter[include][item][subType][type]=tax")
@@ -1141,16 +1114,49 @@
                                         this.loader2 = false
                                     })
                             })
-                            this.$axios.get("/" + this.$route.params.username + "/api/Orders/" + this.id + "/customer?access_token=" + this.$store.state.token)
+
+                            //  Getting Customer details and also order
+                            this.$axios.get("/" + this.$route.params.username + "/api/Orders?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id + "&filter[include]=customer&filter[include]=billbook&filter[include]=transport")
                             .then((res) => {
-                                this.billDetail.customerName = res.data.name
-                                this.closingbal = res.data.closingbal
-                                if(res.data.noofdays == -1) this.remainder = false
+                                this.idToBeSent.customerId = res.data[0].customerId
+                                this.transport.Id = res.data[0].transportId
+                                this.transport.check = 0
+                                if (res.data[0].transportId != null) {
+                                    this.transport.name = res.data[0].transport.name
+                                    this.transport.vehicleNo = res.data[0].transport.vehicleno
+                                    this.transport.dateOfSupply = new Date(res.data[0].dateofsupply).toISOString().substr(0,10);
+                                }
+                                this.transport.placeOfSupply = res.data[0].placeofsupply
+                                this.transportACV.search = "n"
+                                this.billDetail.billDate = new Date(res.data[0].billdate).toISOString().substr(0,10);
+                                this.billDetail.dueDate = new Date(res.data[0].duedate).toISOString().substr(0,10);
+                                let dis = res.data[0].discount
+                                if (dis.search('%') > -1) {
+                                    this.billDetail.discountType = '2'
+                                    this.billDetail.discount = parseFloat(dis.substr(0, dis.search('%')))
+                                }
+                                else this.billDetail.discount = parseFloat(dis)
+                                this.billDetail.charges = res.data[0].charges
+                                this.billDetail.totalPayableAmount = res.data[0].totalamount
+                                
+                                this.billBookprev.billBookId = res.data[0].billbookId
+                                this.billBookprev.number = res.data[0].billno
+                                this.billBookprev.prefix = res.data[0].billbook.prefix
+                                this.idToBeSent.billBookId = res.data[0].billbookId
+                                this.billPreNo.prefix = res.data[0].billbook.prefix
+                                this.billPreNo.number = res.data[0].billno
+                                this.billPreNo.billNo = new String(res.data[0].billbook.prefix).toUpperCase() + "" + res.data[0].billno
+
+                                this.billDetail.customerName = res.data[0].customer.name
+                                this.closingbal = res.data[0].customer.closingbal
+                                if(res.data[0].customer.noofdays == -1) this.remainder = false
                                 else {
                                     this.remainder = true
-                                    this.noofdays = res.data.noofdays
+                                    this.noofdays = res.data[0].customer.noofdays
                                 }
                                 this.loader1 = false
+
+                                //  Getting payment Details
                                 this.$axios.get("/" + this.$route.params.username + "/api/Orderpayments?access_token=" + this.$store.state.token + "&filter[where][orderId]=" + this.id + "&filter[order]=series")
                                 .then((res) => {
                                     this.payment = []

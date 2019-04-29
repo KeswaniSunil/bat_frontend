@@ -15,22 +15,24 @@
           :error="emailUniqueError?true:false"
           :error-messages="emailUniqueError"
           class="input-box"
+          :disabled="loading"
         ></v-text-field>
       </v-card-text>
     </v-flex>
 
     <v-flex xs12>
       <v-card-text style="padding: 0;width:100%;">
-        <h4 style="color: #999999;font-weight: normal;">Full Name</h4>
+        <h4 style="color: #999999;font-weight: normal;">Company Name</h4>
         <v-text-field
           v-model="name"
           :rules="nameRules"
-          label="Enter your name"
+          label="Enter your company name"
           single-line
           solo
           flat
           required
           class="input-box"
+          :disabled="loading"
         ></v-text-field>
       </v-card-text>
     </v-flex>
@@ -48,6 +50,7 @@
           flat
           required
           class="input-box"
+          :disabled="loading"
         ></v-text-field>
       </v-card-text>
     </v-flex>
@@ -55,6 +58,7 @@
       round
       :disabled="!valid"
       @click="handleNext"
+      :loading="loading"
       class="px-4 transform-capitalize v-btn--active"
       color="#000"
       flat
@@ -82,6 +86,7 @@ export default {
       v => !!v || "E-mail is required",
       v => /.+@.+/.test(v) || "E-mail must be valid"
     ],
+    loading:false,
     mobile: "",
     mobileRules: [
       v => !!v || "Mobile number is required",
@@ -93,19 +98,18 @@ export default {
   methods: {
     validateEmail(v) {
       return new Promise((resolve, reject) => {
-        this.$store
-          .dispatch("validateEmail", v)
-          .then(res => {
-            if (res) {
+        this.$axios.post("/jdmit/api/PendingAccounts/validateEmail",{email:v})
+        .then(res => {
+            if (!res.data.status) {
               this.emailUniqueError = "";
               resolve(true);
             } else {
-              this.emailUniqueError = "Email alreday exist";
+              this.emailUniqueError = "Email already exist";
               resolve(false);
             }
           })
           .catch(err => {
-            this.emailUniqueError = "Email alreday exist";
+            this.emailUniqueError = "Email already exist";
             reject(err);
           });
       });
@@ -122,6 +126,7 @@ export default {
     handleNext() {
       console.log("login()", this.$store);
       if (this.validate() === true) {
+        this.loading = true
         this.validateEmail(this.email)
           .then(res => {
             if (res) {

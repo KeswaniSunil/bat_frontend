@@ -1,20 +1,20 @@
 <template>
   <v-app>
-    <snack-bar/>
+    <snack-bar />
     <v-navigation-drawer :mini-variant="miniVariant" :clipped="clipped" v-model="drawer" width="250" fixed app dark
       class="primary">
       <loadercontent v-if="loader1" />
-        <v-list style="margin-top:50px;background:transparent">
-          <v-list-tile style="height:80px;">
-            <v-list-tile-content class="height-100">
-              <v-list-tile-title class="text-xs-center title font-weight-bold height-100">
-                <v-avatar size="100px" @click="$router.push('/'+$route.params.username+'/Dashboard')" style="cursor:pointer;">
-                  <img src="https://justatic.com/v/20190228102703/shared/images/icons/placeholders/profile.png" alt="Avatar" />
-                </v-avatar>
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
+      <v-list style="margin-top:50px;background:transparent">
+        <v-list-tile style="height:80px;">
+          <v-list-tile-content class="height-100">
+            <v-list-tile-title class="text-xs-center title font-weight-bold height-100">
+              <v-avatar size="100px" @click="$router.push('/'+$route.params.username+'/Dashboard')" style="cursor:pointer;">
+                <img src="https://justatic.com/v/20190228102703/shared/images/icons/placeholders/profile.png" alt="Avatar" />
+              </v-avatar>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
       <v-list class="ml-4">
         <v-list-tile v-for="(item, i) in items" :to="item.to" :key="i" router active-class="my-3 info white--text border-radius-left-25"
           class="my-3 transparent white--text border-radius-left-25" :ripple="true">
@@ -28,8 +28,10 @@
 
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar color="white" v-if="toolbarview" class="elevation-0" :clipped-left="clipped"  app light>
-      <v-toolbar-side-icon @click="drawer = !drawer"><v-icon>list</v-icon></v-toolbar-side-icon>
+    <v-toolbar v-if="toolbarview" class="elevation-0 theme-color" :clipped-left="clipped" app light>
+      <v-toolbar-side-icon  @click="drawer = !drawer">
+        <v-icon>list</v-icon>
+      </v-toolbar-side-icon>
 
       <v-toolbar-title>Bussiness Automation Tool</v-toolbar-title>
 
@@ -45,11 +47,11 @@
           </div>
         </template>
 
-        <v-list >
-          <v-list-tile :to="'/'+this.$route.params.username+'/dashboard/CompanyDetails'">
+        <v-list>
+          <v-list-tile :to="'/'+this.$route.params.username+'/Dashboard/CompanyDetails'">
             <v-icon style="padding-right: 10px;">account_circle</v-icon>
             <v-list-tile-title>
-            Profile
+              Profile
             </v-list-tile-title>
           </v-list-tile>
           <v-list-tile @click="showModal= true">
@@ -70,17 +72,17 @@
     <v-dialog v-model="modalChngPass" width="400">
       <v-card>
         <v-card-title class="pt-2 pb-2" style="border-bottom:1px solid #A5A5A5;">
-            <span style="font-size:18px;">Change Password</span>
+          <span style="font-size:18px;">Change Password</span>
         </v-card-title>
         <v-card-text class="pa-0">
-          <changepassword  v-model="modalChngPass"/>
+          <changepassword v-model="modalChngPass" />
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" flat @click="modalChngPass = false">
-                Close
-            </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" flat @click="modalChngPass = false">
+            Close
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -135,7 +137,7 @@
   import SnackBar from "@/components/_page/Snackbar";
   export default {
     middleware: 'authenticated',
-    components:{
+    components: {
       loadercontent,
       changepassword,
       SnackBar
@@ -143,22 +145,22 @@
     created() {
       this.getConfig()
     },
-    beforeMount(){
+    beforeMount() {
       window.addEventListener('keyup', this.keymonitor)
     },
     mounted() {
       this.$nextTick(() => {
-          if (window.innerWidth <= 600) this.$store.commit("setBiggerScreen",false)
-          else this.$store.commit("setBiggerScreen",true)
-          window.addEventListener('resize', () => {
-            if (window.innerWidth <= 600) this.$store.commit("setBiggerScreen",false)
-            else this.$store.commit("setBiggerScreen",true)
-          })
+        if (window.innerWidth <= 600) this.$store.commit("setBiggerScreen", false)
+        else this.$store.commit("setBiggerScreen", true)
+        window.addEventListener('resize', () => {
+          if (window.innerWidth <= 600) this.$store.commit("setBiggerScreen", false)
+          else this.$store.commit("setBiggerScreen", true)
+        })
       })
     },
     data() {
       return {
-        loader1:true,
+        loader1: true,
         clipped: false,
         drawer: true,
         toolbarview: true,
@@ -166,7 +168,7 @@
         showModal: false,
         fixed: false,
         btnLoading: false,
-        modalChngPass:false,
+        modalChngPass: false,
         items: [],
         miniVariant: false,
         right: true,
@@ -174,7 +176,8 @@
         title: 'BAT',
         selectConfig: [],
         allconfig: [],
-        transport: 0
+        transport: 0,
+        loader2: true
       }
     },
     methods: {
@@ -189,10 +192,9 @@
             window.location = "/" + this.$route.params.username + "/login"
           })
       },
-      keymonitor(event){
+      keymonitor(event) {
         //console.log(event);
-        if(event.code == 'KeyB' && event.ctrlKey)
-        {
+        if (event.code == 'KeyB' && event.ctrlKey) {
           this.$router.push('/' + this.$route.params.username + '/Dashboard/sales#tab-1')
         }
       },
@@ -210,7 +212,7 @@
                   this.getConfig()
                   this.btnLoading = false
                   this.showModal = false
-                  this.$router.push("/"+this.$route.params.username+"/Dashboard")
+                  this.$router.push("/" + this.$route.params.username + "/Dashboard")
                 }
               }
             });
@@ -220,48 +222,64 @@
         await this.$axios.get("/" + this.$route.params.username + "/api/Configurations?access_token=" + this.$store.state.token)
           .then(res => {
             this.items = [
+              { icon: 'dashboard', title: 'Dashboard', to: '/' + this.$route.params.username + '/Dashboard/view' },
               { icon: 'store', title: 'Sales', to: '/' + this.$route.params.username + '/Dashboard/sales' },
               { icon: 'shopping_cart', title: 'Purchases', to: '/' + this.$route.params.username + '/Dashboard/purchase' },
               { icon: 'queue', title: 'Items', to: '/' + this.$route.params.username + '/Dashboard/items' },
-              { icon: 'storage', title: 'Stock Logs', to: '/' + this.$route.params.username + '/Dashboard/stock' }            ]
+              { icon: 'storage', title: 'Stock Logs', to: '/' + this.$route.params.username + '/Dashboard/stock' }]
             this.allconfig = res.data;
             let tax = 0
-            for(let i=0;i<this.allconfig.length;i++)
-            {
-              if(this.allconfig[i].alias == 'manage_transport')
-              {
-                if(this.allconfig[i].value == 1) {
+            for (let i = 0; i < this.allconfig.length; i++) {
+              if (this.allconfig[i].alias == 'manage_transport') {
+                if (this.allconfig[i].value == 1) {
                   this.items.push({ icon: 'subway', title: 'Transport', to: '/' + this.$route.params.username + '/Dashboard/transport' })
                 }
               }
-              else if(this.allconfig[i].alias == 'calculate_taxes_sales' || this.allconfig[i].alias == 'calculate_taxes_purchase')
-              {
-                if(this.allconfig[i].value == 1) {
-                  if(tax == 0) {
+              else if (this.allconfig[i].alias == 'calculate_taxes_sales' || this.allconfig[i].alias == 'calculate_taxes_purchase') {
+                if (this.allconfig[i].value == 1) {
+                  if (tax == 0) {
                     this.items.push({ icon: 'dashboard', title: 'Taxes', to: '/' + this.$route.params.username + '/Dashboard/taxes' })
                     tax = 1
                   }
                 }
               }
-              else if(this.allconfig[i].alias == 'manage_billbook')
-              {
-                if(this.allconfig[i].value == 1) {
+              else if (this.allconfig[i].alias == 'manage_billbook') {
+                if (this.allconfig[i].value == 1) {
                   this.items.push({ icon: 'note_add', title: 'Billbook', to: '/' + this.$route.params.username + '/Dashboard/billbook' })
                 }
               }
-              else if(this.allconfig[i].alias == 'manage_sms')
-              {
-                if(this.allconfig[i].value == 1) {
+              else if (this.allconfig[i].alias == 'manage_sms') {
+                if (this.allconfig[i].value == 1) {
                   this.items.push({ icon: 'message', title: 'Sms Management', to: '/' + this.$route.params.username + '/Dashboard/sms' })
                 }
               }
             }
             this.loader1 = false
           })
-          .catch(e=>{
+          .catch(e => {
             this.logout()
           })
       }
     }
   }
 </script>
+<style scoped>
+.theme-color, .theme-color img {
+  background: white !important;
+  color: black !important;
+}
+.theme-color i {
+  background: transparent !important;
+  color: black !important;
+}
+@media only screen and (max-width: 1200px) {
+  .theme-color{
+    background: #1b2237 !important;
+    color: white !important;
+  }
+  .theme-color i {
+    background: transparent !important;
+    color: white !important;
+  }
+}
+</style>

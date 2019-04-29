@@ -77,7 +77,7 @@
                             <template v-slot:items="props">
                                 <tr>
                                     <td>{{props.item.index+1}}</td>
-                                    <td>{{props.item.smstemplate.title}}</td>
+                                    <td class="text-xs-left">{{props.item.smstemplate.title}}</td>
                                     <td>{{props.item.content}}</td>
                                     <td v-if="props.item.customerId != null">{{props.item.customer.name}} </td>
                                     <td v-else>-</td>

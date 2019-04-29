@@ -9,7 +9,7 @@
             </v-layout>
             <v-layout align-center justify-start row wrap class="mb-1">
                 <v-flex xs12 sm12>
-                    <v-autocomplete v-model="typeId" :items="typeListitems" :rules="requiredRules"
+                    <v-autocomplete v-model="myTypeId" :items="typeListitems" :rules="requiredRules"
                         auto-select-first clearable append-icon="add" @click:append="addACV('type')" :loading="typeList.isLoading"
                         :search-input.sync="typeList.search" hide-no-data hide-selected item-text="name" item-value="id"
                         label="Type" placeholder="" return-string class="pa-0 mt-1"  >
@@ -83,6 +83,7 @@
             }
             if(this.typeId != null){
                 this.typeList.search = ""
+                this.myTypeId=this.typeId
             }
         },
         updated() {
@@ -128,6 +129,7 @@
                 closeModal1:0,
                 subTypeName: "",
                 typeName: "",
+                myTypeId:"",
                 propCheck: 0,
                 editMode: {
                     type: 0
@@ -151,11 +153,12 @@
                 }
             },
             async addSubType() {
+                this.btnLoading= true
                 if (this.propCheck == 0) {
                     await this.$axios.post("/" + this.$route.params.username + "/api/Subtypes?access_token=" + this.$store.state.token, {
                         name: this.subTypeName,
                         isenabled: 1,
-                        typeId: this.typeId,
+                        typeId: this.myTypeId,
                         createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                         modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                         createdById: this.$store.state.userId,
@@ -172,7 +175,7 @@
                     await this.$axios.post("/" + this.$route.params.username + "/api/Subtypes/update?access_token=" + this.$store.state.token + "&where[id]=" + this.id, {
                         name: this.subTypeName,
                         isenabled: 1,
-                        typeId: this.typeId,
+                        typeId: this.myTypeId,
                         modifiedon: new Date(),
                         modifiedById: this.$store.state.userId
 
@@ -191,7 +194,7 @@
                     .then(res => {
                         this.subTypeName = res.data.name;
                         this.typeName = res.data.type.name;
-                        this.typeId = res.data.typeId;
+                        this.myTypeId = res.data.typeId;
                         this.typeList.search = ""
                     });
 

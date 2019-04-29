@@ -59,14 +59,13 @@
                         
                         <v-flex xs12 sm12>
                     <v-layout align-start justify-end>
-
-                            <v-btn color="info" round type=submit>
-                                <v-icon dark small class="mr-1"> edit</v-icon>Add
-                            </v-btn>
-                            </v-layout>
-                        </v-flex>
+                        <v-btn color="info" :loading="loading" round type=submit>
+                            <v-icon dark small class="mr-1"> edit</v-icon>Add
+                        </v-btn>
                     </v-layout>
-              </v-form>
+            </v-flex>
+        </v-layout>
+    </v-form>
 </template>
 <script>
 let date=new Date();
@@ -104,7 +103,8 @@ export default {
                     v => !!v || 'This Field is required'
             ],
             btnLoading:false,
-            Datemodal:false
+            Datemodal:false,
+            loading:false
         }
     },
     watch: {
@@ -140,7 +140,9 @@ export default {
     methods:{
         async addStock(){
             if (this.$refs.form1.validate())
-            {    if(this.addStockDtl.date != null)
+            {
+                this.loading = true;
+                if(this.addStockDtl.date != null)
                 {
                     let date=new Date(this.addStockDtl.date);
                     let month = ""+(date.getMonth()+1)
@@ -170,8 +172,7 @@ export default {
                             totalstock : totalstock
                         })
                         .then(res1=>{
-                            //alert("Stock Added Succesfully")
-                            //window.location=""
+                            this.loading = false
                             this.$emit('input', 2);
                         })
                     })

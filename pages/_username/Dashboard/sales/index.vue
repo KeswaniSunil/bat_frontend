@@ -78,6 +78,10 @@
             this.endDate=year+"-"+month+"-"+date1;
         }
     },
+    beforeDestroy(){
+    },
+    destroyed(){
+    },
     data() {
       return {
         tab: null,

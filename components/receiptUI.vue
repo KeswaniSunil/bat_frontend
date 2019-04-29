@@ -103,8 +103,8 @@
                                     Name</b></td>
                             <td width="10%" align="center" style="border-bottom: 1px solid black; border-right: 1px solid black; border-left: 1px solid black;"><b>HSN/SAC</b></td>
                             <td width="15%" align="center" style="border-bottom: 1px solid black; border-right: 1px solid black; border-left: 1px solid black;"><b>QTY</b></td>
-                            <td width="15%" colspan="1" align="center" style="border-bottom: 1px solid black; border-right: 1px solid black; border-left: 1px solid black;"><b>Rate</b></td>
-                            <td width="15%" colspan="2" align="center" style="border-left:1px solid black;border-right:2px solid black;border-bottom:1px solid black;"><b>Amount</b></td>
+                            <td width="15%" colspan="1" align="center" style="border-bottom: 1px solid black; border-right: 1px solid black; border-left: 1px solid black;"><b>Rate (Rs)</b></td>
+                            <td width="15%" colspan="2" align="center" style="border-left:1px solid black;border-right:2px solid black;border-bottom:1px solid black;"><b>Amount (Rs)</b></td>
                         </tr>
                         <tr v-for="(value, index) in Orderitems" :key="index">
                             <td width="5%" align="center" style="border:1px solid black;">{{index+1}}</td>
@@ -121,7 +121,7 @@
                             </td>
                             <td colspan="5" class="px-1" style="border-left:1px solid black;border-right:2px solid black;"
                                 width="40%">
-                                <b>Sub Total </b><span style="float:right;"><b>{{order.itemtotal - order.taxamount }} &nbsp;</b></span>
+                                <b>Sub Total </b><span style="float:right;"><b>Rs. {{order.itemtotal - order.taxamount }}/-&nbsp;</b></span>
                             </td>
                         </tr>
                         <tr>
@@ -132,10 +132,10 @@
                                             <td align="center"><b>Note:<br /><br /><br /></b></td>
                                         </tr>
                                         <tr style="border-bottom:2px solid black;">
-                                            <td><b>Total GST : {{order.taxamount}}<br /><br /></b></td>
+                                            <td><b>Total GST : Rs. {{order.taxamount}}/-<br /><br /></b></td>
                                         </tr>
                                         <tr>
-                                            <td><b>Bill Amount : {{amountowords}} Only<br /><br /></b></td>
+                                            <td><b>Bill Amount : {{amountowords}} Rupees Only<br /><br /></b></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -144,11 +144,17 @@
                                 <table width="100%" height="100%" class="">
                                     <tbody>
                                         <tr style="border-bottom:2px solid black;margin-bottom:20px;">
-                                            <td> <br /><br /><b>Taxable Amount: {{order.itemtotal - order.taxamount }}</b><br /><br /><br /><br /></td>
+                                            <td> <br /><br /><b>Taxable Amount: Rs. {{order.itemtotal - order.taxamount }}/-</b></td>
+                                        </tr>
+                                        <tr style="border-bottom:2px solid black;margin-bottom:20px;">
+                                            <td> <b>Discount Amount: <span v-if="new String(order.discount).search('%') == -1">Rs.</span> {{order.discount }}<span v-if="new String(order.discount).search('%') == -1">/-</span></b></td>
+                                        </tr>
+                                        <tr style="border-bottom:2px solid black;margin-bottom:20px;">
+                                            <td> <b>Charges : Rs. {{order.charges }}/-</b><br /><br /></td>
                                         </tr>
                                         <tr>
                                             <td height="100%" style="background-color:#aab79f;"><b>Grand Total:-
-                                                    {{order.totalamount}}</b></td>
+                                                    Rs. {{order.totalamount}}/-</b></td>
                                         </tr>
                                     </tbody>
                                 </table>

@@ -1,8 +1,8 @@
 <template>
     <v-layout>
         <v-flex xs11 sm12 ma-3 mt-4>
-            <v-layout align-end justify-end row wrap>
-                <v-btn color="info" round class="pa-2" @click="showModal = true,editValue=null">
+            <v-layout align-end justify-end row wrap class="mb-2">
+                <v-btn color="info" round class="pa-2 mb-1" @click="showModal = true,editValue=null">
                     <v-icon dark small class="mr-2"> flash_on</v-icon>Add Member
                 </v-btn>
             </v-layout>
@@ -12,7 +12,7 @@
                         <v-icon dark small class="mr-1">delete</v-icon> Delete
                     </v-btn>
                 </v-flex>
-                <v-flex xs12 sm3 class="mb-3">
+                <v-flex xs12 sm4 class="mb-3">
                     <v-text-field v-model="search" append-icon="search" label="Search" class="pa-0 ma-0" single-line
                         hide-details></v-text-field>
                 </v-flex>
@@ -40,17 +40,13 @@
                             <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                         </td>
                         <td width="6%">{{props.item.index+1}}</td>
-                        <td width="65%" style="cursor:pointer;" class="text-capitalize name-linking text-lg-left mr-3">
+                        <td width="65%" style="cursor:pointer;" class="text-capitalize name-linking text-xs-left">
                             <router-link :to="'/'+$route.params.username+'/Dashboard/sales/customer/'+props.item.customerId+'/view'">
                                 {{props.item.customer.name}}
                             </router-link>
                         </td>
                         <td width="25%" class="text-xs-left">
                             {{props.item.customer.mobile}}
-                        </td>
-                        <td width="10%">
-                            <v-icon small class="mr-12" @click="editMember(props.item.id)">edit
-                            </v-icon>
                         </td>
 
                     </tr>
@@ -100,8 +96,7 @@
                 header: [
                     { text: "#", value: "name" },
                     { text: "Member Name", value: "name" },
-                    { text: "Mobile No.", value: "mobile" },
-                    { text: "Edit", value: "name" }
+                    { text: "Mobile No.", value: "mobile" }
                 ],
                 selectMember: [],
                 loading: true,

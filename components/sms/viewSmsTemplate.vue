@@ -52,7 +52,7 @@
                                             <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                         </td>
                                         <td width="6%">{{props.item.index+1}}</td>
-                                        <td width="20%" style="cursor:pointer;" class="text-capitalize name-linking text-lg-left mr-3">
+                                        <td width="20%" style="cursor:pointer;" class="text-capitalize name-linking text-xs-left">
 
                                             {{props.item.title}}
                                         </td>

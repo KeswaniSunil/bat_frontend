@@ -56,18 +56,19 @@
                                         </th>
                                         <th v-for="header in props.headers" :key="header.text" :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
                                             @click="changeSort(header.value)">
-                                            <v-icon small>arrow_upward</v-icon>
                                             {{ header.text }}
+                                            <v-icon small>arrow_upward</v-icon>
+
                                         </th>
                                     </tr>
                                 </template>
                                 <template v-slot:items="props">
-                                    <tr>
+                                    <tr >
                                         <td :active="props.selected" @click="props.selected = !props.selected">
                                             <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                                         </td>
                                         <td>{{props.item.index+1}}</td>
-                                        <td style="cursor:pointer;" class="text-capitalize name-linking" @click="editItem(props.item.id)">{{
+                                        <td style="cursor:pointer;" class="text-capitalize name-linking text-xs-left" @click="editItem(props.item.id)">{{
                                             props.item.name }}</td>
                                         <td>{{ props.item.unit.title }}</td>
                                         <td>{{ props.item.price }}</td>
@@ -317,7 +318,7 @@
                             let promise1 = new Promise((resolve, reject) => {
 
                                 for (let i = 1; i < data.length; i++) {
-
+                                    let eee=0
                                     if (data[i][0] != null && data[i][1] != null && data[i][2] != null && data[i][3] != null && data[i][4] != null && data[i][5] != null) {
                                         a[j] = new Object()
                                         a[j].name = data[i][0];
@@ -326,33 +327,41 @@
                                         a[j].content = "abc";
                                         for (let e = 0; e < this.type1.length; e++) {
                                             //console.log(data[i][3]+" "+this.type1[e].name)
-                                            if (this.type1[e].name == data[i][3]) {
+                                            if (this.type1[e].name.toLowerCase() == data[i][3].toLowerCase()) {
                                                 //console.log(this.subType1)
                                                 for (let k = 0; k < this.subType1.length; k++) {
-                                                    if (this.subType1[k].typeId == this.type1[e].id && this.subType1[k].name == data[i][4]) {
+                                                    if (this.subType1[k].typeId == this.type1[e].id && this.subType1[k].name.toLowerCase() == data[i][4].toLowerCase()) {
                                                         a[j].subTypeId = this.subType1[k].id;
                                                         //console.log(a[j].subTypeId)
                                                         //console.log(this.type1[e].id)
                                                         break;
                                                     }
+                                                    if(k==this.subType1.length-1){
+                                                        d += i + " , ";
+                                                        eee=1
+                                                        a.pop();
+                                                    }
                                                 }
                                                 break;
                                             }
                                         }
+                                        if(eee==0){
                                         for (let d = 0; d < this.unit1.length; d++) {
-                                            if (this.unit1[d].title == data[i][5]) {
+                                            if (this.unit1[d].title.toLowerCase() == data[i][5].toLowerCase()) {
                                                 a[j].unitId = this.unit1[d].id;
                                                 break;
                                             }
                                         }
-                                        a[j].hsncode = data[i][6];
-                                        a[j].barcode = data[i][7];
-                                        a[j].isenabled = 1;
-                                        a[j].createdon = new Date();
-                                        a[j].modifiedon = new Date();
-                                        a[j].createdById = 1;
-                                        a[j].modifiedById = 1;
-                                        j++;
+                                        
+                                            a[j].hsncode = data[i][6];
+                                            a[j].barcode = data[i][7];
+                                            a[j].isenabled = 1;
+                                            a[j].createdon = new Date();
+                                            a[j].modifiedon = new Date();
+                                            a[j].createdById = 1;
+                                            a[j].modifiedById = 1;
+                                            j++;
+                                        }
                                     }
                                     else {
                                         //console.log('bb')
@@ -367,6 +376,7 @@
                                     this.showBulk = false
 
                                 }
+                                //console.log(a)
                                 this.$axios.post("/" + this.$route.params.username + "/api/Items?access_token=" + this.$store.state.token, a)
                                     .then(res => {
                                         //alert("Inserted"); 
@@ -455,12 +465,12 @@
                     let promise = new Promise((resolve, reject) => {
                         for (let i = 0; i < this.selectItem.length; i++) {
                             //console.log(this.selectCustomer[i]);
-                            this.$axios.post("/" + this.$route.params.username + "/api/Items/update?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&where[id]=" + this.selectItem[i].id,
+                            this.$axios.post("/" + this.$route.params.username + "/api/Items/update?access_token="+this.$store.state.token+"&where[id]=" + this.selectItem[i].id,
                                 {
                                     isenabled: 0
                                 })
                                 .then(res => {
-                                    this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs/update?access_token=5FIQwvmvvuUCeQqfSqT1xCmGf7GdvJe4SUTPTUQ5Q2om9vxss8CadPNHCeVjP23L&where[itemId]=" + this.selectItem[i].id,
+                                    this.$axios.post("/" + this.$route.params.username + "/api/Stocklogs/update?access_token="+this.$store.state.token+"&where[itemId]=" + this.selectItem[i].id,
                                         {
                                             isenabled: 0
                                         })

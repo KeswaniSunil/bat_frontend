@@ -1,8 +1,8 @@
 <template>
     <v-layout row wrap>
         <v-flex xs12 text-xs-center>
-            <v-card class="body-background">
-                <v-card-text >
+            <v-card class="elevation-0">
+                <v-card-text class="body-background padding-xs">
                         <stockListing mode="total"/>        
                 </v-card-text>
             </v-card>

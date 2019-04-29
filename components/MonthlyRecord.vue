@@ -148,46 +148,37 @@
                     }
                 })
                 promise2.then(res => {
-                        this.billRecords=res.data
-                        let s=res.data
-                        let a=new Date(res.data[0].billdate)
-                        let b=new Date(res.data[s.length-1].billdate)
-                        let startYear  = b.getFullYear()
-                        let endYear    = a.getFullYear();
-                        this.monthName = [];
-                        for(let i = startYear; i <= endYear; i++) {
-                            let endMonth = i != endYear ? 11 : parseInt(a.getMonth()+1) - 1;
-                            let startMon = i === startYear ? parseInt(b.getMonth()+1)-1 : 0;
-                            for(let j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
-                                let month = j;
-                                let ii=this.allMonths[j]
-                                let date1=""+new Date(i, j+1, 0).getDate();
-                                let date2=""+new Date(i, j, 1).getDate();
-                                if((j+1) < 10) month="0"+(j+1)
-                                if(date2 < 10) date2="0"+date2;
-                                let startDate=i+"-"+month+"-"+date2;
-                                let endDate=i+"-"+month+"-"+date1;
-                                let p = 0
-                                for(let k=0;k<res.data.length;k++){
-                                    if(new Date(res.data[k].billdate)>=new Date(startDate) && new Date(res.data[k].billdate)<=new Date(endDate)){
-                                        p++;
+                        if(res.data.length > 0){
+                            this.billRecords=res.data
+                            let s=res.data
+                            let a=new Date(res.data[0].billdate)
+                            let b=new Date(res.data[s.length-1].billdate)
+                            let startYear  = b.getFullYear()
+                            let endYear    = a.getFullYear();
+                            this.monthName = [];
+                            for(let i = startYear; i <= endYear; i++) {
+                                let endMonth = i != endYear ? 11 : parseInt(a.getMonth()+1) - 1;
+                                let startMon = i === startYear ? parseInt(b.getMonth()+1)-1 : 0;
+                                for(let j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+                                    let month = j;
+                                    let ii=this.allMonths[j]
+                                    let date1=""+new Date(i, j+1, 0).getDate();
+                                    let date2=""+new Date(i, j, 1).getDate();
+                                    if((j+1) < 10) month="0"+(j+1)
+                                    if(date2 < 10) date2="0"+date2;
+                                    let startDate=i+"-"+month+"-"+date2;
+                                    let endDate=i+"-"+month+"-"+date1;
+                                    let p = 0
+                                    for(let k=0;k<res.data.length;k++){
+                                        if(new Date(res.data[k].billdate)>=new Date(startDate) && new Date(res.data[k].billdate)<=new Date(endDate)){
+                                            p++;
+                                        }
                                     }
-                                }
-                                if(p > 0) this.monthName.push([ii,i,p,startDate,endDate])
-                            }        
-                        }
-                        this.monthName.reverse()
-                        if(this.ui == 'dashboard'){
-                            if(window.innerWidth >= 960) {
-                                this.monthName =this.monthName.splice(0,5)
+                                    if(p > 0) this.monthName.push([ii,i,p,startDate,endDate])
+                                }        
                             }
-                            else if(window.innerWidth >= 600) {
-                                this.monthName =this.monthName.splice(0,3)
-                            }
-                            else {
-                                this.monthName =this.monthName.splice(0,2)
-                            }
-                            window.addEventListener('resize', () => {
+                            this.monthName.reverse()
+                            if(this.ui == 'dashboard'){
                                 if(window.innerWidth >= 960) {
                                     this.monthName =this.monthName.splice(0,5)
                                 }
@@ -197,7 +188,18 @@
                                 else {
                                     this.monthName =this.monthName.splice(0,2)
                                 }
-                            })
+                                window.addEventListener('resize', () => {
+                                    if(window.innerWidth >= 960) {
+                                        this.monthName =this.monthName.splice(0,5)
+                                    }
+                                    else if(window.innerWidth >= 600) {
+                                        this.monthName =this.monthName.splice(0,3)
+                                    }
+                                    else {
+                                        this.monthName =this.monthName.splice(0,2)
+                                    }
+                                })
+                            }
                         }
                     });
             },

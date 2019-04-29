@@ -33,16 +33,7 @@ export default {
     SnackBar
   },
   beforeCreate(){
-    this.$axios.get("/" + this.$route.params.username + "/api/CompanyDetails?filter[where][name]=" + this.$route.params.username)
-      .then(res => {
-        if (res.data.length > 0);
-        else {
-          return this.$nuxt.error({ statusCode: 404, message: "Page Not Found" })
-        }
-      })
-      .catch(e => {
-        return this.$nuxt.error({ statusCode: 404, message: "Page Not Found" })
-      });
+    
   },
   data: () => ({})
 };

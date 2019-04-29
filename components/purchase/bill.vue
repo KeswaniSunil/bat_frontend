@@ -41,7 +41,7 @@
                                             <v-dialog ref="dialogbilldate" v-model="modalbilldate" :return-value.sync="billDetail.billDate"
                                                 persistent lazy full-width width="290px">
                                                 <template v-slot:activator="{ on }">
-                                                    <v-text-field v-model="billDetail.billDate" :rules="requiredRules"
+                                                    <v-text-field v-model="billDetail.billDate" :rules="requiredRules" label="Bill Date"
                                                         :single-line="$store.state.biggerScreen" readonly v-on="on" height=20 :disabled="type != null"></v-text-field>
                                                 </template>
                                                 <v-date-picker v-model="billDetail.billDate" scrollable>
@@ -377,7 +377,7 @@
                 </v-card-title>
                 <v-card-text class="pa-0">
                     <v-container grid-list-xs>
-                        <csAddComponent v-model="closeModal1" mode="supplier"></csAddComponent>
+                        <csAddComponent v-model="closeModal1" @Success="handleSuccess($event)" mode="supplier"></csAddComponent>
                     </v-container>
                 </v-card-text>
 
@@ -667,6 +667,7 @@
             if(this.closeModal1 == 2){
                 this.modalItem = false;
                 this.modalSupplier = false
+                this.closeModal1 = 1
             }
         },
         computed: {
@@ -769,6 +770,9 @@
                     this.modalItem = true
                 }
             },
+            handleSuccess(e){
+                console.log(e)
+            },
             resetItemModal(index) {
                 this.itemModalDetails[index].id = null
                 this.itemModalDetails[index].itemId = ""
@@ -799,13 +803,10 @@
             },
             async getDetails() {
                 this.getConfiguration()
-                await this.$axios.get("/" + this.$route.params.username + "/api/Purchases/" + this.id + "/supplier?access_token=" + this.$store.state.token)
+                await this.$axios.get("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token + "&filter[include]=supplier&filter[where][id]=" + this.id)
                     .then((res) => {
-                        this.billDetail.supplierName = res.data.name
-                        this.closingbal = res.data.closingbal
-                    })
-                await this.$axios.get("/" + this.$route.params.username + "/api/Purchases?access_token=" + this.$store.state.token + "&filter[where][id]=" + this.id)
-                    .then((res) => {
+                        this.billDetail.supplierName = res.data[0].supplier.name
+                        this.closingbal = res.data[0].supplier.closingbal
                         this.idToBeSent.supplierId = res.data[0].supplierId
                         this.billDetail.billDate = new Date(res.data[0].billdate).toISOString().substr(0,10);
                         this.billDetail.dueDate = new Date(res.data[0].duedate).toISOString().substr(0,10);

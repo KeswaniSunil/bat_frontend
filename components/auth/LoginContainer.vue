@@ -134,6 +134,7 @@ export default {
             this.$emit("onLoginSuccess", res);
           })
           .catch(err => {
+            this.loading = false
             this.$emit("onLoginError", err);
           });
       }

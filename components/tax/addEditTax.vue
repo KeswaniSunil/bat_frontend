@@ -11,14 +11,13 @@
                 </v-flex>
             </v-layout>
             <v-layout align-center justify-start row wrap>
-                <v-flex xs12 sm9>
+                <v-flex xs12 sm12>
                     <v-layout align-start justify-end>
-
-                    <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark>
+                    <v-btn v-if="propCheck==0" class="" :loading="btnLoading" type="submit" color="info" round dark >
                         Add
                         <v-icon dark right class="ml-1">check_circle</v-icon>
                     </v-btn>
-                    <v-btn v-else :loading="btnLoading" type="submit" color="info" round dark>
+                    <v-btn v-else class="" :loading="btnLoading" type="submit" color="info" round dark>
                         Save
                         <v-icon dark right class="ml-1">check_circle</v-icon>
         

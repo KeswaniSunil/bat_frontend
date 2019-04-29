@@ -130,8 +130,7 @@ export default {
                     })
                 }
                     this.showItem=1;
-                    //console.log(this.selectedSubType+"-- "+res.data.length)
-
+                    
             }) 
         },
         addAllStock(){
@@ -154,7 +153,6 @@ export default {
                             modifiedon:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                             modifiedById:this.$store.state.userId
                         })
-                        //console.log("aa")
                     }
                     if(j == this.addItemStock.length-1) resolve()
                 }
@@ -163,12 +161,12 @@ export default {
                 if(this.validItemStock.length>0){
                     this.$axios.post("/"+this.$route.params.username+"/api/Stocklogs?access_token="+this.$store.state.token,this.validItemStock)
                     .then(res=>{
-                        console.log(this.validItemStock)
                         this.$axios.post("/"+this.$route.params.username+"/api/Stocklogs/updatetotalstock?access_token="+this.$store.state.token,{itemId:this.validItemStock})
                                 .then(res1=>{
                                     if(res1.status){
                                         this.btnLoading=false;
                                     this.showItem=0;
+                                    this.$store.commit("snackbar/setSnack", "Stock Added.");            
                                     this.selectedSubType=null;
                                     this.validItemStock=[];
                                     this.addItemStock=[];

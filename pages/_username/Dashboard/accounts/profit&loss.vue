@@ -22,19 +22,33 @@
                                             <tr v-for="(debits,index) in debit" :key="index" style="vertical-align: bottom !important;" >
                                                 <td class="account_td">
                                                     <v-layout v-for="(sub,i) in debits.sub" :key="i" row wrap class="width-100" >
-                                                        <v-flex xs1 sm2 md1 v-if="sub.cal != null" class="text-lowercase">{{sub.cal}}</v-flex>
-                                                        <v-flex :class="[sub.cal != null ? 'xs8 sm7 md8' : 'xs9']">{{sub.particular}}</v-flex>
-                                                        <v-flex xs3 text-xs-center>{{sub.amount}}</v-flex>
+                                                        <v-flex xs2 v-if="sub.cal != null" class="text-lowercase ">
+                                                            <v-select :items="operator" label="" item-text="text" item-value="value" v-model="sub.cal" 
+                                                            height=18 class="pa-0 mt-1"></v-select>
+                                                        </v-flex>
+                                                        <v-flex :class="[sub.cal != null ? 'xs7 ml-1 mr-1' : 'xs9']">
+                                                            <v-text-field v-if="sub.cal != null" type=text v-model="sub.particular"
+                                                             height=18 class="pa-0 mt-1"></v-text-field>
+                                                             <span v-else>{{sub.particular}}</span>
+                                                        </v-flex>
+                                                        <v-flex xs2 text-xs-center>
+                                                            <v-text-field v-if="sub.cal != null" type=text v-model="sub.amount"
+                                                             height=18 class="pa-0 mt-1"></v-text-field>
+                                                             <span v-else>{{sub.amount}}</span>
+                                                        </v-flex>
                                                     </v-layout>
                                                 </td>
+                                                <td style="border:none;cursor:pointer"><v-icon color="black" small @click="debits.sub.push({particular:'',cal:'',amount:''})">add_circle</v-icon></td>
                                                 <td class="account_td text-xs-center">
                                                     {{debits.amount}}
                                                 </td>
+                                                
                                             </tr>
                                         </tbody>
                                         <tfoot>
                                             <tr>
                                                 <td class="account_td"></td>
+                                                <td style="border:none;"></td>
                                                 <th class="account_th">{{debittotal}}</th>
                                             </tr>
                                         </tfoot>
@@ -87,11 +101,18 @@ export default {
         return{
             headers:[
                 { text:'Particulars', width:'70%'},
-                {text:'Amount(Rs.)', width:'30%'}
+                { text:' ', width:'5%'},
+                {text:'Amount(Rs.)', width:'25%'}
+            ],
+            operator:[
+                {text:"",value:""},
+                {text:"Add",value:"Add"},
+                {text:"Less",value:"Less"}
             ],
             debit:[
-                {amount:600,sub:[{particular:'MR',cal:null,amount:100},{particular:'MY',cal:'add:',amount:300},{particular:'MQ',cal:'less:',amount:200}]},
-                {amount:1000,sub:[{particular:'MR',cal:null,amount:null}]}
+                {amount:600,sub:[{particular:'Bhavesh',cal:null,amount:100},{particular:'Jayesh',cal:null,amount:300},{particular:'Chirag',cal:null,amount:200}]},
+                {amount:1000,sub:[{particular:'Jay',cal:null,amount:null}]},                
+                {amount:4000,sub:[{particular:'Sunil',cal:null,amount:null}]}
                 ],
             credit:[
                 {amount:1000,sub:[{particular:'MR',cal:null,amount:null}]},

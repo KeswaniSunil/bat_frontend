@@ -222,6 +222,7 @@
                 this.modalType = false
                 this.modalSubType = false
                 this.modalUnit = false
+                this.closeModal1 = 0
             }
         },
         watch: {

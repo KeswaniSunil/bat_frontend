@@ -25,7 +25,7 @@
                         <label class="font-15 font-weight-regular">Mobile No: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="Mobile No." type=number height=20 :single-line="$store.state.biggerScreen" :rules="requiredRules" 
+                        <v-text-field label="Mobile No." type=number height=20 :single-line="$store.state.biggerScreen" 
                             v-model="customerDetails.mobile"></v-text-field>
                     </v-flex>
                     <v-flex v-if="$store.state.biggerScreen" xs12 sm2 class="text-lg-center text-xs-left">
@@ -59,7 +59,7 @@
                         <label class="font-15 font-weight-regular">Pincode: </label>
                     </v-flex>
                     <v-flex xs12 sm4>
-                        <v-text-field label="Pincode" height=20 type=text :single-line="$store.state.biggerScreen"  v-model="customerDetails.pinCode"></v-text-field>
+                        <v-text-field label="Pincode" height=20 type=number :single-line="$store.state.biggerScreen"  v-model="customerDetails.pinCode"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-flex>
@@ -85,7 +85,7 @@
                         <label class="font-15 font-weight-regular">State Code: </label>
                     </v-flex>
                     <v-flex xs12 sm3>
-                        <v-text-field label="State Code" height=20 type=text :single-line="$store.state.biggerScreen"  v-model="customerDetails.stateCode"></v-text-field>
+                        <v-text-field label="State Code" height=20 type=number :single-line="$store.state.biggerScreen"  v-model="customerDetails.stateCode"></v-text-field>
                     </v-flex>
                     <v-flex v-if="$store.state.biggerScreen" xs12 sm3 class="text-lg-center text-xs-left">
                         <label class="font-15 font-weight-regular">Opening Balance: </label>
@@ -165,15 +165,15 @@
             }
         },
         methods: {
-            async add() {
+            add() {
                 if (this.$refs.form1.validate()) {
                     if (this.propCheck == 0) {
                         this.btnLoading = true
                         
                         if(this.mode == 'customer')
                         {
-                            await this.$axios.post("/" + this.$route.params.username + "/api/Customers?access_token=" + this.$store.state.token, {
-                                name: this.customerDetails.firstName,
+                            this.$axios.post("/" + this.$route.params.username + "/api/Customers?access_token=" + this.$store.state.token, {
+                                name: this.customerDetails.firstName+"",
                                 mobile: this.customerDetails.mobile,
                                 email: this.customerDetails.email,
                                 gstin: this.customerDetails.gstn,
@@ -189,8 +189,7 @@
                                 createdon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
                                 createdById: this.$store.state.userId,
-                                modifiedById: this.$store.state.userId,
-                                customerTypeId: "0131ef88-91a1-4b63-9a5a-d5a36cd0252"
+                                modifiedById: this.$store.state.userId
 
                             })
                             .then(res => {
@@ -216,8 +215,8 @@
                         }
                         else if (this.mode == 'supplier')
                         {
-                            await this.$axios.post("/" + this.$route.params.username + "/api/Suppliers?access_token=" + this.$store.state.token, {
-                                name: this.customerDetails.firstName,
+                            this.$axios.post("/" + this.$route.params.username + "/api/Suppliers?access_token=" + this.$store.state.token, {
+                                name: this.customerDetails.firstName+"",
                                 mobile: this.customerDetails.mobile,
                                 email: this.customerDetails.email,
                                 gstin: this.customerDetails.gstn,
@@ -261,9 +260,9 @@
                         this.btnLoading = true
                         
                         if(this.mode == 'customer') {
-                            await this.$axios.post("/" + this.$route.params.username + "/api/Customers/update?access_token=" + this.$store.state.token + "&where[id]=" + this.id,
+                            this.$axios.post("/" + this.$route.params.username + "/api/Customers/update?access_token=" + this.$store.state.token + "&where[id]=" + this.id,
                             {
-                                name: this.customerDetails.firstName,
+                                name: this.customerDetails.firstName+"",
                                 mobile: this.customerDetails.mobile,
                                 email: this.customerDetails.email,
                                 gstin: this.customerDetails.gstn,
@@ -275,8 +274,7 @@
                                 statecode: this.customerDetails.stateCode,
                                 isenabled: 1,
                                 modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
-                                modifiedById: this.$store.state.userId,
-                                customerTypeId: "0131ef88-91a1-4b63-9a5a-d5a36cd0252"
+                                modifiedById: this.$store.state.userId
                             })
                             .then(res1 => {
                                 if (res1) {
@@ -289,9 +287,9 @@
                         }
                         else if(this.mode == 'supplier')
                         {
-                            await this.$axios.post("/" + this.$route.params.username + "/api/Suppliers/update?access_token=" + this.$store.state.token + "&where[id]=" + this.id,
+                            this.$axios.post("/" + this.$route.params.username + "/api/Suppliers/update?access_token=" + this.$store.state.token + "&where[id]=" + this.id,
                             {
-                                name: this.customerDetails.firstName,
+                                name: this.customerDetails.firstName+"",
                                 mobile: this.customerDetails.mobile,
                                 email: this.customerDetails.email,
                                 gstin: this.customerDetails.gstn,
@@ -351,7 +349,7 @@
                         this.customerDetails.state = this.editCustomerDtl.state;
                         this.customerDetails.gstn = this.editCustomerDtl.gstin;
                         this.customerDetails.stateCode = this.editCustomerDtl.statecode;
-                                                this.customerDetails.balance=this.editCustomerDtl.balance
+                        this.customerDetails.balance=this.editCustomerDtl.balance
 
                     });
                 }

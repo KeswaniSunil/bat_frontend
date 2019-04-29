@@ -60,12 +60,12 @@
                 <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
               </td>
               <td>{{props.item.index+1}}</td>
-              <td v-if="mode=='customer'" class="text-capitalize name-linking">
+              <td v-if="mode=='customer'" class="text-capitalize name-linking text-xs-left">
                 <router-link :to="'/'+$route.params.username+'/Dashboard/sales/customer/'+props.item.id+'/view'">
                   {{props.item.name}}
                 </router-link>
               </td>
-              <td v-else class="text-capitalize name-linking">
+              <td v-else class="text-capitalize name-linking text-xs-left">
                 <router-link :to="'/'+$route.params.username+'/Dashboard/purchase/supplier/'+props.item.id+'/view'">
                   {{props.item.name}}
                 </router-link>

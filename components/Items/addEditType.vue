@@ -133,8 +133,9 @@ export default {
             await this.$axios.get("/"+this.$route.params.username+"/api/Types/"+this.id+"?access_token="+this.$store.state.token+"&filter[include]=tax")
                     .then(res => {
                         this.typeName=res.data.name;
-                        this.selectedTax=res.data.tax.id;
-                        //console.log(this.selectedTax)
+                        if(res.data.taxId != ''){
+                            this.selectedTax=res.data.tax.id;
+                        }
                     });
 
         }

@@ -90,7 +90,7 @@
                       Pincode , g) City , h) State , i) Gstn , j) StateCode , k) Opening Balance</v-flex>
                   </v-layout>
                   <v-layout row wrap class="mb-3">
-                    <v-flex sm12 class="font-18">[<b>Note</b>:- Supplier Name,Mobile No. are compulsory Fields]</v-flex>
+                    <v-flex sm12 class="font-18">[<b>Note</b>:- Supplier Name is Compulsory Field]</v-flex>
                   </v-layout>
                   <v-layout row wrap>
                     <v-flex sm12>
@@ -161,6 +161,8 @@
       // closeModal = 2 means reload the datatable
       if (this.closeModal1 == 2) {
         this.showModal = false
+        this.editValue = null
+        this.closeModal1=1
       }
       if(this.closeModal2 == 2){
         this.modalSettlement = false
@@ -211,7 +213,7 @@
           let d = "";
           let promise = new Promise((resolve, reject) => {
             for (let i = 1; i < data.length; i++) {
-              if (data[i][0] != null && data[i][1] != null) {
+              if (data[i][0] != null) {
                 a[j] = new Object()
                 a[j].name = data[i][0];
                 a[j].mobile = data[i][1];

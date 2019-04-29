@@ -35,9 +35,9 @@
                         </v-flex>
                         <v-flex xs12 sm3>
                             <v-layout row wrap>
-                                <v-flex xs7 sm3>
+                                <v-flex xs7 sm3 class="mb-1">
                                 </v-flex>
-                                <v-flex xs5 sm9>
+                                <v-flex xs5 sm9 class="mb-1">
                                     <v-btn class="" dark round @click="getTotal()">Get Stock</v-btn>
                                 </v-flex>
                             </v-layout>
@@ -45,29 +45,23 @@
                     </v-layout>
                     <v-card class="elevation-3" style="border-radius:5px;">
                         <v-card-title class="pa-2 primary white--text">
-                            List of All Items:-
+                            Listing:-
                         </v-card-title>
                         <v-card-text>
-                            <v-layout row wrap class="mb-2">
-                                <v-flex xs4 sm1>
-                                    <v-btn color="primary" round class="pa-0 ma-0" :loading="loadingPDF" @click="_export('pdf')">
-                                        <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Pdf
-                                    </v-btn>
-                                </v-flex>
-                                <v-flex xs5 sm2>
-                                    <v-layout row wrap>
-                                        <v-flex sm1></v-flex>
-                                        <v-flex sm7>
-                                            <v-btn color="primary" round class="pa-0 ma-0" :loading="loadingExcel"
-                                                @click="_export('excel')">
-                                                <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Excel
-                                            </v-btn>
-                                        </v-flex>
-                                        <v-flex sm4></v-flex>
+                            <v-layout row wrap>
+                                <v-flex xs12 sm9 class="mb-3">
+                                    <v-layout align-start justify-start row wrap>
+
+                                        <v-btn color="primary" round class="pa-0 mr-1" :loading="loadingPDF" @click="_export('pdf')">
+                                            <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Pdf
+                                        </v-btn>
+                                        <v-btn color="primary" round class="pa-0 " :loading="loadingExcel" @click="_export('excel')">
+                                            <v-icon dark small class="mr-2" reverse>cloud_download</v-icon>Excel
+                                        </v-btn>
+
                                     </v-layout>
                                 </v-flex>
-                                <v-flex xs3 sm6 class="mb-1"></v-flex>
-                                <v-flex xs12 sm3>
+                                <v-flex xs12 sm3 class="mb-3">
                                     <v-text-field v-model="search" append-icon="search" label="Search" class="pa-0 ma-0"
                                         single-line hide-details></v-text-field>
                                 </v-flex>

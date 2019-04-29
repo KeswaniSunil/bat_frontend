@@ -235,7 +235,7 @@
                 ],
                 senderRules: [
                     v => !!v || 'This Field is required',
-                    v => v.length == 6 || 'Sender Id is of 6 digits'
+                    v => (v != null && v.length == 6) || 'Sender Id is of 6 digits'
                 ],
                 smsDtl:{
                     route:4,
@@ -358,8 +358,28 @@
                             modifiedon: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString()
                         })
                         .then(res => {
-                            this.loading = false
-                            this.$store.commit("snackbar/setSnack", "Details Changed!");
+                            this.$axios.post("/"+this.$route.params.username+"/api/CompanyDetails/updatedetails",
+                            {
+                                webname:this.$route.params.username,
+                                name: this.companyDtl.name,
+                                mobile: this.companyDtl.mobile,
+                                address: this.companyDtl.address,
+                                state: this.companyDtl.state,
+                                city: this.companyDtl.city,
+                                pincode: this.companyDtl.pincode,
+                                statecode: this.companyDtl.statecode,
+                                logo: "aab"
+                            })
+                            .then(res=>{
+                                if(res.data.status){
+                                    this.loading = false
+                                    this.$store.commit("snackbar/setSnack", "Details Changed!");
+                                }
+                                else {
+                                    this.loading = false
+                                    this.$store.commit("snackbar/setSnack", "Error While Changing Details! Try again later");
+                                }
+                            })
                         });
                 }
             }

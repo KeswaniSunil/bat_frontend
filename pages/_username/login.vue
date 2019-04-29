@@ -72,6 +72,13 @@ export default {
   components: {
     LoginContainer
   },
+  async asyncData ({ params,$axios,error }) {
+    let { data } = await $axios.get("/" + params.username + "/api/Configs?filter[where][name]=" + params.username)
+    if(data.length > 0);
+    else {
+      return error({ statusCode: 404, message: "Page Not Found" })
+    }
+  },
   data: () => ({}),
   methods: {
     handleLoginSuccess() {
