@@ -119,8 +119,9 @@ export default {
             password: this.password
           })
           .then(res => {
+            //now in res we will be returned access token i.e res.data.id and userID in res.data.userId and username in res.data.username
             let cookieValueObj={
-              token:res.data.id,
+              token:res.data.id,     
               userId:res.data.userId,
               username:this.$route.params.username
             }

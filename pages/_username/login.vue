@@ -95,7 +95,7 @@ export default {
       this.$store.commit("snackbar/setSnack", "Logged In Fail.");
     },
     handleSignupClick() {
-      //$nuxt.$router.push("/dashboard/signup");
+      $nuxt.$router.push("/signup");
     }
   }
 };

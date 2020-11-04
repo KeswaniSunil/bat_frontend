@@ -254,12 +254,38 @@
           promise.then((resolve) => {
             if (d.length > 0) {
               alert("Your Row number " + d + " is/are not valid Entry/Entries")
-              this.showBulk = false
-
             }
             this.$axios.post("/" + this.$route.params.username + "/api/Customers?access_token=" + this.$store.state.token, a)
               .then(res => {
+                // console.log(res.data)
+                    let hh=[];
+                  let promise1 = new Promise((resolve1, reject1) => {
+                      for(let h=0;h<res.length;h++){
+                        hh.push({
+                          balance:res.data[h].balance,
+                          notes:"Opening Balance",
+                                    date:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    customerId:res.data[h].id,
+                                    isenabled:1,
+                                    createdon:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    modifiedon:new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString(),
+                                    createdById:this.$store.state.userId
+                          
+                        })
+                        if(h == res.length - 1){
+                          resolve1();
+                        }
+                      }
+                  });
+              promise1.then((resolve1) => {
+                                this.$axios.post("/" + this.$route.params.username + "/api/Customerlogs?access_token=" + this.$store.state.token,hh)
+                                .then(res1=>{
+                                  // console.log(res1)
+                                  // console.log(hh)
                 this.showBulk = false
+                                })
+
+          });
               });
 
           });
